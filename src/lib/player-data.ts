@@ -7,9 +7,16 @@ export interface Player extends DocumentData {
   userId: string;
 }
 
+export interface AuctionOrderItem {
+  player: Player;
+  orderNumber: number;
+}
+
 export interface PlayerSet extends DocumentData {
   id: string;
   name: string;
   players: Player[];
   userId: string;
+  order?: AuctionOrderItem[];
+  pinHash?: string;
 }

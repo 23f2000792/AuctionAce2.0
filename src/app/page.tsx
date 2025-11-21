@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel } from 'lucide-react';
+import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel, KeyRound } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
@@ -112,8 +112,8 @@ export default function Home() {
                   </CardContent>
                   <CardFooter className="p-4">
                      <Button asChild className="w-full mt-auto">
-                        <Link href={`/auction/present/${set.id}`}>
-                          <Gavel className="mr-2" /> Start Auction
+                        <Link href={`/auction/order/${set.id}`}>
+                          <KeyRound className="mr-2" /> Setup & Secure
                         </Link>
                       </Button>
                   </CardFooter>
