@@ -6,6 +6,7 @@ import { Player, PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc, DocumentReference } from 'firebase/firestore';
 import FullScreenView from '@/components/FullScreenView';
+import { shuffleArray } from '@/lib/utils';
 
 export default function PresentPage() {
   const [orderedPlayers, setOrderedPlayers] = useState<{ player: Player; orderNumber: number }[]>([]);
@@ -35,12 +36,14 @@ export default function PresentPage() {
         notFound();
         return;
       }
-      if (!set.order) {
-        // If order isn't set, redirect to the setup page
-        router.push(`/auction/order/${slug}`);
-      } else {
-        setOrderedPlayers(set.order);
-      }
+      
+      // Shuffle players on load for a new random order each time
+      const shuffled = shuffleArray(set.players);
+      const readyForPresentation = shuffled.map((player, index) => ({
+          player,
+          orderNumber: index + 1
+      }));
+      setOrderedPlayers(readyForPresentation);
     }
   }, [set, user, router, slug]);
 
@@ -54,7 +57,7 @@ export default function PresentPage() {
     );
   }
 
-  if (!set || !set.order) {
+  if (!set) {
     // This can happen briefly before redirect, or if doc doesn't exist
     return (
       <div className="fixed inset-0 bg-background flex items-center justify-center">
@@ -66,7 +69,7 @@ export default function PresentPage() {
   if (orderedPlayers.length === 0) {
      return (
       <div className="fixed inset-0 bg-background flex items-center justify-center">
-        <p className="text-lg">Loading players...</p>
+        <p className="text-lg">Shuffling Players...</p>
       </div>
     );
   }
