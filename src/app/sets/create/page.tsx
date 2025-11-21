@@ -18,22 +18,35 @@ import { Player, PlayerSet } from '@/lib/player-data';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, Users, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
+import { useUser, useFirestore, useCollection, addDocumentNonBlocking, useMemoFirebase } from '@/firebase';
+import { collection, query, where } from 'firebase/firestore';
 
 export default function CreateSetPage() {
-  const [allPlayers, setAllPlayers] = useState<Player[]>([]);
   const [selectedPlayers, setSelectedPlayers] = useState<Player[]>([]);
   const [setName, setSetName] = useState('');
-  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
+
+  const playersQuery = useMemoFirebase(() => {
+    if (!user || !firestore) return null;
+    return query(collection(firestore, 'players'), where('userId', '==', user.uid));
+  }, [user, firestore]);
+
+  const { data: allPlayers, isLoading: isLoadingPlayers } = useCollection<Player>(playersQuery);
+
+  const setsCollection = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'sets');
+  }, [firestore]);
+
 
   useEffect(() => {
-    setIsClient(true);
-    const storedPlayers = localStorage.getItem('players');
-    if (storedPlayers) {
-      setAllPlayers(JSON.parse(storedPlayers));
+    if (!isUserLoading && !user) {
+      router.push('/login');
     }
-  }, []);
+  }, [user, isUserLoading, router]);
 
   const handlePlayerToggle = (player: Player) => {
     setSelectedPlayers((prev) =>
@@ -52,18 +65,15 @@ export default function CreateSetPage() {
       toast({ title: 'Select at least one player.', variant: 'destructive' });
       return;
     }
+    if (!user || !setsCollection) return;
 
-    const newSet: PlayerSet = {
-      id: Date.now(),
+    const newSet = {
       name: setName,
       players: selectedPlayers,
+      userId: user.uid,
     };
 
-    const storedSets = localStorage.getItem('playerSets');
-    const sets = storedSets ? JSON.parse(storedSets) : [];
-    const updatedSets = [...sets, newSet];
-
-    localStorage.setItem('playerSets', JSON.stringify(updatedSets));
+    addDocumentNonBlocking(setsCollection, newSet);
 
     toast({
       title: 'Set Created!',
@@ -73,10 +83,10 @@ export default function CreateSetPage() {
     router.push('/');
   };
 
-  if (!isClient) {
-    return null; // or a loading spinner
+  if (isUserLoading || !user) {
+    return <div className="w-full text-center">Loading...</div>
   }
-  
+
   return (
     <div className="w-full max-w-4xl mx-auto space-y-8">
        <Button variant="outline" asChild className="mb-4">
@@ -103,7 +113,14 @@ export default function CreateSetPage() {
 
           <div className="space-y-2">
             <Label>Select Players</Label>
-            {allPlayers.length > 0 ? (
+            {isLoadingPlayers && (
+                <Card>
+                    <CardContent className="p-4">
+                        <div className="h-40 animate-pulse rounded-md bg-muted" />
+                    </CardContent>
+                </Card>
+            )}
+            {!isLoadingPlayers && allPlayers && allPlayers.length > 0 ? (
                 <Card>
                     <CardContent className="p-4 max-h-[400px] overflow-y-auto">
                         <ul className="space-y-3">
@@ -126,18 +143,20 @@ export default function CreateSetPage() {
                     </CardContent>
                 </Card>
             ) : (
-                <div className="text-center py-10 border-2 border-dashed rounded-lg">
-                    <Users className="mx-auto h-12 w-12 text-muted-foreground" />
-                    <h3 className="mt-4 text-lg font-medium">No Players Found</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">You need to add players before you can create a set.</p>
-                    <div className="mt-6">
-                        <Button asChild>
-                            <Link href="/players">
-                                <PlusCircle className="mr-2" /> Add Players
-                            </Link>
-                        </Button>
-                    </div>
-                </div>
+                !isLoadingPlayers && (
+                  <div className="text-center py-10 border-2 border-dashed rounded-lg">
+                      <Users className="mx-auto h-12 w-12 text-muted-foreground" />
+                      <h3 className="mt-4 text-lg font-medium">No Players Found</h3>
+                      <p className="mt-1 text-sm text-muted-foreground">You need to add players before you can create a set.</p>
+                      <div className="mt-6">
+                          <Button asChild>
+                              <Link href="/players">
+                                  <PlusCircle className="mr-2" /> Add Players
+                              </Link>
+                          </Button>
+                      </div>
+                  </div>
+                )
             )}
           </div>
            <p className="text-sm text-muted-foreground font-medium">
@@ -145,7 +164,7 @@ export default function CreateSetPage() {
             </p>
         </CardContent>
         <CardFooter>
-          <Button onClick={handleCreateSet} className="ml-auto">
+          <Button onClick={handleCreateSet} className="ml-auto" disabled={!setsCollection}>
             Create Set
           </Button>
         </CardFooter>

@@ -1,16 +1,10 @@
 {
   "entities": {
     "User": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "User",
       "type": "object",
       "description": "Represents a user of the application.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the user.",
-          "format": "uuid"
-        },
         "email": {
           "type": "string",
           "description": "User's email address.",
@@ -27,182 +21,100 @@
         }
       },
       "required": [
-        "id",
         "email",
         "displayName",
         "createdAt"
       ]
     },
-    "Auction": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "Auction",
-      "type": "object",
-      "description": "Represents an IPL auction.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the auction."
-        },
-        "name": {
-          "type": "string",
-          "description": "Name of the auction."
-        },
-        "locked": {
-          "type": "boolean",
-          "description": "Indicates if the final order is locked."
-        },
-        "generatedAt": {
-          "type": "string",
-          "description": "Timestamp of when the auction order was generated.",
-          "format": "date-time"
-        },
-        "pinHash": {
-          "type": "string",
-          "description": "SHA-256 hash of the PIN used to lock the auction."
-        },
-        "ownerId": {
-          "type": "string",
-          "description": "Reference to User. (Relationship: User 1:N Auction). The user who created the auction."
-        }
-      },
-      "required": [
-        "id",
-        "name",
-        "locked",
-        "generatedAt",
-        "pinHash",
-        "ownerId"
-      ]
-    },
     "Player": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Player",
       "type": "object",
-      "description": "Represents a player in the auction.",
+      "description": "Represents a player available for auction.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the player."
-        },
-        "name": {
+        "playerName": {
           "type": "string",
           "description": "Name of the player."
-        }
-      },
-      "required": [
-        "id",
-        "name"
-      ]
-    },
-    "AuctionOrder": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "AuctionOrder",
-      "type": "object",
-      "description": "Represents the order of players in the auction.",
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the auction order."
         },
-        "auctionId": {
-          "type": "string",
-          "description": "Reference to Auction. (Relationship: Auction 1:N AuctionOrder)"
-        },
-        "playerId": {
-          "type": "string",
-          "description": "Reference to Player. (Relationship: Player 1:N AuctionOrder)"
-        },
-        "orderNumber": {
+        "playerNumber": {
           "type": "number",
-          "description": "The order number of the player in the auction."
+          "description": "The number assigned to the player."
+        },
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who created this player."
         }
       },
       "required": [
-        "id",
-        "auctionId",
-        "playerId",
-        "orderNumber"
+        "playerName",
+        "playerNumber",
+        "userId"
       ]
     },
     "Set": {
-      "$schema": "http://json-schema.org/draft-07/schema#",
       "title": "Set",
       "type": "object",
-      "description": "Represents a set of players in the auction.",
+      "description": "Represents a set of players for an auction.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the set."
-        },
         "name": {
           "type": "string",
           "description": "Name of the set."
         },
-        "auctionId": {
-          "type": "string",
-          "description": "Reference to Auction. (Relationship: Auction 1:N Set)"
-        },
-        "playerIds": {
+        "players": {
           "type": "array",
-          "description": "References to Players. (Relationship: Set N:N Player)",
+          "description": "An array of player objects included in the set.",
           "items": {
-            "type": "string"
+            "$ref": "#/entities/Player"
           }
+        },
+        "userId": {
+          "type": "string",
+          "description": "The ID of the user who created this set."
         }
       },
       "required": [
-        "id",
         "name",
-        "auctionId",
-        "playerIds"
+        "players",
+        "userId"
       ]
     }
   },
   "auth": {
     "providers": [
-      "password",
-      "anonymous"
+      "password"
     ]
   },
   "firestore": {
     "structure": [
       {
-        "path": "/auctions/{auctionId}",
+        "path": "/users/{userId}",
         "definition": {
-          "entityName": "Auction",
+          "entityName": "User",
           "schema": {
-            "$ref": "#/backend/entities/Auction"
+            "$ref": "#/entities/User"
           },
-          "description": "Stores auction details, including locked status, generation timestamp, and PIN hash. The `auctionId` is fixed as 'default'.",
-          "params": [
-            {
-              "name": "auctionId",
-              "description": "The ID of the auction. This will always be 'default'."
-            }
-          ]
+          "description": "Stores public profile information for each user."
         }
       },
       {
-        "path": "/auctions/{auctionId}/order/{orderNumber}",
+        "path": "/players/{playerId}",
         "definition": {
-          "entityName": "AuctionOrder",
+          "entityName": "Player",
           "schema": {
-            "$ref": "#/backend/entities/AuctionOrder"
+            "$ref": "#/entities/Player"
           },
-          "description": "Stores the final auction order, with each document representing a player's order number.",
-          "params": [
-            {
-              "name": "auctionId",
-              "description": "The ID of the auction. This will always be 'default'."
-            },
-            {
-              "name": "orderNumber",
-              "description": "The order number of the player in the auction. Used as the document ID."
-            }
-          ]
+          "description": "Stores the master list of all players created by users."
+        }
+      },
+      {
+        "path": "/sets/{setId}",
+        "definition": {
+          "entityName": "Set",
+          "schema": {
+            "$ref": "#/entities/Set"
+          },
+          "description": "Stores auction sets created by users, containing an array of players."
         }
       }
-    ],
-    "reasoning": "Given the requirements of the IPL Auction Order Generator application, the Firestore structure is designed with simplicity and the absence of authentication in mind. Since authentication is not needed and the application mainly involves generating and storing a final auction order, the structure focuses on storing the auction details and the final order in a straightforward manner.\n\nThe core principle applied here is **Structural Segregation (Homogeneous Security Posture)**. All data related to the auction is stored under a single `/auction/default` document and its subcollections, ensuring consistent security rules can be applied.  Since there is no authentication, data is effectively public.\n\nSpecifically:\n\n*   `/auctions/{auctionId}` stores the overall auction data, including the locked status, generation timestamp, and PIN hash. The `{auctionId}` is hardcoded to `default` as per the requirements.  The `pinHash` allows rules to check its value on write.\n*   `/auctions/{auctionId}/order/{orderNumber}` stores the final auction order. Each document contains the player's name and their order number. Using the order number as the document ID ensures easy retrieval in the correct order.  No denormalization is required as there is no complex authorization and all data is effectively public and read-only after being 'locked'.\n\nThis structure supports the required QAPs:\n\n*   **Secure Writes (Write if pinHash matches):** The Firestore rules check the `pinHash` during writes to lock the auction order."
+    ]
   }
 }

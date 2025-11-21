@@ -1,16 +1,15 @@
-export interface Player {
-  id: number;
+import { DocumentData } from "firebase/firestore";
+
+export interface Player extends DocumentData {
+  id: string;
   playerName: string;
   playerNumber: number;
+  userId: string;
 }
 
-export interface PlayerSet {
-  id: number;
+export interface PlayerSet extends DocumentData {
+  id: string;
   name: string;
   players: Player[];
+  userId: string;
 }
-
-// The initial data is now used as a fallback or seed, but primary data will be in localStorage.
-export const allPlayers: Player[] = [];
-
-export const sets: PlayerSet[] = [];

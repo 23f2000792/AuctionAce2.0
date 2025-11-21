@@ -8,40 +8,57 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Gavel, Users, Check, Star, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useDoc, useFirestore, useUser, useMemoFirebase } from '@/firebase';
+import { doc } from 'firebase/firestore';
 
 export default function AuctionPage({ params }: { params: { slug: string } }) {
   const [remainingPlayers, setRemainingPlayers] = useState<Player[]>([]);
   const [drawnPlayer, setDrawnPlayer] = useState<Player | null>(null);
   const [auctionedPlayers, setAuctionedPlayers] = useState<Player[]>([]);
-  const [set, setSet] = useState<PlayerSet | null>(null);
   const router = useRouter();
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
+
+  const setRef = useMemoFirebase(() => {
+    if (!params.slug || !firestore) return null;
+    return doc(firestore, 'sets', params.slug);
+  }, [params.slug, firestore]);
+
+  const { data: set, isLoading: isLoadingSet } = useDoc<PlayerSet>(setRef);
 
   useEffect(() => {
-    const storedSets = localStorage.getItem('playerSets');
-    if (storedSets) {
-      const sets: PlayerSet[] = JSON.parse(storedSets);
-      const currentSet = sets.find(s => String(s.id) === params.slug);
-      if (currentSet) {
-        setSet(currentSet);
-        setRemainingPlayers(currentSet.players);
-        setDrawnPlayer(null);
-        setAuctionedPlayers([]);
-      } else {
-        notFound();
-      }
-    } else {
-        // if no sets are in local storage, there's nothing to auction
-        notFound();
+     if (!isUserLoading && !user) {
+      router.push('/login');
     }
-  }, [params.slug]);
+  }, [user, isUserLoading, router]);
 
-  if (!set) {
-    return null; // Or a loading spinner
+  useEffect(() => {
+    if (set) {
+      // Ensure we don't accidentally try to auction another user's set
+      if (user && set.userId !== user.uid) {
+        notFound();
+        return;
+      }
+      setRemainingPlayers(set.players);
+      setDrawnPlayer(null);
+      setAuctionedPlayers([]);
+    }
+  }, [set, user]);
+
+  if (isLoadingSet || isUserLoading) {
+    return <div className="text-center">Loading auction...</div>;
   }
+  
+  if (!set) {
+    // This will be triggered if the doc doesn't exist or there was an error.
+    // The useDoc hook will have logged the error already.
+    notFound();
+    return null;
+  }
+
 
   const drawPlayer = () => {
     if (remainingPlayers.length === 0) {
-      // Last player was drawn in previous click, now we move to finished state
       if(drawnPlayer) {
         setAuctionedPlayers(prev => [drawnPlayer, ...prev]);
         setDrawnPlayer(null);
@@ -66,7 +83,6 @@ export default function AuctionPage({ params }: { params: { slug: string } }) {
 
   return (
     <div className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8">
-      {/* Main Content */}
       <div className="lg:col-span-2 space-y-8">
         <div>
           <Button variant="outline" asChild className="mb-4">
@@ -134,8 +150,8 @@ export default function AuctionPage({ params }: { params: { slug: string } }) {
           <CardContent>
             <ScrollArea className="h-[250px] pr-4">
               <ul className="space-y-2">
-                {allPlayersInSet.map(player => (
-                  <li key={player.id} className={`flex items-center gap-3 p-2 rounded-md ${auctionedPlayers.find(p=>p.id === player.id) ? 'bg-muted/50 opacity-50' : 'bg-secondary'}`}>
+                {allPlayersInSet.map((player, index) => (
+                  <li key={index} className={`flex items-center gap-3 p-2 rounded-md ${auctionedPlayers.find(p=>p.id === player.id) ? 'bg-muted/50 opacity-50' : 'bg-secondary'}`}>
                     <span className="font-mono text-muted-foreground w-6 text-center">#{player.playerNumber}</span>
                     <span className={`font-medium ${auctionedPlayers.find(p=>p.id === player.id) ? 'line-through' : ''}`}>{player.playerName}</span>
                     {auctionedPlayers.find(p=>p.id === player.id) && <Check className="h-5 w-5 ml-auto text-green-500"/>}
@@ -155,8 +171,8 @@ export default function AuctionPage({ params }: { params: { slug: string } }) {
                         <p className="text-center text-muted-foreground py-10">Drawn players will appear here.</p>
                     ) : (
                         <ul className="space-y-2">
-                            {auctionedPlayers.map(player => (
-                                <li key={player.id} className="flex items-center gap-3 p-2 rounded-md bg-muted/50">
+                            {auctionedPlayers.map((player, index) => (
+                                <li key={index} className="flex items-center gap-3 p-2 rounded-md bg-muted/50">
                                     <span className="font-mono text-muted-foreground w-6 text-center">#{player.playerNumber}</span>
                                     <span className="font-medium text-muted-foreground">{player.playerName}</span>
                                 </li>

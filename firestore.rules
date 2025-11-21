@@ -1,120 +1,35 @@
-/**
- * Core Philosophy:
- * This ruleset enforces a public-read, shared-secret-write security model.
- * All data related to the auction is publicly readable by anyone, including
- * unauthenticated users. However, any modification to the auction data (such as
- * creating it, updating player order, or locking it) is protected by a secret
- * PIN. A valid PIN must be provided with any write request, where it is hashed
- * and compared against a stored `pinHash` on the auction document.
- *
- * Data Structure:
- * The data is organized around a single, global auction document located at
- * `/auctions/default`. This document holds the auction's state, including whether
- * it is locked. The actual player order is stored in a subcollection at
- * `/auctions/default/order/{orderNumber}`.
- *
- * Key Security Decisions:
- * - No User Authentication: Following the application's reasoning, this ruleset
- *   does not use Firebase Authentication. Access is not tied to individual user
- *   accounts. The `User` entity and `ownerId` field from the schema are ignored
- *   in favor of the shared-secret model.
- * - Shared Secret (PIN): All write operations are gated by a PIN. The rules
- *   expect the client to send a raw `pin` value during write requests. The rules
- *   then hash this value and compare it to the `pinHash` stored on the auction
- *   document for authorization.
- * - Auction Locking Mechanism: Once the parent auction document's `locked` flag
- *   is set to `true`, no further modifications (create, update, delete) are
- *   permitted on the child `/order` subcollection. This ensures the final player
- *   order is immutable after locking.
- *
- * Denormalization for Authorization:
- * The primary authorization data (`locked` status) is stored on the parent
- * `/auctions/{auctionId}` document. Rules for the `/order` subcollection must
- * perform a `get()` call to the parent document to check this `locked` status
- * before allowing any writes. This is a necessary cross-document read to enforce
- * the locking mechanism.
- */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    //-------------------------------------------------------------------------
     // Helper Functions
-    //-------------------------------------------------------------------------
-
-    /**
-     * Checks if the parent auction is unlocked by reading its 'locked' field.
-     * This is used to protect the 'order' subcollection from changes after
-     * the auction has been finalized.
-     */
-    function isAuctionUnlocked(auctionId) {
-      return get(/databases/$(database)/documents/auctions/$(auctionId)).data.locked == false;
+    function isOwner(userId) {
+      return request.auth != null && request.auth.uid == userId;
     }
 
-    /**
-     * Validates that the 'pinHash' being created is the SHA-256 hash of the
-     * 'pin' provided in the request data. This secures the initial creation.
-     * The raw 'pin' is expected in the request but is not part of the final schema.
-     */
-    function isPinHashSetCorrectly() {
-      return request.resource.data.pinHash == hash.sha256(request.resource.data.pin);
+    // /users/{userId}
+    // Users can create their own profile.
+    // Users can only read and update their own profile.
+    // No one can delete a user profile through this rule.
+    match /users/{userId} {
+      allow read, update: if isOwner(userId);
+      allow create: if request.auth != null;
     }
 
-    /**
-     * Validates that the 'pin' provided in an update/delete request matches the
-     * hash already stored in the document. Protects against unauthorized changes.
-     */
-    function isCorrectPinForExistingAuction() {
-      return resource != null && hash.sha256(request.resource.data.pin) == resource.data.pinHash;
-    }
-
-    /**
-     * Validates that the auctionId in the document body matches the path.
-     * This is used on create to enforce relational integrity.
-     */
-    function hasValidAuctionId(auctionId) {
-      return request.resource.data.auctionId == auctionId;
+    // /players/{playerId}
+    // Logged-in users can create players.
+    // Users can read, update, and delete only the players they created.
+    match /players/{playerId} {
+      allow create: if request.auth != null && isOwner(request.resource.data.userId);
+      allow read, update, delete: if request.auth != null && isOwner(resource.data.userId);
     }
     
-    /**
-     * Enforces that the auctionId field cannot be changed after creation.
-     */
-    function isAuctionIdImmutable() {
-      return request.resource.data.auctionId == resource.data.auctionId;
-    }
-
-    //-------------------------------------------------------------------------
-    // Collection Rules
-    //-------------------------------------------------------------------------
-
-    /**
-     * @description Manages the main auction document. It is publicly readable, but all
-     *              write operations (create, update, delete) are protected by a shared PIN.
-     * @path /auctions/{auctionId}
-     * @allow (get) Anyone can read the auction's status.
-     * @deny (update) An attempt to change the auction's `locked` status without the correct PIN will be rejected.
-     * @principle Protects sensitive write operations with a shared secret (PIN).
-     */
-    match /auctions/{auctionId} {
-      allow get, list: if true;
-      allow create: if isPinHashSetCorrectly() && hasValidAuctionId(auctionId);
-      allow update: if isCorrectPinForExistingAuction() && isAuctionIdImmutable();
-      allow delete: if isCorrectPinForExistingAuction();
-    }
-
-    /**
-     * @description Manages the player order within an auction. It is publicly readable,
-     *              but writes are only allowed if the parent auction is not locked.
-     * @path /auctions/{auctionId}/order/{orderNumber}
-     * @allow (create) Anyone can add a player to the order if the parent auction is unlocked.
-     * @deny (create) An attempt to add a player after the parent auction has `locked: true` will be rejected.
-     * @principle Subcollection security is derived from the state of its parent document.
-     */
-    match /auctions/{auctionId}/order/{orderNumber} {
-      allow get, list: if true;
-      allow create: if isAuctionUnlocked(auctionId) && hasValidAuctionId(auctionId);
-      allow update: if isAuctionUnlocked(auctionId) && isAuctionIdImmutable();
-      allow delete: if isAuctionUnlocked(auctionId);
+    // /sets/{setId}
+    // Logged-in users can create sets.
+    // Users can read, update, and delete only the sets they created.
+    match /sets/{setId} {
+      allow create: if request.auth != null && isOwner(request.resource.data.userId);
+      allow read, update, delete: if request.auth != null && isOwner(resource.data.userId);
     }
   }
 }
