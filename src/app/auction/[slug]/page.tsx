@@ -18,11 +18,10 @@ export default function AuctionPage({ params }: { params: { slug: string } }) {
   const router = useRouter();
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
-
-  // Create the document reference directly.
-  // The slug from params is available on the client-side when this component renders.
+  
   const setRef = useMemoFirebase(() => {
     if (!firestore) return null;
+    // The slug from params is available on the client-side when this component renders.
     return doc(firestore, 'sets', params.slug) as DocumentReference<DocumentData>;
   }, [firestore, params.slug]);
 
