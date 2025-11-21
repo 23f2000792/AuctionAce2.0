@@ -51,7 +51,7 @@ export default function PreviewPage() {
             <Button variant="outline" onClick={regenerateOrder} className="w-full sm:w-auto">
               <RefreshCw className="mr-2 h-4 w-4" /> Regenerate Order
             </Button>
-            <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto sm:ml-auto bg-accent hover:bg-accent/90">
+            <Button onClick={() => setIsModalOpen(true)} className="w-full sm:w-auto sm:ml-auto">
               <Lock className="mr-2 h-4 w-4" /> Freeze Final Order
             </Button>
           </CardFooter>

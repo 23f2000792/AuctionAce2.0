@@ -17,9 +17,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        body: ['Inter', 'sans-serif'],
-        headline: ['Inter', 'sans-serif'],
-        code: ['Source Code Pro', 'monospace'],
+        body: ['Geist Sans', 'sans-serif'],
+        headline: ['Geist Sans', 'sans-serif'],
+        code: ['Geist Mono', 'monospace'],
       },
       colors: {
         background: 'hsl(var(--background))',

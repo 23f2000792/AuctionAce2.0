@@ -116,7 +116,7 @@ export default function Home() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button onClick={generateOrder} disabled={players.length < 2} className="w-full sm:w-auto ml-auto bg-accent hover:bg-accent/90">
+          <Button onClick={generateOrder} disabled={players.length < 2} className="w-full sm:w-auto ml-auto">
             Generate Random Order
           </Button>
         </CardFooter>
