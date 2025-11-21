@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Gavel, Trophy, Users, PlusCircle } from 'lucide-react';
+import { Gavel, Users, PlusCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -40,13 +40,6 @@ const Header = () => {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-
-          <Button variant="ghost" asChild>
-            <Link href="/results">
-              <Trophy className="mr-2" />
-              Auction Results
-            </Link>
-          </Button>
         </nav>
       </div>
     </header>
