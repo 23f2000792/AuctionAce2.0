@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit } from 'lucide-react';
+import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Lock } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
@@ -82,7 +82,7 @@ export default function Home() {
         <CardHeader>
           <CardTitle className="text-2xl font-headline">Select a Player Set</CardTitle>
           <CardDescription>
-            Choose a set of players to begin the auction. Create your own sets and manage players.
+            Choose a set of players to begin the auction. You can generate a secure, random order for each set.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -106,11 +106,19 @@ export default function Home() {
                     </div>
                   </CardHeader>
                   <CardContent className="p-4 pt-0 flex-grow">
-                     <p className="mt-2 text-sm text-muted-foreground">{set.players.length} players</p>
+                     <div className="flex items-center justify-between text-sm text-muted-foreground">
+                        <span>{set.players.length} players</span>
+                        {set.order && (
+                            <div className="flex items-center gap-1 text-yellow-400 font-medium">
+                                <Lock className="h-3 w-3"/>
+                                <span>Order Set</span>
+                            </div>
+                        )}
+                     </div>
                   </CardContent>
                   <CardFooter className="p-4">
                      <Button asChild className="w-full mt-auto">
-                        <Link href={`/auction/${set.id}`}>
+                        <Link href={`/auction/order/${set.id}`}>
                           Start Auction <ArrowRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>
