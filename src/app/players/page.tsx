@@ -17,7 +17,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Player } from '@/lib/player-data';
-import { Trash2, UserPlus, Image as ImageIcon } from 'lucide-react';
+import { Trash2, UserPlus, Image as ImageIcon, Users } from 'lucide-react';
 import Image from 'next/image';
 import {
   Form,
