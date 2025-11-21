@@ -14,11 +14,9 @@ import {
   CardFooter,
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Player } from '@/lib/player-data';
-import { Trash2, UserPlus, Image as ImageIcon, Users } from 'lucide-react';
-import Image from 'next/image';
+import { Trash2, UserPlus, Users } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -29,8 +27,8 @@ import {
 } from '@/components/ui/form';
 
 const playerSchema = z.object({
-  name: z.string().min(1, 'Player name is required.'),
-  imageUrl: z.string().url('Must be a valid URL.'),
+  playerName: z.string().min(1, 'Player name is required.'),
+  playerNumber: z.coerce.number().min(0, 'Player number must be a positive number.'),
 });
 
 type PlayerFormData = z.infer<typeof playerSchema>;
@@ -43,8 +41,8 @@ export default function PlayersPage() {
   const form = useForm<PlayerFormData>({
     resolver: zodResolver(playerSchema),
     defaultValues: {
-      name: '',
-      imageUrl: '',
+      playerName: '',
+      playerNumber: 0,
     },
   });
 
@@ -64,14 +62,14 @@ export default function PlayersPage() {
   const onSubmit: SubmitHandler<PlayerFormData> = (data) => {
     const newPlayer: Player = {
       id: Date.now(),
-      name: data.name,
-      imageUrl: data.imageUrl,
+      playerName: data.playerName,
+      playerNumber: data.playerNumber,
     };
     const updatedPlayers = [...players, newPlayer];
     savePlayers(updatedPlayers);
     toast({
       title: 'Player Added',
-      description: `${data.name} has been added to your list.`,
+      description: `${data.playerName} has been added to your list.`,
     });
     form.reset();
   };
@@ -82,7 +80,7 @@ export default function PlayersPage() {
     savePlayers(updatedPlayers);
     toast({
       title: 'Player Removed',
-      description: `${playerToDelete?.name} has been removed.`,
+      description: `${playerToDelete?.playerName} has been removed.`,
       variant: 'destructive',
     });
   };
@@ -107,7 +105,7 @@ export default function PlayersPage() {
             <CardContent className="space-y-4">
               <FormField
                 control={form.control}
-                name="name"
+                name="playerName"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Player Name</FormLabel>
@@ -120,12 +118,12 @@ export default function PlayersPage() {
               />
               <FormField
                 control={form.control}
-                name="imageUrl"
+                name="playerNumber"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Image URL</FormLabel>
+                    <FormLabel>Player Number</FormLabel>
                     <FormControl>
-                      <Input placeholder="https://example.com/player.jpg" {...field} />
+                      <Input type="number" placeholder="e.g., 7" {...field} />
                     </FormControl>
                      <FormMessage />
                   </FormItem>
@@ -157,15 +155,8 @@ export default function PlayersPage() {
                   className="flex items-center justify-between p-2 rounded-md bg-secondary"
                 >
                   <div className="flex items-center gap-3">
-                    <Image
-                      src={player.imageUrl}
-                      alt={player.name}
-                      width={40}
-                      height={40}
-                      className="h-10 w-10 rounded-full object-cover"
-                      data-ai-hint="player photo"
-                    />
-                    <span className="font-medium">{player.name}</span>
+                     <span className="font-mono text-muted-foreground w-8 text-center">#{player.playerNumber}</span>
+                    <span className="font-medium">{player.playerName}</span>
                   </div>
                   <Button
                     variant="ghost"

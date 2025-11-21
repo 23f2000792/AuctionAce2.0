@@ -16,7 +16,6 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Player, PlayerSet } from '@/lib/player-data';
 import { Checkbox } from '@/components/ui/checkbox';
-import Image from 'next/image';
 import { ArrowLeft, Users, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
 
@@ -119,15 +118,8 @@ export default function CreateSetPage() {
                                 onCheckedChange={() => handlePlayerToggle(player)}
                                 id={`player-${player.id}`}
                             />
-                            <Image
-                                src={player.imageUrl}
-                                alt={player.name}
-                                width={32}
-                                height={32}
-                                className="h-8 w-8 rounded-full object-cover"
-                                data-ai-hint="player photo"
-                            />
-                            <label htmlFor={`player-${player.id}`} className="font-medium cursor-pointer">{player.name}</label>
+                            <span className="font-mono text-muted-foreground w-8 text-center">#{player.playerNumber}</span>
+                            <label htmlFor={`player-${player.id}`} className="font-medium cursor-pointer">{player.playerName}</label>
                             </li>
                         ))}
                         </ul>

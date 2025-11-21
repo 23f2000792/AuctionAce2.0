@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Gavel, Users, Check, Star, ArrowLeft } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 
 export default function AuctionPage({ params }: { params: { slug: string } }) {
@@ -99,20 +98,13 @@ export default function AuctionPage({ params }: { params: { slug: string } }) {
               ) : drawnPlayer ? (
                 <div className="w-full max-w-sm mx-auto animate-in fade-in zoom-in-95">
                   <Card className="shadow-2xl">
-                    <CardContent className="p-0">
-                      <Image
-                        src={drawnPlayer.imageUrl}
-                        alt={drawnPlayer.name}
-                        width={400}
-                        height={400}
-                        className="rounded-t-lg aspect-square object-cover"
-                        data-ai-hint="player photo"
-                      />
+                    <CardContent className="p-6">
+                        <div className="flex flex-col items-center justify-center h-full">
+                            <p className="text-4xl font-bold text-primary">#{drawnPlayer.playerNumber}</p>
+                            <h2 className="text-6xl font-bold font-headline mt-2">{drawnPlayer.playerName}</h2>
+                            <p className="text-lg text-primary font-semibold mt-4">Up for auction!</p>
+                        </div>
                     </CardContent>
-                    <div className="p-6 bg-background rounded-b-lg">
-                       <h2 className="text-4xl font-bold font-headline">{drawnPlayer.name}</h2>
-                       <p className="text-lg text-primary font-semibold mt-1">Up for auction!</p>
-                    </div>
                   </Card>
                 </div>
               ) : (
@@ -144,15 +136,8 @@ export default function AuctionPage({ params }: { params: { slug: string } }) {
               <ul className="space-y-2">
                 {allPlayersInSet.map(player => (
                   <li key={player.id} className={`flex items-center gap-3 p-2 rounded-md ${auctionedPlayers.find(p=>p.id === player.id) ? 'bg-muted/50 opacity-50' : 'bg-secondary'}`}>
-                    <Image
-                      src={player.imageUrl}
-                      alt={player.name}
-                      width={32}
-                      height={32}
-                      className="h-8 w-8 rounded-full"
-                      data-ai-hint="player photo"
-                    />
-                    <span className={`font-medium ${auctionedPlayers.find(p=>p.id === player.id) ? 'line-through' : ''}`}>{player.name}</span>
+                    <span className="font-mono text-muted-foreground w-6 text-center">#{player.playerNumber}</span>
+                    <span className={`font-medium ${auctionedPlayers.find(p=>p.id === player.id) ? 'line-through' : ''}`}>{player.playerName}</span>
                     {auctionedPlayers.find(p=>p.id === player.id) && <Check className="h-5 w-5 ml-auto text-green-500"/>}
                   </li>
                 ))}
@@ -172,15 +157,8 @@ export default function AuctionPage({ params }: { params: { slug: string } }) {
                         <ul className="space-y-2">
                             {auctionedPlayers.map(player => (
                                 <li key={player.id} className="flex items-center gap-3 p-2 rounded-md bg-muted/50">
-                                    <Image
-                                        src={player.imageUrl}
-                                        alt={player.name}
-                                        width={32}
-                                        height={32}
-                                        className="h-8 w-8 rounded-full"
-                                        data-ai-hint="player photo"
-                                    />
-                                    <span className="font-medium text-muted-foreground">{player.name}</span>
+                                    <span className="font-mono text-muted-foreground w-6 text-center">#{player.playerNumber}</span>
+                                    <span className="font-medium text-muted-foreground">{player.playerName}</span>
                                 </li>
                             ))}
                         </ul>

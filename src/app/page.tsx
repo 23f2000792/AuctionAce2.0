@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Layers, PlusCircle, Users } from 'lucide-react';
-import Image from 'next/image';
 import { PlayerSet } from '@/lib/player-data';
 
 export default function Home() {
@@ -60,25 +59,7 @@ export default function Home() {
                     </div>
                   </CardHeader>
                   <CardContent className="p-4 pt-0 flex-grow">
-                    <div className="flex -space-x-2 overflow-hidden">
-                      {set.players.slice(0, 5).map((player) => (
-                        <Image
-                          key={player.id}
-                          src={player.imageUrl}
-                          alt={player.name}
-                          width={32}
-                          height={32}
-                          className="inline-block h-8 w-8 rounded-full ring-2 ring-background"
-                          data-ai-hint="player photo"
-                        />
-                      ))}
-                      {set.players.length > 5 && (
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-xs font-medium text-secondary-foreground ring-2 ring-background">
-                          +{set.players.length - 5}
-                        </div>
-                      )}
-                    </div>
-                    <p className="mt-2 text-sm text-muted-foreground">{set.players.length} players</p>
+                     <p className="mt-2 text-sm text-muted-foreground">{set.players.length} players</p>
                   </CardContent>
                   <CardFooter className="p-4">
                      <Button asChild className="w-full mt-auto">
