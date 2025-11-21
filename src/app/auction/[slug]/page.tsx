@@ -15,10 +15,8 @@ export default function AuctionPage({ params }: { params: { slug: string } }) {
   const [drawnPlayer, setDrawnPlayer] = useState<Player | null>(null);
   const [auctionedPlayers, setAuctionedPlayers] = useState<Player[]>([]);
 
-  const set = useMemo(() => {
-    const setId = parseInt(params.slug, 10);
-    return sets.find(s => s.id === setId);
-  }, [params.slug]);
+  const setId = parseInt(params.slug, 10);
+  const set = sets.find(s => s.id === setId);
 
   useEffect(() => {
     if (set) {
