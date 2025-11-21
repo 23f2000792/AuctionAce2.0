@@ -9,7 +9,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Gavel, Users, Check, Star, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useDoc, useFirestore, useUser, useMemoFirebase } from '@/firebase';
-import { doc } from 'firebase/firestore';
+import { doc, DocumentReference, DocumentData } from 'firebase/firestore';
 
 export default function AuctionPage({ params }: { params: { slug: string } }) {
   const [remainingPlayers, setRemainingPlayers] = useState<Player[]>([]);
@@ -19,10 +19,12 @@ export default function AuctionPage({ params }: { params: { slug: string } }) {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
+  // Create the document reference directly.
+  // The slug from params is available on the client-side when this component renders.
   const setRef = useMemoFirebase(() => {
-    if (!params.slug || !firestore) return null;
-    return doc(firestore, 'sets', params.slug);
-  }, [params.slug, firestore]);
+    if (!firestore) return null;
+    return doc(firestore, 'sets', params.slug) as DocumentReference<DocumentData>;
+  }, [firestore, params.slug]);
 
   const { data: set, isLoading: isLoadingSet } = useDoc<PlayerSet>(setRef);
 
