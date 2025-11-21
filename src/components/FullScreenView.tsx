@@ -188,8 +188,8 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.5, opacity: 0 }}
                   >
-                    <Gavel className="h-32 w-32 text-primary animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]" />
-                    <p className="mt-4 text-2xl font-headline tracking-widest uppercase">
+                    <Gavel className="h-24 w-24 sm:h-32 sm:w-32 text-primary animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]" />
+                    <p className="mt-4 text-xl sm:text-2xl font-headline tracking-widest uppercase">
                       Drawing...
                     </p>
                   </motion.div>
@@ -199,7 +199,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                       initial={{ opacity: 0, scale: 0.5 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.2, duration: 0.3 }}
-                      className="text-4xl font-bold text-muted-foreground"
+                      className="text-3xl sm:text-4xl font-bold text-muted-foreground"
                     >
                       #{currentPlayer.playerNumber}
                     </motion.p>
@@ -207,7 +207,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                       initial={{ opacity: 0, y: 50 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3, duration: 0.4 }}
-                      className="text-6xl sm:text-8xl md:text-9xl font-bold font-headline mt-4 tracking-tight"
+                      className="text-5xl sm:text-7xl md:text-8xl font-bold font-headline mt-4 tracking-tight"
                       style={{ textShadow: '0 0 15px hsl(var(--primary) / 0.5)' }}
                     >
                       {currentPlayer.playerName}
@@ -215,8 +215,8 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                   </div>
                 ) : (
                   <div className="text-center">
-                    <Users className="h-32 w-32 mx-auto text-muted-foreground" />
-                    <h1 className="text-5xl font-bold font-headline mt-4">
+                    <Users className="h-24 w-24 sm:h-32 sm:w-32 mx-auto text-muted-foreground" />
+                    <h1 className="text-3xl sm:text-5xl font-bold font-headline mt-4">
                       {players.length > 0
                         ? 'Ready to Start the Auction?'
                         : 'No Players in this Set'}
@@ -237,7 +237,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
           onClick={handleDrawPlayer}
           disabled={availablePlayers.length === 0 || isDrawing}
           size="lg"
-          className="rounded-full w-full max-w-xs h-16 text-2xl font-headline"
+          className="rounded-full w-full max-w-xs h-16 text-xl sm:text-2xl font-headline"
           style={{ animation: !isDrawing && availablePlayers.length > 0 ? 'pulse-slow 2s infinite' : 'none' }}
         >
           <Gavel className="mr-4" />
