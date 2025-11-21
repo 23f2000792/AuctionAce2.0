@@ -15,6 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const pathname = usePathname();
+  const isAuctionPage = pathname.includes('/auction/present/');
+
   return (
     <html lang="en" className="dark" style={{ colorScheme: 'dark' }} suppressHydrationWarning>
       <head>
@@ -30,7 +32,7 @@ export default function RootLayout({
         <div className="grid-background"></div>
         <FirebaseClientProvider>
           <div className="flex min-h-screen w-full flex-col">
-            <Header />
+            {!isAuctionPage && <Header />}
             <AnimatePresence mode="wait">
               <motion.main
                 key={pathname}
@@ -38,7 +40,7 @@ export default function RootLayout({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
-                className="flex flex-1 flex-col items-center p-4 sm:p-6 md:p-8 z-10"
+                className={!isAuctionPage ? "flex flex-1 flex-col items-center p-4 sm:p-6 md:p-8 z-10" : "flex-1"}
               >
                 {children}
               </motion.main>
