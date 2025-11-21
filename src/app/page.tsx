@@ -82,7 +82,7 @@ export default function Home() {
         <CardHeader>
           <CardTitle className="text-2xl font-headline">Select a Player Set</CardTitle>
           <CardDescription>
-            Choose a set of players to begin the auction. You can generate a secure, random order for each set.
+            Choose a set of players to begin the auction.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -108,17 +108,11 @@ export default function Home() {
                   <CardContent className="p-4 pt-0 flex-grow">
                      <div className="flex items-center justify-between text-sm text-muted-foreground">
                         <span>{set.players.length} players</span>
-                        {set.order && (
-                            <div className="flex items-center gap-1 text-yellow-400 font-medium">
-                                <Lock className="h-3 w-3"/>
-                                <span>Order Set</span>
-                            </div>
-                        )}
                      </div>
                   </CardContent>
                   <CardFooter className="p-4">
                      <Button asChild className="w-full mt-auto">
-                        <Link href={`/auction/order/${set.id}`}>
+                        <Link href={`/auction/present/${set.id}`}>
                           Start Auction <ArrowRight className="ml-2 h-4 w-4" />
                         </Link>
                       </Button>

@@ -6,6 +6,7 @@ import { Player, PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc, DocumentReference } from 'firebase/firestore';
 import FullScreenView from '@/components/FullScreenView';
+import { shuffleArray } from '@/lib/utils';
 
 export default function PresentPage() {
   const [orderedPlayers, setOrderedPlayers] = useState<{ player: Player; orderNumber: number }[]>([]);
@@ -35,21 +36,17 @@ export default function PresentPage() {
         notFound();
         return;
       }
-      if (!set.order) {
-        // If there's no order, redirect back to the order setup page
-        router.push(`/auction/order/${slug}`);
-        return;
-      }
       
-      const playersForPresentation = set.order.map(item => ({
-        id: item.player.id,
-        playerName: item.player.playerName,
-        orderNumber: item.orderNumber,
+      // Shuffle the players array to create a random order on each load
+      const shuffledPlayers = shuffleArray(set.players);
+      const playersForPresentation = shuffledPlayers.map((player, index) => ({
+        player: player,
+        orderNumber: index + 1,
       }));
 
       setOrderedPlayers(playersForPresentation);
     }
-  }, [set, user, slug, router]);
+  }, [set, user]);
 
   const isLoading = isLoadingSet || isUserLoading;
 
@@ -61,7 +58,7 @@ export default function PresentPage() {
     );
   }
 
-  if (!set || !set.order) {
+  if (!set) {
     // This can happen briefly before redirect, or if doc doesn't exist
     return (
       <div className="fixed inset-0 bg-background flex items-center justify-center">
@@ -78,5 +75,12 @@ export default function PresentPage() {
     );
   }
 
-  return <FullScreenView players={orderedPlayers} />;
+  const presentationPlayers = orderedPlayers.map(item => ({
+    id: item.player.id,
+    playerName: item.player.playerName,
+    playerNumber: item.player.playerNumber,
+    orderNumber: item.orderNumber,
+  }));
+
+  return <FullScreenView players={presentationPlayers} />;
 }

@@ -5,15 +5,14 @@ import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
 import { ArrowLeft, ArrowRight, X } from 'lucide-react';
 import { Progress } from './ui/progress';
+import { Player } from '@/lib/player-data';
 
-interface Player {
-  id: string;
-  playerName: string;
+interface PresentationPlayer extends Player {
   orderNumber: number;
 }
 
 interface FullScreenViewProps {
-  players: Player[];
+  players: PresentationPlayer[];
 }
 
 export default function FullScreenView({ players }: FullScreenViewProps) {
@@ -90,7 +89,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                 >
                     <Card className="w-full aspect-video flex flex-col items-center justify-center shadow-2xl">
                         <CardContent className="p-6 text-center">
-                            <p className="text-2xl sm:text-3xl text-muted-foreground font-medium">#{player.orderNumber}</p>
+                            <p className="text-2xl sm:text-3xl text-muted-foreground font-medium">#{player.playerNumber}</p>
                             <h1 className="text-5xl sm:text-7xl md:text-8xl font-bold font-headline mt-4">{player.playerName}</h1>
                         </CardContent>
                     </Card>
