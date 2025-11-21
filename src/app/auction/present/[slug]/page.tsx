@@ -1,15 +1,13 @@
 'use client';
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
 import { Player, PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc, DocumentReference } from 'firebase/firestore';
 import FullScreenView from '@/components/FullScreenView';
-import { shuffleArray } from '@/lib/utils';
 
 export default function PresentPage() {
-  const [orderedPlayers, setOrderedPlayers] = useState<{ player: Player; orderNumber: number }[]>([]);
   const router = useRouter();
   const params = useParams();
   const { slug } = params;
@@ -31,21 +29,11 @@ export default function PresentPage() {
   }, [user, isUserLoading, router]);
 
   useEffect(() => {
-    if (set) {
-      if (user && set.userId !== user.uid) {
-        notFound();
-        return;
-      }
-      
-      // Shuffle players on load for a new random order each time
-      const shuffled = shuffleArray(set.players);
-      const readyForPresentation = shuffled.map((player, index) => ({
-          player,
-          orderNumber: index + 1
-      }));
-      setOrderedPlayers(readyForPresentation);
+    if (set && user && set.userId !== user.uid) {
+      notFound();
     }
-  }, [set, user, router, slug]);
+  }, [set, user]);
+
 
   const isLoading = isLoadingSet || isUserLoading;
 
@@ -65,21 +53,6 @@ export default function PresentPage() {
       </div>
     );
   }
-  
-  if (orderedPlayers.length === 0) {
-     return (
-      <div className="fixed inset-0 bg-background flex items-center justify-center">
-        <p className="text-lg">Shuffling Players...</p>
-      </div>
-    );
-  }
 
-  const presentationPlayers = orderedPlayers.map(item => ({
-    id: item.player.id,
-    playerName: item.player.playerName,
-    playerNumber: item.player.playerNumber,
-    orderNumber: item.orderNumber,
-  }));
-
-  return <FullScreenView players={presentationPlayers} />;
+  return <FullScreenView players={set.players} />;
 }
