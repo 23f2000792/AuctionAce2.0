@@ -1,20 +1,20 @@
-import type { Metadata } from 'next';
+
+"use client";
+
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/Header';
 import { FirebaseClientProvider } from '@/firebase';
 import { ParticleBackground } from '@/components/ParticleBackground';
-
-export const metadata: Metadata = {
-  title: 'Auction Ace',
-  description: 'Generate a random auction order for your league.',
-};
+import { motion, AnimatePresence } from 'framer-motion';
+import { usePathname } from 'next/navigation';
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
   return (
     <html lang="en" className="dark" style={{ colorScheme: 'dark' }} suppressHydrationWarning>
       <head>
@@ -31,9 +31,18 @@ export default function RootLayout({
         <FirebaseClientProvider>
           <div className="flex min-h-screen w-full flex-col">
             <Header />
-            <main className="flex flex-1 flex-col items-center p-4 sm:p-6 md:p-8 z-10">
-              {children}
-            </main>
+            <AnimatePresence mode="wait">
+              <motion.main
+                key={pathname}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="flex flex-1 flex-col items-center p-4 sm:p-6 md:p-8 z-10"
+              >
+                {children}
+              </motion.main>
+            </AnimatePresence>
           </div>
           <Toaster />
         </FirebaseClientProvider>

@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -28,7 +29,8 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
   const router = useRouter();
 
   useEffect(() => {
-    setAvailablePlayers([...players]);
+    // Initial shuffle of players
+    setAvailablePlayers([...players].sort(() => Math.random() - 0.5));
     setDrawnPlayers([]);
     setCurrentPlayer(null);
   }, [players]);
@@ -39,15 +41,15 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
     setIsDrawing(true);
     setCurrentPlayer(null);
 
+    // Suspense and reveal animation
     setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * availablePlayers.length);
-      const drawnPlayer = availablePlayers[randomIndex];
+      const [drawnPlayer, ...remainingPlayers] = availablePlayers;
 
       setCurrentPlayer(drawnPlayer);
-      setAvailablePlayers((prev) => prev.filter((p) => p.id !== drawnPlayer.id));
+      setAvailablePlayers(remainingPlayers);
       setDrawnPlayers((prev) => [drawnPlayer, ...prev]);
       setIsDrawing(false);
-    }, 2500); // Suspense duration
+    }, 2500);
   }, [availablePlayers, isDrawing]);
 
   useEffect(() => {
@@ -83,56 +85,80 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
     exit: { opacity: 0, y: -100, scale: 0.8, filter: 'blur(10px)' },
   };
 
+  const drawnPlayerListVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05,
+      },
+    },
+  };
+
+  const drawnPlayerItemVariants = {
+    hidden: { opacity: 0, x: -20 },
+    visible: { opacity: 1, x: 0 },
+  };
+
   return (
     <div className="fixed inset-0 bg-background/50 flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
       <AnimatePresence>
-        <Collapsible
-          open={isSidebarOpen}
-          onOpenChange={setIsSidebarOpen}
-          className={cn(
-            'absolute top-0 left-0 h-full z-10 transition-all duration-300',
-            isSidebarOpen ? 'w-72' : 'w-16'
-          )}
-        >
-          <CollapsibleTrigger asChild>
-            <motion.button
-              className="absolute top-1/2 -translate-y-1/2 left-full -ml-px w-5 h-24 bg-primary/20 hover:bg-primary/40 border-y-2 border-r-2 border-primary/50 rounded-r-lg flex items-center justify-center text-primary-foreground"
-              initial={{ x: 0 }}
-              animate={{ x: isSidebarOpen ? -1 : 0 }}
-            >
-              {isSidebarOpen ? <ChevronsLeft /> : <ChevronsRight />}
-            </motion.button>
-          </CollapsibleTrigger>
-          <CollapsibleContent asChild>
-            <motion.div
-              className="h-full w-full bg-card/80 backdrop-blur-sm border-r border-primary/20 p-4 space-y-4"
-              initial={{ x: '-100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-            >
+        {isSidebarOpen && (
+          <motion.div
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            className="absolute top-0 left-0 h-full z-10 w-72"
+          >
+            <div className="h-full w-full bg-card/80 backdrop-blur-sm border-r border-primary/20 p-4 space-y-4">
               <h3 className="text-xl font-bold font-headline text-primary-foreground">
                 Drawn Players ({drawnPlayers.length})
               </h3>
-              <ul className="space-y-2 h-[calc(100%-4rem)] overflow-y-auto pr-2">
-                {drawnPlayers.map((player, index) => (
-                  <li
-                    key={player.id}
-                    className="flex items-center gap-3 p-2 bg-secondary/50 rounded-md text-left"
-                  >
-                    <span className="text-sm font-bold text-muted-foreground w-6">
-                      {drawnPlayers.length - index}.
-                    </span>
-                    <span className="font-medium">{player.playerName}</span>
-                    <span className="font-mono text-xs text-primary ml-auto">
-                      #{player.playerNumber}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </CollapsibleContent>
-        </Collapsible>
+              <AnimatePresence>
+                <motion.ul
+                  variants={drawnPlayerListVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="space-y-2 h-[calc(100%-4rem)] overflow-y-auto pr-2"
+                >
+                  {drawnPlayers.map((player, index) => (
+                    <motion.li
+                      key={player.id}
+                      variants={drawnPlayerItemVariants}
+                      className="flex items-center gap-3 p-2 bg-secondary/50 rounded-md text-left"
+                    >
+                      <span className="text-sm font-bold text-muted-foreground w-6">
+                        {drawnPlayers.length - index}.
+                      </span>
+                      <span className="font-medium">{player.playerName}</span>
+                      <span className="font-mono text-xs text-primary ml-auto">
+                        #{player.playerNumber}
+                      </span>
+                    </motion.li>
+                  ))}
+                </motion.ul>
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
+
+      <Collapsible
+        open={isSidebarOpen}
+        onOpenChange={setIsSidebarOpen}
+        className={cn(
+          'absolute top-1/2 -translate-y-1/2 z-20 transition-all duration-300',
+          isSidebarOpen ? 'left-72' : 'left-0'
+        )}
+      >
+        <CollapsibleTrigger asChild>
+          <motion.button className="w-5 h-24 bg-primary/20 hover:bg-primary/40 border-y-2 border-r-2 border-primary/50 rounded-r-lg flex items-center justify-center text-primary-foreground">
+            {isSidebarOpen ? <ChevronsLeft /> : <ChevronsRight />}
+          </motion.button>
+        </CollapsibleTrigger>
+      </Collapsible>
+
       <Button
         variant="ghost"
         size="icon"
@@ -212,7 +238,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
           disabled={availablePlayers.length === 0 || isDrawing}
           size="lg"
           className="rounded-full w-full max-w-xs h-16 text-2xl font-headline"
-          style={{ animation: isDrawing ? 'none' : 'pulse 2s infinite' }}
+          style={{ animation: !isDrawing && availablePlayers.length > 0 ? 'pulse-slow 2s infinite' : 'none' }}
         >
           <Gavel className="mr-4" />
           {availablePlayers.length === 0 ? 'Auction Over' : 'Draw Player'}
