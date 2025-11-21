@@ -42,7 +42,9 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
 
     setIsDrawing(true);
     setCurrentPlayer(null);
-    audioRef.current?.play();
+    if (audioRef.current && audioRef.current.src) {
+        audioRef.current.play().catch(console.error);
+    }
 
     // Suspense and reveal animation
     setTimeout(() => {
@@ -109,7 +111,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
 
   return (
     <div className="fixed inset-0 bg-background/50 flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
-        <audio ref={audioRef} src="https://cdn.pixabay.com/audio/2022/10/18/audio_8336762dfa.mp3" preload="auto" loop={false} />
+        <audio ref={audioRef} src="" preload="auto" loop={false} />
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
