@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
@@ -27,6 +27,8 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const router = useRouter();
+  const audioRef = useRef<HTMLAudioElement>(null);
+
 
   useEffect(() => {
     // Initial shuffle of players
@@ -40,9 +42,14 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
 
     setIsDrawing(true);
     setCurrentPlayer(null);
+    audioRef.current?.play();
 
     // Suspense and reveal animation
     setTimeout(() => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
       const [drawnPlayer, ...remainingPlayers] = availablePlayers;
 
       setCurrentPlayer(drawnPlayer);
@@ -102,6 +109,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
 
   return (
     <div className="fixed inset-0 bg-background/50 flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
+        <audio ref={audioRef} src="https://cdn.pixabay.com/audio/2022/10/18/audio_8336762dfa.mp3" preload="auto" loop={false} />
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
