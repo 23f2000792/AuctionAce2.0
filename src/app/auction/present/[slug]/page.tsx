@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useEffect } from 'react';
@@ -16,9 +17,10 @@ export default function PresentPage() {
   const firestore = useFirestore();
 
   const setRef = useMemoFirebase(() => {
-    if (!firestore || typeof slug !== 'string') return null;
+    // Wait for user and firestore to be available before creating the reference
+    if (!firestore || !user || typeof slug !== 'string') return null;
     return doc(firestore, 'sets', slug) as DocumentReference<PlayerSet>;
-  }, [firestore, slug]);
+  }, [firestore, user, slug]);
 
   const { data: set, isLoading: isLoadingSet } = useDoc<PlayerSet>(setRef);
 
@@ -29,13 +31,14 @@ export default function PresentPage() {
   }, [user, isUserLoading, router]);
 
   useEffect(() => {
-    if (set && user && set.userId !== user.uid) {
+    // This check is important for security, ensuring a user can't access another user's set
+    if (!isLoadingSet && set && user && set.userId !== user.uid) {
       notFound();
     }
-  }, [set, user]);
+  }, [set, user, isLoadingSet]);
 
 
-  const isLoading = isLoadingSet || isUserLoading;
+  const isLoading = isLoadingSet || isUserLoading || !set;
 
   if (isLoading) {
     return (
@@ -46,8 +49,11 @@ export default function PresentPage() {
   }
 
   if (!set) {
+    // This case will be hit if the set doesn't exist or there was an issue loading it
+    // that wasn't a permissions error (already handled by isLoading logic).
+    // Can also be hit briefly before the loading state properly updates.
     return (
-      <div className="fixed inset-0 bg-background flex items-center justify-center">
+       <div className="fixed inset-0 bg-background flex items-center justify-center">
         <p className="text-lg">Preparing auction...</p>
       </div>
     );
