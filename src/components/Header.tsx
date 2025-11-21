@@ -23,10 +23,10 @@ const Header = () => {
   }
 
   return (
-    <header className="w-full border-b border-border/40">
+    <header className="w-full border-b border-primary/20 bg-background/30 backdrop-blur-sm z-20">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href="/" className="flex items-center gap-2">
-          <Gavel className="h-7 w-7 text-primary" />
+        <Link href="/" className="flex items-center gap-2 group">
+          <Gavel className="h-7 w-7 text-primary group-hover:animate-pulse" />
           <span className="text-xl font-bold tracking-tight font-headline">Auction Ace</span>
         </Link>
         <nav className="flex items-center gap-4">
@@ -55,7 +55,7 @@ const Header = () => {
             </DropdownMenu>
           )}
           {isUserLoading ? (
-             <div className="h-10 w-20 animate-pulse rounded-md bg-muted" />
+             <div className="h-10 w-20 animate-pulse rounded-md bg-muted/50" />
           ) : user ? (
             <Button variant="outline" onClick={handleSignOut}>
               <LogOut className="mr-2" /> Sign Out

@@ -99,11 +99,21 @@ export default {
           '0%,70%,100%': { opacity: '1' },
           '20%,50%': { opacity: '0' },
         },
+        'grid-movement': {
+          '0%': { backgroundPosition: '0 0' },
+          '100%': { backgroundPosition: '80px 80px' },
+        },
+        'pulse-slow': {
+          '0%, 100%': { transform: 'scale(1)', boxShadow: '0 0 10px hsl(var(--primary) / 0.5)' },
+          '50%': { transform: 'scale(1.02)', boxShadow: '0 0 20px hsl(var(--primary) / 0.8)' },
+        },
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'caret-blink': 'caret-blink 1.25s ease-out infinite',
+        'grid-movement': 'grid-movement 20s linear infinite',
+        'pulse-slow': 'pulse-slow 4s ease-in-out infinite',
       },
     },
   },

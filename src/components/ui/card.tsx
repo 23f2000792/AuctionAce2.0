@@ -2,6 +2,8 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
+const cardVariants = "bg-card/60 backdrop-blur-sm border border-primary/20 shadow-[0_0_15px_hsla(var(--primary)/0.2)] transition-all duration-300 hover:border-primary/40 hover:shadow-[0_0_25px_hsla(var(--primary)/0.4)]";
+
 const Card = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -9,7 +11,8 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
+      "rounded-lg",
+      cardVariants,
       className
     )}
     {...props}

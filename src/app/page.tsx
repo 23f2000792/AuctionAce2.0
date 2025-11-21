@@ -8,6 +8,7 @@ import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel } from 'lucid
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
+import { motion } from 'framer-motion';
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
@@ -20,22 +21,36 @@ export default function Home() {
 
   const { data: sets, isLoading: isLoadingSets } = useCollection<PlayerSet>(setsQuery);
 
+  const cardVariants = {
+    hidden: { opacity: 0, y: 50, rotateX: -30 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      rotateX: 0,
+      transition: {
+        delay: i * 0.1,
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    }),
+  };
+
   if (isUserLoading || isLoadingSets) {
     return (
       <div className="w-full max-w-5xl mx-auto">
         <div className="flex justify-end gap-2 mb-4">
-           <div className="h-10 w-40 animate-pulse rounded-md bg-muted" />
-           <div className="h-10 w-40 animate-pulse rounded-md bg-muted" />
+           <div className="h-10 w-40 animate-pulse rounded-md bg-muted/50" />
+           <div className="h-10 w-40 animate-pulse rounded-md bg-muted/50" />
         </div>
         <Card>
           <CardHeader>
-            <div className="h-8 w-64 animate-pulse rounded-md bg-muted" />
-            <div className="h-4 w-96 animate-pulse rounded-md bg-muted mt-2" />
+            <div className="h-8 w-64 animate-pulse rounded-md bg-muted/50" />
+            <div className="h-4 w-96 animate-pulse rounded-md bg-muted/50 mt-2" />
           </CardHeader>
           <CardContent>
              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="h-48 animate-pulse rounded-lg bg-muted" />
+                <div key={i} className="h-48 animate-pulse rounded-lg bg-muted/50" />
               ))}
             </div>
           </CardContent>
@@ -46,7 +61,12 @@ export default function Home() {
 
   if (!user) {
      return (
-       <div className="w-full max-w-2xl mx-auto text-center">
+       <motion.div 
+          className="w-full max-w-2xl mx-auto text-center"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.5 }}
+        >
         <Card>
             <CardHeader>
                 <CardTitle className="text-3xl font-headline">Welcome to Auction Ace!</CardTitle>
@@ -59,12 +79,17 @@ export default function Home() {
                 </Button>
             </CardContent>
         </Card>
-       </div>
+       </motion.div>
      )
   }
 
   return (
-    <div className="w-full max-w-5xl mx-auto">
+    <motion.div 
+      className="w-full max-w-5xl mx-auto"
+      initial="hidden"
+      animate="visible"
+      transition={{ staggerChildren: 0.1 }}
+    >
       <div className="flex justify-end gap-2 mb-4">
         <Button asChild variant="outline">
           <Link href="/players">
@@ -88,40 +113,50 @@ export default function Home() {
         <CardContent>
           {sets && sets.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {sets.map((set) => (
-                <Card key={set.id} className="hover:shadow-lg transition-shadow flex flex-col">
-                  <CardHeader className="p-4">
-                    <div className="flex items-center justify-between">
-                       <div className="flex items-center gap-3">
-                         <div className="bg-primary/10 text-primary p-2 rounded-lg">
-                           <Layers className="h-6 w-6" />
+              {sets.map((set, i) => (
+                <motion.div
+                  key={set.id}
+                  custom={i}
+                  variants={cardVariants}
+                >
+                  <Card className="hover:shadow-lg transition-shadow flex flex-col h-full">
+                    <CardHeader className="p-4">
+                      <div className="flex items-center justify-between">
+                         <div className="flex items-center gap-3">
+                           <div className="bg-primary/10 text-primary p-2 rounded-lg">
+                             <Layers className="h-6 w-6" />
+                           </div>
+                           <CardTitle className="text-lg">{set.name}</CardTitle>
                          </div>
-                         <CardTitle className="text-lg">{set.name}</CardTitle>
+                         <Button variant="ghost" size="icon" asChild>
+                            <Link href={`/sets/edit/${set.id}`}>
+                              <Edit className="h-4 w-4" />
+                            </Link>
+                         </Button>
+                      </div>
+                    </CardHeader>
+                    <CardContent className="p-4 pt-0 flex-grow">
+                       <div className="flex items-center justify-between text-sm text-muted-foreground">
+                          <span>{set.players.length} players</span>
                        </div>
-                       <Button variant="ghost" size="icon" asChild>
-                          <Link href={`/sets/edit/${set.id}`}>
-                            <Edit className="h-4 w-4" />
+                    </CardContent>
+                    <CardFooter className="p-4">
+                       <Button asChild className="w-full mt-auto">
+                          <Link href={`/auction/present/${set.id}`}>
+                            <Gavel className="mr-2" /> Start Auction
                           </Link>
-                       </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent className="p-4 pt-0 flex-grow">
-                     <div className="flex items-center justify-between text-sm text-muted-foreground">
-                        <span>{set.players.length} players</span>
-                     </div>
-                  </CardContent>
-                  <CardFooter className="p-4">
-                     <Button asChild className="w-full mt-auto">
-                        <Link href={`/auction/present/${set.id}`}>
-                          <Gavel className="mr-2" /> Start Auction
-                        </Link>
-                      </Button>
-                  </CardFooter>
-                </Card>
+                        </Button>
+                    </CardFooter>
+                  </Card>
+                </motion.div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 border-2 border-dashed rounded-lg">
+            <motion.div
+              className="text-center py-16 border-2 border-dashed border-primary/20 rounded-lg"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
                 <Layers className="mx-auto h-12 w-12 text-muted-foreground" />
                 <h3 className="mt-4 text-lg font-medium">No Sets Created Yet</h3>
                 <p className="mt-1 text-sm text-muted-foreground">Get started by adding some players and creating your first set.</p>
@@ -132,10 +167,10 @@ export default function Home() {
                         </Link>
                     </Button>
                 </div>
-            </div>
+            </motion.div>
           )}
         </CardContent>
       </Card>
-    </div>
+    </motion.div>
   );
 }

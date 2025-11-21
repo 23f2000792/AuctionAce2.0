@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/Header';
 import { FirebaseClientProvider } from '@/firebase';
+import { ParticleBackground } from '@/components/ParticleBackground';
 
 export const metadata: Metadata = {
   title: 'Auction Ace',
@@ -25,10 +26,12 @@ export default function RootLayout({
         />
       </head>
       <body className="font-body antialiased">
+        <ParticleBackground />
+        <div className="grid-background"></div>
         <FirebaseClientProvider>
           <div className="flex min-h-screen w-full flex-col">
             <Header />
-            <main className="flex flex-1 flex-col items-center p-4 sm:p-6 md:p-8">
+            <main className="flex flex-1 flex-col items-center p-4 sm:p-6 md:p-8 z-10">
               {children}
             </main>
           </div>

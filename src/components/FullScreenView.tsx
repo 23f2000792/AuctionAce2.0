@@ -28,7 +28,6 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // Initialize the player pool when the component mounts
     setAvailablePlayers([...players]);
     setDrawnPlayers([]);
     setCurrentPlayer(null);
@@ -38,8 +37,8 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
     if (availablePlayers.length === 0 || isDrawing) return;
 
     setIsDrawing(true);
+    setCurrentPlayer(null);
 
-    // Drum roll effect
     setTimeout(() => {
       const randomIndex = Math.floor(Math.random() * availablePlayers.length);
       const drawnPlayer = availablePlayers[randomIndex];
@@ -48,7 +47,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
       setAvailablePlayers((prev) => prev.filter((p) => p.id !== drawnPlayer.id));
       setDrawnPlayers((prev) => [drawnPlayer, ...prev]);
       setIsDrawing(false);
-    }, 1500); // Suspense duration
+    }, 2500); // Suspense duration
   }, [availablePlayers, isDrawing]);
 
   useEffect(() => {
@@ -68,11 +67,12 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
   }, [handleDrawPlayer, router]);
 
   const cardVariants = {
-    hidden: { opacity: 0, y: 100, scale: 0.8 },
+    hidden: { opacity: 0, y: 100, scale: 0.8, filter: 'blur(10px)' },
     visible: {
       opacity: 1,
       y: 0,
       scale: 1,
+      filter: 'blur(0px)',
       transition: {
         duration: 0.5,
         type: 'spring',
@@ -80,11 +80,11 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
         damping: 15,
       },
     },
-    exit: { opacity: 0, y: -100, scale: 0.8 },
+    exit: { opacity: 0, y: -100, scale: 0.8, filter: 'blur(10px)' },
   };
 
   return (
-    <div className="fixed inset-0 bg-background flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
+    <div className="fixed inset-0 bg-background/50 flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
       <AnimatePresence>
         <Collapsible
           open={isSidebarOpen}
@@ -153,24 +153,16 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
             exit="exit"
             className="w-full"
           >
-            <Card className="w-full aspect-video flex flex-col items-center justify-center shadow-2xl bg-card/80 backdrop-blur-sm border-primary/20 text-center">
+            <Card className="w-full aspect-video flex flex-col items-center justify-center text-center">
               <CardContent className="p-6">
                 {isDrawing ? (
                   <motion.div
                     key="drawing"
                     initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{
-                      scale: [1, 1.1, 1],
-                      opacity: 1,
-                      rotate: [0, -5, 5, -5, 0],
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      ease: 'easeInOut',
-                      repeat: Infinity,
-                    }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.5, opacity: 0 }}
                   >
-                    <Gavel className="h-32 w-32 text-primary animate-pulse" />
+                    <Gavel className="h-32 w-32 text-primary animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]" />
                     <p className="mt-4 text-2xl font-headline tracking-widest uppercase">
                       Drawing...
                     </p>
@@ -190,6 +182,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3, duration: 0.4 }}
                       className="text-6xl sm:text-8xl md:text-9xl font-bold font-headline mt-4 tracking-tight"
+                      style={{ textShadow: '0 0 15px hsl(var(--primary) / 0.5)' }}
                     >
                       {currentPlayer.playerName}
                     </motion.h1>
@@ -219,6 +212,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
           disabled={availablePlayers.length === 0 || isDrawing}
           size="lg"
           className="rounded-full w-full max-w-xs h-16 text-2xl font-headline"
+          style={{ animation: isDrawing ? 'none' : 'pulse 2s infinite' }}
         >
           <Gavel className="mr-4" />
           {availablePlayers.length === 0 ? 'Auction Over' : 'Draw Player'}
