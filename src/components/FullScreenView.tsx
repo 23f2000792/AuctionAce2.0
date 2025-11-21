@@ -111,7 +111,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
 
   return (
     <div className="fixed inset-0 bg-background/50 flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
-        <audio ref={audioRef} preload="auto" loop={false} />
+        <audio ref={audioRef} src="https://assets.mixkit.co/sfx/preview/mixkit-drum-roll-567.mp3" preload="auto" loop={false} />
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
