@@ -15,7 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { Player } from '@/lib/player-data';
-import { Trash2, UserPlus, Users } from 'lucide-react';
+import { Trash2, UserPlus, Users, Edit, X } from 'lucide-react';
 import {
   Form,
   FormControl,
@@ -24,10 +24,10 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { useUser, useFirestore, useCollection, addDocumentNonBlocking, deleteDocumentNonBlocking, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore, useCollection, addDocumentNonBlocking, deleteDocumentNonBlocking, useMemoFirebase, updateDocumentNonBlocking } from '@/firebase';
 import { collection, query, where, doc } from 'firebase/firestore';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const playerSchema = z.object({
   playerName: z.string().min(1, 'Player name is required.'),
@@ -41,6 +41,8 @@ export default function PlayersPage() {
   const firestore = useFirestore();
   const router = useRouter();
   const { toast } = useToast();
+  const [editingPlayer, setEditingPlayer] = useState<Player | null>(null);
+
 
   const playersCollection = useMemoFirebase(() => {
       if (!firestore) return null;
@@ -68,21 +70,47 @@ export default function PlayersPage() {
     }
   }, [user, isUserLoading, router]);
 
+  useEffect(() => {
+    if (editingPlayer) {
+      form.reset({
+        playerName: editingPlayer.playerName,
+        playerNumber: editingPlayer.playerNumber,
+      });
+    } else {
+        form.reset({
+            playerName: '',
+            playerNumber: 0,
+        });
+    }
+  }, [editingPlayer, form]);
+
 
   const onSubmit: SubmitHandler<PlayerFormData> = (data) => {
     if (!user || !playersCollection) return;
 
-    const newPlayer = {
-      ...data,
-      userId: user.uid,
-    };
-    
-    addDocumentNonBlocking(playersCollection, newPlayer);
+    if (editingPlayer) {
+        // Update existing player
+        const playerRef = doc(firestore, 'players', editingPlayer.id);
+        updateDocumentNonBlocking(playerRef, data);
+        toast({
+            title: 'Player Updated',
+            description: `${data.playerName} has been updated.`,
+        });
+        setEditingPlayer(null);
 
-    toast({
-      title: 'Player Added',
-      description: `${data.playerName} has been added to your list.`,
-    });
+    } else {
+        // Add new player
+        const newPlayer = {
+            ...data,
+            userId: user.uid,
+        };
+        addDocumentNonBlocking(playersCollection, newPlayer);
+        toast({
+            title: 'Player Added',
+            description: `${data.playerName} has been added to your list.`,
+        });
+    }
+    
     form.reset();
   };
 
@@ -97,6 +125,14 @@ export default function PlayersPage() {
       variant: 'destructive',
     });
   };
+  
+  const handleEditClick = (player: Player) => {
+    setEditingPlayer(player);
+  }
+
+  const cancelEdit = () => {
+    setEditingPlayer(null);
+  }
 
   if (isUserLoading || !user) {
     return <div className="w-full text-center">Loading...</div>;
@@ -109,10 +145,10 @@ export default function PlayersPage() {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <UserPlus className="mr-2" /> Add New Player
+                <UserPlus className="mr-2" /> {editingPlayer ? `Editing ${editingPlayer.playerName}` : 'Add New Player'}
               </CardTitle>
               <CardDescription>
-                Add a new player to your master list. They will be available to add to auction sets.
+                {editingPlayer ? 'Update the player details below.' : 'Add a new player to your master list. They will be available to add to auction sets.'}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -143,9 +179,15 @@ export default function PlayersPage() {
                 )}
               />
             </CardContent>
-            <CardFooter>
-              <Button type="submit" className="ml-auto">
-                Add Player
+            <CardFooter className="flex justify-end gap-2">
+              {editingPlayer && (
+                 <Button type="button" variant="outline" onClick={cancelEdit}>
+                    <X className="mr-2" />
+                    Cancel
+                 </Button>
+              )}
+              <Button type="submit" disabled={form.formState.isSubmitting}>
+                {editingPlayer ? 'Update Player' : 'Add Player'}
               </Button>
             </CardFooter>
           </form>
@@ -181,14 +223,24 @@ export default function PlayersPage() {
                      <span className="font-mono text-muted-foreground w-8 text-center">#{player.playerNumber}</span>
                     <span className="font-medium">{player.playerName}</span>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => deletePlayer(player.id)}
-                    className="text-muted-foreground hover:text-destructive"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  <div className="flex items-center gap-1">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEditClick(player)}
+                        className="text-muted-foreground hover:text-primary"
+                    >
+                        <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => deletePlayer(player.id)}
+                        className="text-muted-foreground hover:text-destructive"
+                    >
+                        <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
                 </li>
               ))}
             </ul>

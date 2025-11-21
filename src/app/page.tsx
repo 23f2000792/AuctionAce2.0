@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Layers, PlusCircle, Users, LogIn } from 'lucide-react';
+import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
@@ -91,11 +91,18 @@ export default function Home() {
               {sets.map((set) => (
                 <Card key={set.id} className="hover:shadow-lg transition-shadow flex flex-col">
                   <CardHeader className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="bg-primary/10 text-primary p-2 rounded-lg">
-                        <Layers className="h-6 w-6" />
-                      </div>
-                      <CardTitle className="text-lg">{set.name}</CardTitle>
+                    <div className="flex items-center justify-between">
+                       <div className="flex items-center gap-3">
+                         <div className="bg-primary/10 text-primary p-2 rounded-lg">
+                           <Layers className="h-6 w-6" />
+                         </div>
+                         <CardTitle className="text-lg">{set.name}</CardTitle>
+                       </div>
+                       <Button variant="ghost" size="icon" asChild>
+                          <Link href={`/sets/edit/${set.id}`}>
+                            <Edit className="h-4 w-4" />
+                          </Link>
+                       </Button>
                     </div>
                   </CardHeader>
                   <CardContent className="p-4 pt-0 flex-grow">

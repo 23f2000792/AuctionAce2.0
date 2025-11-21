@@ -1,7 +1,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Gavel, Users, PlusCircle, LogOut, LogIn } from 'lucide-react';
+import { Gavel, Users, PlusCircle, LogOut, LogIn, Edit } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -35,7 +35,7 @@ const Header = () => {
               <DropdownMenuTrigger asChild>
                 <Button variant="outline">
                   <PlusCircle className="mr-2" />
-                  Create
+                  Create/Edit
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
