@@ -112,8 +112,8 @@ export default function Home() {
                   </CardContent>
                   <CardFooter className="p-4">
                      <Button asChild className="w-full mt-auto">
-                        <Link href={`/auction/present/${set.id}`}>
-                          Start Auction <ArrowRight className="ml-2 h-4 w-4" />
+                        <Link href={`/auction/order/${set.id}`}>
+                          <Lock className="mr-2" /> Setup & Secure
                         </Link>
                       </Button>
                   </CardFooter>

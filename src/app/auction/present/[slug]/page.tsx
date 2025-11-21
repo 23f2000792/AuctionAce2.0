@@ -6,7 +6,6 @@ import { Player, PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc, DocumentReference } from 'firebase/firestore';
 import FullScreenView from '@/components/FullScreenView';
-import { shuffleArray } from '@/lib/utils';
 
 export default function PresentPage() {
   const [orderedPlayers, setOrderedPlayers] = useState<{ player: Player; orderNumber: number }[]>([]);
@@ -36,17 +35,14 @@ export default function PresentPage() {
         notFound();
         return;
       }
-      
-      // Shuffle the players array to create a random order on each load
-      const shuffledPlayers = shuffleArray(set.players);
-      const playersForPresentation = shuffledPlayers.map((player, index) => ({
-        player: player,
-        orderNumber: index + 1,
-      }));
-
-      setOrderedPlayers(playersForPresentation);
+      if (!set.order) {
+        // If order isn't set, redirect to the setup page
+        router.push(`/auction/order/${slug}`);
+      } else {
+        setOrderedPlayers(set.order);
+      }
     }
-  }, [set, user]);
+  }, [set, user, router, slug]);
 
   const isLoading = isLoadingSet || isUserLoading;
 
@@ -58,7 +54,7 @@ export default function PresentPage() {
     );
   }
 
-  if (!set) {
+  if (!set || !set.order) {
     // This can happen briefly before redirect, or if doc doesn't exist
     return (
       <div className="fixed inset-0 bg-background flex items-center justify-center">
