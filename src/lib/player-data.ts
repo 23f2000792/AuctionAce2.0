@@ -17,6 +17,4 @@ export interface PlayerSet extends DocumentData {
   name: string;
   players: Player[];
   userId: string;
-  order?: AuctionOrderItem[];
-  pinHash?: string;
 }

@@ -4,32 +4,58 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
-import { ArrowLeft, ArrowRight, X } from 'lucide-react';
-import { AuctionOrderItem } from '@/lib/player-data';
+import { X, Gavel, Users, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { Player } from '@/lib/player-data';
 import { AnimatePresence, motion } from 'framer-motion';
+import { cn } from '@/lib/utils';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 
 interface FullScreenViewProps {
-  auctionOrder: AuctionOrderItem[];
+  players: Player[];
 }
 
-export default function FullScreenView({ auctionOrder }: FullScreenViewProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+export default function FullScreenView({ players }: FullScreenViewProps) {
+  const [availablePlayers, setAvailablePlayers] = useState<Player[]>([]);
+  const [drawnPlayers, setDrawnPlayers] = useState<Player[]>([]);
+  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   const router = useRouter();
 
-  const handleNext = useCallback(() => {
-    setCurrentIndex((prev) => Math.min(prev + 1, auctionOrder.length -1));
-  }, [auctionOrder.length]);
+  useEffect(() => {
+    // Initialize the player pool when the component mounts
+    setAvailablePlayers([...players]);
+    setDrawnPlayers([]);
+    setCurrentPlayer(null);
+  }, [players]);
 
-  const handlePrev = useCallback(() => {
-    setCurrentIndex((prev) => Math.max(prev - 1, 0));
-  }, []);
-  
+  const handleDrawPlayer = useCallback(() => {
+    if (availablePlayers.length === 0 || isDrawing) return;
+
+    setIsDrawing(true);
+
+    // Drum roll effect
+    setTimeout(() => {
+      const randomIndex = Math.floor(Math.random() * availablePlayers.length);
+      const drawnPlayer = availablePlayers[randomIndex];
+
+      setCurrentPlayer(drawnPlayer);
+      setAvailablePlayers((prev) => prev.filter((p) => p.id !== drawnPlayer.id));
+      setDrawnPlayers((prev) => [drawnPlayer, ...prev]);
+      setIsDrawing(false);
+    }, 1500); // Suspense duration
+  }, [availablePlayers, isDrawing]);
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'ArrowRight') {
-        handleNext();
-      } else if (event.key === 'ArrowLeft') {
-        handlePrev();
+      if (event.key === ' ' || event.key === 'Enter') {
+        event.preventDefault();
+        handleDrawPlayer();
       } else if (event.key === 'Escape') {
         router.push('/');
       }
@@ -39,82 +65,170 @@ export default function FullScreenView({ auctionOrder }: FullScreenViewProps) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleNext, handlePrev, router]);
+  }, [handleDrawPlayer, router]);
 
-  const currentPlayer = auctionOrder[currentIndex];
+  const cardVariants = {
+    hidden: { opacity: 0, y: 100, scale: 0.8 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.5,
+        type: 'spring',
+        stiffness: 100,
+        damping: 15,
+      },
+    },
+    exit: { opacity: 0, y: -100, scale: 0.8 },
+  };
 
   return (
     <div className="fixed inset-0 bg-background flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
+      <AnimatePresence>
+        <Collapsible
+          open={isSidebarOpen}
+          onOpenChange={setIsSidebarOpen}
+          className={cn(
+            'absolute top-0 left-0 h-full z-10 transition-all duration-300',
+            isSidebarOpen ? 'w-72' : 'w-16'
+          )}
+        >
+          <CollapsibleTrigger asChild>
+            <motion.button
+              className="absolute top-1/2 -translate-y-1/2 left-full -ml-px w-5 h-24 bg-primary/20 hover:bg-primary/40 border-y-2 border-r-2 border-primary/50 rounded-r-lg flex items-center justify-center text-primary-foreground"
+              initial={{ x: 0 }}
+              animate={{ x: isSidebarOpen ? -1 : 0 }}
+            >
+              {isSidebarOpen ? <ChevronsLeft /> : <ChevronsRight />}
+            </motion.button>
+          </CollapsibleTrigger>
+          <CollapsibleContent asChild>
+            <motion.div
+              className="h-full w-full bg-card/80 backdrop-blur-sm border-r border-primary/20 p-4 space-y-4"
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+            >
+              <h3 className="text-xl font-bold font-headline text-primary-foreground">
+                Drawn Players ({drawnPlayers.length})
+              </h3>
+              <ul className="space-y-2 h-[calc(100%-4rem)] overflow-y-auto pr-2">
+                {drawnPlayers.map((player, index) => (
+                  <li
+                    key={player.id}
+                    className="flex items-center gap-3 p-2 bg-secondary/50 rounded-md text-left"
+                  >
+                    <span className="text-sm font-bold text-muted-foreground w-6">
+                      {drawnPlayers.length - index}.
+                    </span>
+                    <span className="font-medium">{player.playerName}</span>
+                    <span className="font-mono text-xs text-primary ml-auto">
+                      #{player.playerNumber}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          </CollapsibleContent>
+        </Collapsible>
+      </AnimatePresence>
       <Button
         variant="ghost"
         size="icon"
         onClick={() => router.push('/')}
-        className="absolute top-4 right-4 h-12 w-12 rounded-full"
+        className="absolute top-4 right-4 h-12 w-12 rounded-full z-20"
       >
         <X className="h-8 w-8" />
         <span className="sr-only">Exit Full Screen</span>
       </Button>
 
       <div className="w-full max-w-5xl flex-1 flex flex-col justify-center items-center relative">
-        <Card className="w-full aspect-video flex flex-col items-center justify-center shadow-2xl bg-card/80 backdrop-blur-sm border-primary/20">
-          <CardContent className="p-6">
-            <AnimatePresence mode="wait">
-              {currentPlayer && (
-                <motion.div
-                  key={currentPlayer.player.id}
-                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -50, scale: 0.9 }}
-                  transition={{ duration: 0.5, type: 'spring' }}
-                  className="text-center"
-                >
-                  <motion.p
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.2, duration: 0.3 }}
-                    className="text-4xl font-bold text-muted-foreground"
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentPlayer ? currentPlayer.id : 'waiting'}
+            variants={cardVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="w-full"
+          >
+            <Card className="w-full aspect-video flex flex-col items-center justify-center shadow-2xl bg-card/80 backdrop-blur-sm border-primary/20 text-center">
+              <CardContent className="p-6">
+                {isDrawing ? (
+                  <motion.div
+                    key="drawing"
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{
+                      scale: [1, 1.1, 1],
+                      opacity: 1,
+                      rotate: [0, -5, 5, -5, 0],
+                    }}
+                    transition={{
+                      duration: 1.5,
+                      ease: 'easeInOut',
+                      repeat: Infinity,
+                    }}
                   >
-                    #{currentPlayer.player.playerNumber}
-                  </motion.p>
-                  <motion.h1
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.3, duration: 0.4 }}
-                    className="text-6xl sm:text-8xl md:text-9xl font-bold font-headline mt-4 tracking-tight"
-                  >
-                    {currentPlayer.player.playerName}
-                  </motion.h1>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </CardContent>
-        </Card>
+                    <Gavel className="h-32 w-32 text-primary animate-pulse" />
+                    <p className="mt-4 text-2xl font-headline tracking-widest uppercase">
+                      Drawing...
+                    </p>
+                  </motion.div>
+                ) : currentPlayer ? (
+                  <div className="text-center">
+                    <motion.p
+                      initial={{ opacity: 0, scale: 0.5 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ delay: 0.2, duration: 0.3 }}
+                      className="text-4xl font-bold text-muted-foreground"
+                    >
+                      #{currentPlayer.playerNumber}
+                    </motion.p>
+                    <motion.h1
+                      initial={{ opacity: 0, y: 50 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3, duration: 0.4 }}
+                      className="text-6xl sm:text-8xl md:text-9xl font-bold font-headline mt-4 tracking-tight"
+                    >
+                      {currentPlayer.playerName}
+                    </motion.h1>
+                  </div>
+                ) : (
+                  <div className="text-center">
+                    <Users className="h-32 w-32 mx-auto text-muted-foreground" />
+                    <h1 className="text-5xl font-bold font-headline mt-4">
+                      {players.length > 0
+                        ? 'Ready to Start the Auction?'
+                        : 'No Players in this Set'}
+                    </h1>
+                    <p className="text-muted-foreground mt-2">
+                      Click "Draw Player" to begin.
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-       <div className="w-full max-w-md p-4 flex justify-between items-center gap-4">
+      <div className="w-full max-w-lg p-4 flex flex-col justify-center items-center gap-4">
         <Button
-          onClick={handlePrev}
-          disabled={currentIndex === 0}
+          onClick={handleDrawPlayer}
+          disabled={availablePlayers.length === 0 || isDrawing}
           size="lg"
-          variant="outline"
-          className="rounded-full"
+          className="rounded-full w-full max-w-xs h-16 text-2xl font-headline"
         >
-          <ArrowLeft className="mr-2" />
-          Previous
+          <Gavel className="mr-4" />
+          {availablePlayers.length === 0 ? 'Auction Over' : 'Draw Player'}
         </Button>
-         <div className="text-center">
-            <p className="text-sm text-muted-foreground">Player</p>
-            <p className="text-xl font-bold">{currentIndex + 1} / {auctionOrder.length}</p>
+        <div className="text-center">
+          <p className="text-sm text-muted-foreground">Players Remaining</p>
+          <p className="text-xl font-bold">
+            {availablePlayers.length} / {players.length}
+          </p>
         </div>
-        <Button
-          onClick={handleNext}
-          disabled={currentIndex === auctionOrder.length - 1}
-          size="lg"
-          className="rounded-full"
-        >
-          Next
-          <ArrowRight className="ml-2" />
-        </Button>
       </div>
     </div>
   );

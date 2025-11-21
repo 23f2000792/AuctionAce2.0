@@ -1,8 +1,8 @@
 'use client';
 
-import { useEffect, useState, use } from 'react';
+import { useEffect } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
-import { Player, PlayerSet, AuctionOrderItem } from '@/lib/player-data';
+import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc, DocumentReference } from 'firebase/firestore';
 import FullScreenView from '@/components/FullScreenView';
@@ -32,11 +32,7 @@ export default function PresentPage() {
     if (set && user && set.userId !== user.uid) {
       notFound();
     }
-    // Also check if the order exists, if not, redirect to setup
-    if (set && !set.order) {
-      router.push(`/auction/order/${slug}`);
-    }
-  }, [set, user, router, slug]);
+  }, [set, user]);
 
 
   const isLoading = isLoadingSet || isUserLoading;
@@ -49,8 +45,7 @@ export default function PresentPage() {
     );
   }
 
-  if (!set || !set.order) {
-    // This can happen briefly before redirect, or if doc doesn't exist
+  if (!set) {
     return (
       <div className="fixed inset-0 bg-background flex items-center justify-center">
         <p className="text-lg">Preparing auction...</p>
@@ -58,5 +53,5 @@ export default function PresentPage() {
     );
   }
 
-  return <FullScreenView auctionOrder={set.order} />;
+  return <FullScreenView players={set.players} />;
 }
