@@ -2,16 +2,27 @@
 'use client';
 
 import { useState } from 'react';
-import { useUser, useFirestore, addDocumentNonBlocking } from '@/firebase';
+import { useUser, useFirestore } from '@/firebase';
 import { collection, writeBatch, doc, getDocs, query, where } from 'firebase/firestore';
 import { Player, PlayerSet } from '@/lib/player-data';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
+import { Upload, Loader2, CheckCircle, AlertTriangle, Trash2 } from 'lucide-react';
 import Papa from 'papaparse';
 import { useRouter } from 'next/navigation';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function ImportPage() {
   const { user } = useUser();
@@ -47,10 +58,23 @@ export default function ImportPage() {
           const playersCollectionRef = collection(firestore, 'players');
           const setsCollectionRef = collection(firestore, 'sets');
           
-          const importedPlayers = results.data as any[];
+          // Delete old data first
+          const oldSetsQuery = query(setsCollectionRef, where('userId', '==', user.uid));
+          const oldPlayersQuery = query(playersCollectionRef, where('userId', '==', user.uid));
+          
+          const [oldSetsSnapshot, oldPlayersSnapshot] = await Promise.all([
+            getDocs(oldSetsQuery),
+            getDocs(oldPlayersQuery)
+          ]);
 
-          // First, create all players and get their IDs
-          const batch = writeBatch(firestore);
+          const deleteBatch = writeBatch(firestore);
+          oldSetsSnapshot.forEach(doc => deleteBatch.delete(doc.ref));
+          oldPlayersSnapshot.forEach(doc => deleteBatch.delete(doc.ref));
+          await deleteBatch.commit();
+          
+          // Now import new data
+          const importedPlayers = results.data as any[];
+          const creationBatch = writeBatch(firestore);
           const playersWithIds: Player[] = [];
           
           for (const item of importedPlayers) {
@@ -66,17 +90,14 @@ export default function ImportPage() {
               cua: item['C/U/A'] || '',
               reservePrice: parseFloat(item['Reserve Price Rs Lakh']) || 0,
               points: parseInt(item['Points'], 10) || 0,
-              playerNumber: Math.floor(Math.random() * 1000), // Assign a random number as it's not in CSV
+              playerNumber: Math.floor(Math.random() * 1000), // Assign a random number
               userId: user.uid,
             };
 
             const playerRef = doc(playersCollectionRef); // Auto-generate ID
-            batch.set(playerRef, newPlayer);
+            creationBatch.set(playerRef, newPlayer);
             playersWithIds.push({ ...newPlayer, id: playerRef.id });
           }
-
-          // Commit the player creation batch
-          await batch.commit();
 
           // Group players by Set
           const setsMap = new Map<string, Player[]>();
@@ -86,7 +107,6 @@ export default function ImportPage() {
               if (!setsMap.has(setName)) {
                 setsMap.set(setName, []);
               }
-              // Find the corresponding player that was just created
               const createdPlayer = playersWithIds.find(p => p.playerName === `${item['First Name'] || ''} ${item['Surname'] || ''}`.trim());
               if(createdPlayer) {
                  setsMap.get(setName)?.push(createdPlayer);
@@ -94,16 +114,7 @@ export default function ImportPage() {
             }
           });
 
-          // Delete old sets for this user
-          const oldSetsQuery = query(setsCollectionRef, where('userId', '==', user.uid));
-          const oldSetsSnapshot = await getDocs(oldSetsQuery);
-          const deleteBatch = writeBatch(firestore);
-          oldSetsSnapshot.forEach(doc => deleteBatch.delete(doc.ref));
-          await deleteBatch.commit();
-          
-
           // Create new sets
-          const setCreationBatch = writeBatch(firestore);
           for (const [setName, playersInSet] of setsMap.entries()) {
             const newSet: Omit<PlayerSet, 'id'> = {
               name: setName,
@@ -111,14 +122,14 @@ export default function ImportPage() {
               userId: user.uid,
             };
             const setRef = doc(setsCollectionRef);
-            setCreationBatch.set(setRef, newSet);
+            creationBatch.set(setRef, newSet);
           }
           
-          await setCreationBatch.commit();
+          await creationBatch.commit();
 
           toast({
             title: 'Import Successful',
-            description: `${importedPlayers.length} players and ${setsMap.size} sets have been imported.`,
+            description: `${importedPlayers.length} players and ${setsMap.size} sets have been imported after clearing old data.`,
             action: (
                <CheckCircle className="text-green-500" />
             )
@@ -158,13 +169,13 @@ export default function ImportPage() {
         <CardHeader>
           <CardTitle className="flex items-center"><Upload className="mr-2" /> Import from CSV</CardTitle>
           <CardDescription>
-            Upload a CSV file to automatically populate your players and sets. The old sets and players will be replaced.
+            Upload a CSV file to populate your players and sets. This will replace all existing players and sets.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="space-y-2">
                  <p className="text-sm font-medium">The CSV should have the following columns:</p>
-                 <code className="text-xs p-2 bg-muted rounded-sm block">Set, First Name, Surname, Country, Specialism, C/U/A, Reserve Price Rs Lakh, Points</code>
+                 <code className="text-xs p-2 bg-muted rounded-sm block whitespace-pre-wrap">List Sr.No., Set, First Name, Surname, Country, Specialism, C/U/A, Reserve Price Rs Lakh, Points</code>
             </div>
           <Input
             type="file"
@@ -173,20 +184,38 @@ export default function ImportPage() {
             disabled={isProcessing}
             className="file:text-primary file:font-bold"
           />
-          <Button
-            onClick={handleImport}
-            disabled={!file || isProcessing}
-            className="w-full"
-          >
-            {isProcessing ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              'Import Data'
-            )}
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+               <Button
+                disabled={!file || isProcessing}
+                className="w-full"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="mr-2" />
+                    Import Data
+                  </>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center"><Trash2 className="mr-2 text-destructive"/>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete all of your current players and sets and replace them with the data from the CSV file.
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleImport}>Yes, replace everything</AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardContent>
       </Card>
     </div>
