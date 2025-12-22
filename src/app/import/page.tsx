@@ -90,7 +90,7 @@ export default function ImportPage() {
               cua: item['C/U/A'] || '',
               reservePrice: parseFloat(item['Reserve Price Rs Lakh']) || 0,
               points: parseInt(item['Points'], 10) || 0,
-              playerNumber: Math.floor(Math.random() * 1000), // Assign a random number
+              playerNumber: parseInt(item['List Sr.No.'], 10) || 0,
               userId: user.uid,
             };
 
