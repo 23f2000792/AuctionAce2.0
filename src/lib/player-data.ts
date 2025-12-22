@@ -5,6 +5,13 @@ export interface Player extends DocumentData {
   playerName: string;
   playerNumber: number;
   userId: string;
+  firstName?: string;
+  surname?: string;
+  country?: string;
+  specialism?: string;
+  cua?: string; // Capped/Uncapped/Associate
+  reservePrice?: number;
+  points?: number;
 }
 
 export interface AuctionOrderItem {

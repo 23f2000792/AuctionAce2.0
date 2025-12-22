@@ -25,6 +25,8 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
 
   const router = useRouter();
 
@@ -42,6 +44,11 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
     setIsDrawing(true);
     setCurrentPlayer(null);
 
+    if (audioRef.current && audioRef.current.src) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play();
+    }
+
     // Suspense and reveal animation
     setTimeout(() => {
       const [drawnPlayer, ...remainingPlayers] = availablePlayers;
@@ -50,6 +57,10 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
       setAvailablePlayers(remainingPlayers);
       setDrawnPlayers((prev) => [drawnPlayer, ...prev]);
       setIsDrawing(false);
+      if(audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
     }, 2500);
   }, [availablePlayers, isDrawing]);
 
@@ -103,6 +114,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
 
   return (
     <div className="fixed inset-0 bg-background/50 flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
+        <audio ref={audioRef} src="https://www.soundjay.com/buttons/sounds/button-7.mp3" preload="auto" loop={false} />
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -213,6 +225,16 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                     >
                       {currentPlayer.playerName}
                     </motion.h1>
+                    <motion.div 
+                        className="flex gap-4 justify-center mt-4 text-lg"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5, duration: 0.4 }}
+                    >
+                        {currentPlayer.country && <span>{currentPlayer.country}</span>}
+                        {currentPlayer.specialism && <span>&bull; {currentPlayer.specialism}</span>}
+                        {currentPlayer.reservePrice && <span>&bull; {currentPlayer.reservePrice}L</span>}
+                    </motion.div>
                   </div>
                 ) : (
                   <div className="text-center">

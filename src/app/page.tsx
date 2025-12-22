@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel } from 'lucide-react';
+import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel, Upload } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
@@ -100,6 +100,11 @@ export default function Home() {
       animate="visible"
     >
       <div className="flex justify-end gap-2 mb-4">
+        <Button asChild variant="outline">
+            <Link href="/import">
+                <Upload className="mr-2" /> Import CSV
+            </Link>
+        </Button>
         <Button asChild variant="outline">
           <Link href="/players">
             <Users className="mr-2" /> Manage Players
