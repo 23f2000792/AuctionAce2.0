@@ -50,7 +50,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
       setAvailablePlayers(remainingPlayers);
       setDrawnPlayers((prev) => [drawnPlayer, ...prev]);
       setIsDrawing(false);
-    }, 2500);
+    }, 1500);
   }, [availablePlayers, isDrawing]);
 
   useEffect(() => {
@@ -214,7 +214,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                       {currentPlayer.playerName}
                     </motion.h1>
                     <motion.div 
-                        className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-4 mt-8 text-lg"
+                        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-4 mt-8 text-lg"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.5, duration: 0.4, staggerChildren: 0.1 }}
@@ -231,11 +231,23 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                             <span className="text-2xl font-semibold">{currentPlayer.specialism}</span>
                            </motion.div>
                         }
-                        {currentPlayer.reservePrice && 
+                        {currentPlayer.cua && 
+                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
+                            <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Status</span>
+                            <span className="text-2xl font-semibold">{currentPlayer.cua}</span>
+                          </motion.div>
+                        }
+                        {currentPlayer.reservePrice != null && currentPlayer.reservePrice > 0 &&
                            <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
                              <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Reserve Price</span>
                              <span className="text-2xl font-semibold">{currentPlayer.reservePrice} Lakh</span>
                            </motion.div>
+                        }
+                        {currentPlayer.points != null &&
+                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
+                            <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Points</span>
+                            <span className="text-2xl font-semibold">{currentPlayer.points}</span>
+                          </motion.div>
                         }
                     </motion.div>
                   </div>
