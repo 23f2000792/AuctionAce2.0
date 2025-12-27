@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss"
 
 const config = {
@@ -19,7 +20,7 @@ const config = {
     },
     extend: {
       fontFamily: {
-        headline: ["Teko", "sans-serif"],
+        headline: ["Roboto Mono", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -93,3 +94,5 @@ const config = {
 } satisfies Config
 
 export default config
+
+    
