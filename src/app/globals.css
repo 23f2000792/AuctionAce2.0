@@ -5,25 +5,25 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
+    --background: 232 10% 25%; /* #383946 */
     --foreground: 0 0% 98%;
-    --card: 240 3.7% 10%;
+    --card: 292 5% 47%; /* #807281 with some adjustment */
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 232 10% 25%;
     --popover-foreground: 0 0% 98%;
-    --primary: 24 95% 53%;
-    --primary-foreground: 0 0% 98%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
+    --primary: 50 100% 56%; /* #ffd922 */
+    --primary-foreground: 232 10% 25%; /* Dark for contrast on yellow */
+    --secondary: 197 85% 65%; /* #5ac9f1 */
+    --secondary-foreground: 232 10% 25%;
+    --muted: 292 5% 35%;
     --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
+    --accent: 197 85% 75%;
+    --accent-foreground: 232 10% 15%;
+    --destructive: 1 72% 42%; /* #b52221 */
     --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 24 95% 53%;
+    --border: 292 5% 55%;
+    --input: 292 5% 50%;
+    --ring: 50 100% 56%;
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -37,9 +37,9 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-    --radius: 0.5rem;
+    --radius: 0rem; /* Sharp edges for pixel look */
 
-    /* Holographic Additions */
+    /* Glow Additions */
     --glow-primary: 0 0 5px hsl(var(--primary)), 0 0 10px hsl(var(--primary)), 0 0 20px hsl(var(--primary));
     --glow-accent: 0 0 5px hsl(var(--accent)), 0 0 10px hsl(var(--accent));
   }
@@ -51,42 +51,10 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #0a0a0a;
-    overflow-x: hidden;
+    font-family: 'Press Start 2P', cursive;
   }
-
-  .particle-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -2;
-    overflow: hidden;
-    background: #0a0a0a;
-  }
-
-  .grid-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    background-image:
-      linear-gradient(to right, hsla(var(--primary) / 0.1) 1px, transparent 1px),
-      linear-gradient(to bottom, hsla(var(--primary) / 0.1) 1px, transparent 1px);
-    background-size: 40px 40px;
-    animation: grid-movement 20s linear infinite;
-  }
-}
-
-@keyframes grid-movement {
-  0% {
-    transform: translate(0, 0);
-  }
-  100% {
-    transform: translate(80px, 80px);
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Press Start 2P', cursive;
   }
 }
 

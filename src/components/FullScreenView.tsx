@@ -102,7 +102,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-background/50 flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
+    <div className="fixed inset-0 bg-background flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -113,7 +113,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
             className="absolute top-0 left-0 h-full z-10 w-72"
           >
             <div className="h-full w-full bg-card/80 backdrop-blur-sm border-r border-primary/20 p-4 space-y-4">
-              <h3 className="text-xl font-bold font-headline text-primary-foreground">
+              <h3 className="text-xl font-bold text-primary-foreground">
                 Drawn Players ({drawnPlayers.length})
               </h3>
               <AnimatePresence>
@@ -190,7 +190,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                     exit={{ scale: 0.5, opacity: 0 }}
                   >
                     <Gavel className="h-24 w-24 sm:h-32 sm:w-32 text-primary animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]" />
-                    <p className="mt-4 text-xl sm:text-2xl font-headline tracking-widest uppercase">
+                    <p className="mt-4 text-xl sm:text-2xl tracking-widest uppercase">
                       Drawing...
                     </p>
                   </motion.div>
@@ -208,7 +208,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                       initial={{ opacity: 0, y: 50 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3, duration: 0.4 }}
-                      className="text-5xl sm:text-7xl md:text-8xl font-bold font-headline mt-2 tracking-tight"
+                      className="text-4xl sm:text-6xl md:text-7xl font-bold mt-2 tracking-tight"
                       style={{ textShadow: '0 0 15px hsl(var(--primary) / 0.5)' }}
                     >
                       {currentPlayer.playerName}
@@ -221,32 +221,32 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                     >
                         {currentPlayer.country && 
                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
-                            <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Country</span>
-                            <span className="text-2xl font-semibold">{currentPlayer.country}</span>
+                            <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Country</span>
+                            <span className="text-xl font-semibold">{currentPlayer.country}</span>
                           </motion.div>
                         }
                         {currentPlayer.specialism && 
                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
-                             <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Specialism</span>
-                            <span className="text-2xl font-semibold">{currentPlayer.specialism}</span>
+                             <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Specialism</span>
+                            <span className="text-xl font-semibold">{currentPlayer.specialism}</span>
                            </motion.div>
                         }
                         {currentPlayer.cua && 
                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
-                            <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Status</span>
-                            <span className="text-2xl font-semibold">{currentPlayer.cua}</span>
+                            <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Status</span>
+                            <span className="text-xl font-semibold">{currentPlayer.cua}</span>
                           </motion.div>
                         }
                         {currentPlayer.reservePrice != null && currentPlayer.reservePrice > 0 &&
                            <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
-                             <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Reserve Price</span>
-                             <span className="text-2xl font-semibold">{currentPlayer.reservePrice} Lakh</span>
+                             <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Reserve Price</span>
+                             <span className="text-xl font-semibold">{currentPlayer.reservePrice} Lakh</span>
                            </motion.div>
                         }
                         {currentPlayer.points != null &&
                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
-                            <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Points</span>
-                            <span className="text-2xl font-semibold">{currentPlayer.points}</span>
+                            <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Points</span>
+                            <span className="text-xl font-semibold">{currentPlayer.points}</span>
                           </motion.div>
                         }
                     </motion.div>
@@ -254,12 +254,12 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                 ) : (
                   <div className="text-center">
                     <Users className="h-24 w-24 sm:h-32 sm:w-32 mx-auto text-muted-foreground" />
-                    <h1 className="text-3xl sm:text-5xl font-bold font-headline mt-4">
+                    <h1 className="text-3xl sm:text-5xl font-bold mt-4">
                       {players.length > 0
-                        ? 'Ready to Start the Auction?'
+                        ? 'Ready to Start?'
                         : 'No Players in this Set'}
                     </h1>
-                    <p className="text-muted-foreground mt-2">
+                    <p className="text-muted-foreground mt-2 text-sm">
                       Click "Draw Player" to begin.
                     </p>
                   </div>
@@ -275,15 +275,15 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
           onClick={handleDrawPlayer}
           disabled={availablePlayers.length === 0 || isDrawing}
           size="lg"
-          className="rounded-full w-full max-w-xs h-16 text-xl sm:text-2xl font-headline"
+          className="w-full max-w-xs h-16 text-xl sm:text-2xl"
           style={{ animation: !isDrawing && availablePlayers.length > 0 ? 'pulse-slow 2s infinite' : 'none' }}
         >
           <Gavel className="mr-4" />
           {availablePlayers.length === 0 ? 'Auction Over' : 'Draw Player'}
         </Button>
         <div className="text-center">
-          <p className="text-sm text-muted-foreground">Players Remaining</p>
-          <p className="text-xl font-bold">
+          <p className="text-xs text-muted-foreground">Players Remaining</p>
+          <p className="text-lg font-bold">
             {availablePlayers.length} / {players.length}
           </p>
         </div>

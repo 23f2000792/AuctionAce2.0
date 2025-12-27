@@ -2,7 +2,7 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-const cardVariants = "bg-card/60 backdrop-blur-sm border border-primary/20 shadow-[0_0_15px_hsla(var(--primary)/0.2)] transition-all duration-300 hover:border-primary/40 hover:shadow-[0_0_25px_hsla(var(--primary)/0.4)]";
+const cardVariants = "bg-card backdrop-blur-sm border border-border shadow-[4px_4px_0px_hsl(var(--border))] transition-all duration-300 hover:shadow-[2px_2px_0px_hsl(var(--border))]";
 
 const Card = React.forwardRef<
   HTMLDivElement,
@@ -11,7 +11,7 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg",
+      "rounded-none",
       cardVariants,
       className
     )}
