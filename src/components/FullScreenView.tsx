@@ -102,7 +102,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-background flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
+    <div className="fixed inset-0 bg-background flex flex-col items-center justify-center p-4 overflow-hidden">
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -110,7 +110,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ duration: 0.3, ease: 'easeInOut' }}
-            className="absolute top-0 left-0 h-full z-10 w-72"
+            className="absolute top-0 left-0 h-full z-30 w-72"
           >
             <div className="h-full w-full bg-card/80 backdrop-blur-sm border-r border-primary/20 p-4 space-y-4">
               <h3 className="text-xl font-bold text-primary-foreground">
@@ -149,7 +149,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
         open={isSidebarOpen}
         onOpenChange={setIsSidebarOpen}
         className={cn(
-          'absolute top-1/2 -translate-y-1/2 z-20 transition-all duration-300',
+          'absolute top-1/2 -translate-y-1/2 z-40 transition-all duration-300',
           isSidebarOpen ? 'left-72' : 'left-0'
         )}
       >
@@ -164,7 +164,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
         variant="ghost"
         size="icon"
         onClick={() => router.push('/')}
-        className="absolute top-4 right-4 h-12 w-12 rounded-full z-20"
+        className="absolute top-4 right-4 h-12 w-12 rounded-full z-40"
       >
         <X className="h-8 w-8" />
         <span className="sr-only">Exit Full Screen</span>
@@ -180,7 +180,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
             exit="exit"
             className="w-full"
           >
-            <Card className="w-full aspect-video flex flex-col items-center justify-center text-center bg-secondary/20 border-secondary">
+            <Card className="w-full aspect-video flex flex-col items-center justify-center text-center bg-card/30 backdrop-blur-sm border-border">
               <CardContent className="p-6 w-full">
                 {isDrawing ? (
                   <motion.div

@@ -50,12 +50,6 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-
-    /* Digital Grid Background */
-    background-image:
-      linear-gradient(hsla(var(--primary) / 0.1) 1px, transparent 1px),
-      linear-gradient(to right, hsla(var(--primary) / 0.1) 1px, transparent 1px);
-    background-size: 40px 40px;
   }
 }
 
