@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel, Upload } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
+import { collection, query, where, orderBy } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
@@ -17,7 +17,7 @@ export default function Home() {
 
   const setsQuery = useMemoFirebase(() => {
     if (!user || !firestore) return null;
-    return query(collection(firestore, 'sets'), where('userId', '==', user.uid));
+    return query(collection(firestore, 'sets'), where('userId', '==', user.uid), orderBy('order', 'asc'));
   }, [user, firestore]);
 
   const { data: sets, isLoading: isLoadingSets } = useCollection<PlayerSet>(setsQuery);
@@ -77,14 +77,14 @@ export default function Home() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-        <Card>
+        <Card className="shadow-lg shadow-primary/10">
             <CardHeader>
                 <CardTitle className="text-3xl font-headline">Welcome to Auction Ace!</CardTitle>
                 <CardDescription>Your ultimate tool for creating and managing IPL-style player auctions.</CardDescription>
             </CardHeader>
             <CardContent>
                 <p className="mb-6">Please log in to create your player sets and start your auction.</p>
-                <Button asChild size="lg">
+                <Button asChild size="lg" className="btn-clash">
                     <Link href="/login"><LogIn className="mr-2"/>Log In to Get Started</Link>
                 </Button>
             </CardContent>
@@ -110,14 +110,14 @@ export default function Home() {
             <Users className="mr-2" /> Manage Players
           </Link>
         </Button>
-        <Button asChild>
+        <Button asChild className="btn-clash">
           <Link href="/sets/create">
             <PlusCircle className="mr-2" /> Create New Set
           </Link>
         </Button>
       </div>
 
-      <Card>
+      <Card className="shadow-lg shadow-primary/10">
         <CardHeader>
           <CardTitle className="text-3xl font-headline">Select a Player Set</CardTitle>
           <CardDescription>
@@ -138,22 +138,23 @@ export default function Home() {
                     key={set.id}
                     variants={cardVariants}
                   >
-                    <Card className="hover:border-primary/50 hover:shadow-primary/10 hover:shadow-lg transition-all flex flex-col h-full bg-secondary/20 border-secondary">
-                      <CardHeader className="p-4 flex-row items-center justify-between">
+                    <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-secondary/10 border-border btn-clash hover:-translate-y-1">
+                      <CardHeader className="p-4 flex-row items-start justify-between">
                          <CardTitle className="text-lg font-headline truncate">{set.name}</CardTitle>
-                         <Button variant="ghost" size="icon" asChild>
+                         <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
                             <Link href={`/sets/edit/${set.id}`}>
                               <Edit className="h-4 w-4" />
                             </Link>
                          </Button>
                       </CardHeader>
                       <CardContent className="p-4 pt-0 flex-grow">
-                         <div className="flex items-center justify-between text-sm text-muted-foreground">
-                            <span>{set.players.length} players</span>
+                         <div className="flex flex-col items-start text-sm text-muted-foreground">
+                            <span className="text-xs uppercase font-bold tracking-wider">Players</span>
+                            <span className="text-3xl font-headline text-foreground">{set.players.length}</span>
                          </div>
                       </CardContent>
                       <CardFooter className="p-4">
-                         <Button asChild className="w-full mt-auto btn-glow">
+                         <Button asChild className="w-full mt-auto btn-clash">
                             <Link href={`/auction/present/${set.id}`}>
                               Start Auction
                             </Link>
@@ -165,7 +166,7 @@ export default function Home() {
               </motion.div>
             ) : (
               <motion.div
-                className="text-center py-16 border-2 border-dashed border-primary/20 rounded-lg"
+                className="text-center py-16 border-2 border-dashed border-border rounded-lg"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
@@ -174,7 +175,7 @@ export default function Home() {
                   <h3 className="mt-4 text-lg font-medium">No Sets Created Yet</h3>
                   <p className="mt-1 text-sm text-muted-foreground">Get started by adding some players and creating your first set.</p>
                   <div className="mt-6">
-                      <Button asChild>
+                      <Button asChild className="btn-clash">
                           <Link href="/sets/create">
                               <PlusCircle className="mr-2" /> Create a Set
                           </Link>

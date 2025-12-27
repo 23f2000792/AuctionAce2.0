@@ -115,11 +115,13 @@ export default function ImportPage() {
           });
 
           // Create new sets
+          let order = 0;
           for (const [setName, playersInSet] of setsMap.entries()) {
             const newSet: Omit<PlayerSet, 'id'> = {
               name: setName,
               players: playersInSet,
               userId: user.uid,
+              order: order++,
             };
             const setRef = doc(setsCollectionRef);
             creationBatch.set(setRef, newSet);
