@@ -1,37 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    // Helper Functions
-    function isOwner(userId) {
-      return request.auth != null && request.auth.uid == userId;
-    }
-
-    // /users/{userId}
-    // Users can create their own profile.
-    // Users can only read and update their own profile.
-    // No one can delete a user profile through this rule.
-    match /users/{userId} {
-      allow read, update: if isOwner(userId);
-      allow create: if request.auth != null;
-    }
-
-    // /players/{playerId}
-    // Logged-in users can create players.
-    // Users can read, update, and delete only the players they created.
-    match /players/{playerId} {
-      allow create: if request.auth != null && isOwner(request.resource.data.userId);
-      allow read, update, delete: if request.auth != null && isOwner(resource.data.userId);
-    }
-    
-    // /sets/{setId}
-    // Any user can read/list all sets.
-    // Logged-in users can create sets.
-    // Users can update and delete only the sets they created.
-    match /sets/{setId} {
-      allow read, list: if true;
-      allow create: if request.auth != null && isOwner(request.resource.data.userId);
-      allow update, delete: if request.auth != null && isOwner(resource.data.userId);
+    // Allow read and write access to all documents for all users.
+    match /{document=**} {
+      allow read, write: if true;
     }
   }
 }
