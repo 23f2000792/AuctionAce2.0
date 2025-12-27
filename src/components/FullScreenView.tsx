@@ -45,8 +45,14 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
 
     setIsDrawing(true);
     setCurrentPlayer(null);
-    audioRef.current?.play();
-
+    
+    const playPromise = audioRef.current?.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(error => {
+        // Autoplay was prevented.
+        console.error("Audio play failed:", error);
+      });
+    }
 
     // Suspense and reveal animation
     setTimeout(() => {
