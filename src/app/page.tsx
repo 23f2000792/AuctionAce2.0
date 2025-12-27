@@ -85,7 +85,7 @@ export default function Home() {
             </CardHeader>
             <CardContent>
                 <p className="mb-6">Please log in to create your player sets and start your auction.</p>
-                <Button asChild size="lg" className="btn-clash">
+                <Button asChild size="lg" className="btn-glow">
                     <Link href="/login"><LogIn className="mr-2"/>Log In to Get Started</Link>
                 </Button>
             </CardContent>
@@ -111,7 +111,7 @@ export default function Home() {
             <Users className="mr-2" /> Manage Players
           </Link>
         </Button>
-        <Button asChild className="btn-clash">
+        <Button asChild className="btn-glow">
           <Link href="/sets/create">
             <PlusCircle className="mr-2" /> Create New Set
           </Link>
@@ -139,7 +139,7 @@ export default function Home() {
                     key={set.id}
                     variants={cardVariants}
                   >
-                    <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-secondary/10 border-border btn-clash hover:-translate-y-1">
+                    <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-secondary/30 hover:bg-secondary/50 border-border hover:-translate-y-1">
                       <CardHeader className="p-4 flex-row items-start justify-between">
                          <CardTitle className="text-lg font-headline truncate">{set.name}</CardTitle>
                          {user && set.userId === user.uid && (
@@ -157,7 +157,7 @@ export default function Home() {
                          </div>
                       </CardContent>
                       <CardFooter className="p-4">
-                         <Button asChild className="w-full mt-auto btn-clash">
+                         <Button asChild className="w-full mt-auto btn-glow">
                             <Link href={`/auction/present/${set.id}`}>
                               Start Auction
                             </Link>
@@ -178,7 +178,7 @@ export default function Home() {
                   <h3 className="mt-4 text-lg font-medium">No Sets Created Yet</h3>
                   <p className="mt-1 text-sm text-muted-foreground">Get started by adding some players and creating your first set.</p>
                   <div className="mt-6">
-                      <Button asChild className="btn-clash">
+                      <Button asChild className="btn-glow">
                           <Link href="/sets/create">
                               <PlusCircle className="mr-2" /> Create a Set
                           </Link>

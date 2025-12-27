@@ -30,37 +30,27 @@ const Header = () => {
   const NavContent = () => (
     <>
       { !isUserLoading && user && (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="w-full justify-start">
-              <PlusCircle />
-              Create/Edit
+        <div className='flex items-center gap-2'>
+            <Button variant="outline" asChild>
+                <Link href="/players" onClick={() => setIsSheetOpen(false)}>
+                    <Users /> Manage Players
+                </Link>
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem asChild>
-              <Link href="/players" onClick={() => setIsSheetOpen(false)}>
-                <Users />
-                Manage Players
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/sets/create" onClick={() => setIsSheetOpen(false)}>
-                <PlusCircle />
-                Create Set
-              </Link>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+             <Button variant="outline" asChild>
+                <Link href="/sets/create" onClick={() => setIsSheetOpen(false)}>
+                    <PlusCircle /> Create Set
+                </Link>
+            </Button>
+        </div>
       )}
       {isUserLoading ? (
-         <div className="h-10 w-full animate-pulse rounded-md bg-muted/50" />
+         <div className="h-10 w-24 animate-pulse rounded-md bg-muted/50" />
       ) : user ? (
-        <Button variant="outline" onClick={handleSignOut} className="w-full justify-start">
+        <Button variant="ghost" onClick={handleSignOut} className="w-full justify-start md:w-auto">
           <LogOut /> Sign Out
         </Button>
       ) : (
-        <Button asChild className="w-full justify-start">
+        <Button asChild className="btn-glow">
           <Link href="/login" onClick={() => setIsSheetOpen(false)}>
             <LogIn /> Login
           </Link>
@@ -73,7 +63,7 @@ const Header = () => {
     <header className="w-full border-b border-primary/20 bg-background/50 backdrop-blur-sm z-20 sticky top-0">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 group">
-          <Gavel className="h-8 w-8 text-primary group-hover:animate-pulse" />
+          <Gavel className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
           <span className="text-2xl font-bold tracking-tighter font-headline">Auction Ace</span>
         </Link>
         

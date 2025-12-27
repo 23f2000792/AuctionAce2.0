@@ -296,5 +296,3 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
     </div>
   );
 }
-
-    
