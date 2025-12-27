@@ -145,7 +145,7 @@ export default function Home() {
                              <div className="bg-primary/10 text-primary p-2 rounded-lg">
                                <Layers className="h-6 w-6" />
                              </div>
-                             <CardTitle className="text-lg">{set.name}</CardTitle>
+                             <CardTitle className="text-base">{set.name}</CardTitle>
                            </div>
                            <Button variant="ghost" size="icon" asChild>
                               <Link href={`/sets/edit/${set.id}`}>

@@ -208,13 +208,13 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                       initial={{ opacity: 0, y: 50 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3, duration: 0.4 }}
-                      className="text-4xl sm:text-6xl md:text-7xl font-bold mt-2 tracking-tight"
+                      className="text-4xl sm:text-5xl md:text-6xl font-bold mt-2 tracking-tight"
                       style={{ textShadow: '0 0 15px hsl(var(--primary) / 0.5)' }}
                     >
                       {currentPlayer.playerName}
                     </motion.h1>
                     <motion.div 
-                        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-4 mt-8 text-lg"
+                        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-4 mt-8 text-base"
                         initial="hidden"
                         animate="visible"
                         variants={{
@@ -228,31 +228,31 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                         {currentPlayer.country && 
                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
                             <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Country</span>
-                            <span className="text-xl font-semibold">{currentPlayer.country}</span>
+                            <span className="font-semibold">{currentPlayer.country}</span>
                           </motion.div>
                         }
                         {currentPlayer.specialism && 
                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
                              <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Specialism</span>
-                            <span className="text-xl font-semibold">{currentPlayer.specialism}</span>
+                            <span className="font-semibold">{currentPlayer.specialism}</span>
                            </motion.div>
                         }
                         {currentPlayer.cua && 
                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
                             <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Status</span>
-                            <span className="text-xl font-semibold">{currentPlayer.cua}</span>
+                            <span className="font-semibold">{currentPlayer.cua}</span>
                           </motion.div>
                         }
                         {currentPlayer.reservePrice != null && currentPlayer.reservePrice > 0 &&
                            <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
                              <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Reserve Price</span>
-                             <span className="text-xl font-semibold">{currentPlayer.reservePrice} Lakh</span>
+                             <span className="font-semibold">{currentPlayer.reservePrice} Lakh</span>
                            </motion.div>
                         }
                         {currentPlayer.points != null &&
                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
                             <span className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Points</span>
-                            <span className="text-xl font-semibold">{currentPlayer.points}</span>
+                            <span className="font-semibold">{currentPlayer.points}</span>
                           </motion.div>
                         }
                     </motion.div>
