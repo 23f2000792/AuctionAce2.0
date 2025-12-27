@@ -27,9 +27,11 @@ service cloud.firestore {
     // /sets/{setId}
     // Logged-in users can create sets.
     // Users can read, update, and delete only the sets they created.
+    // Users can list sets they own.
     match /sets/{setId} {
       allow create: if request.auth != null && isOwner(request.resource.data.userId);
       allow read, update, delete: if request.auth != null && isOwner(resource.data.userId);
+      allow list: if request.auth != null && request.query.resource.data.userId == request.auth.uid;
     }
   }
 }
