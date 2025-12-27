@@ -50,13 +50,17 @@ export default function Home() {
     },
   };
 
-  if (isUserLoading || isLoadingSets) {
+  const isLoading = isUserLoading || isLoadingSets;
+
+  if (isLoading && !sets) {
     return (
       <div className="w-full max-w-5xl mx-auto">
-        <div className="flex justify-end gap-2 mb-4">
-           <div className="h-10 w-40 animate-pulse rounded-md bg-muted/50" />
-           <div className="h-10 w-40 animate-pulse rounded-md bg-muted/50" />
-        </div>
+        {user && (
+          <div className="flex justify-end gap-2 mb-4">
+            <div className="h-10 w-40 animate-pulse rounded-md bg-muted/50" />
+            <div className="h-10 w-40 animate-pulse rounded-md bg-muted/50" />
+          </div>
+        )}
         <Card>
           <CardHeader>
             <div className="h-8 w-64 animate-pulse rounded-md bg-muted/50" />
@@ -74,53 +78,31 @@ export default function Home() {
     )
   }
 
-  if (!user) {
-     return (
-       <motion.div 
-          className="w-full max-w-2xl mx-auto text-center"
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-        >
-        <Card className="glow-border bg-card/70 backdrop-blur-sm">
-            <CardHeader>
-                <CardTitle className="text-3xl">Welcome to Auction Ace!</CardTitle>
-                <CardDescription>Your ultimate tool for creating and managing IPL-style player auctions.</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <p className="mb-6">Please log in to create your player sets and start your auction.</p>
-                <Button asChild size="lg" className="btn-glow">
-                    <Link href="/login"><LogIn className="mr-2"/>Log In to Get Started</Link>
-                </Button>
-            </CardContent>
-        </Card>
-       </motion.div>
-     )
-  }
-
   return (
     <motion.div 
       className="w-full max-w-5xl mx-auto"
       initial="hidden"
       animate="visible"
     >
-      <div className="flex justify-end gap-2 mb-4">
-        <Button asChild variant="outline">
-            <Link href="/import">
-                <Upload className="mr-2" /> Import CSV
+      {!isUserLoading && user && (
+        <div className="flex justify-end gap-2 mb-4">
+          <Button asChild variant="outline">
+              <Link href="/import">
+                  <Upload className="mr-2" /> Import CSV
+              </Link>
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/players">
+              <Users className="mr-2" /> Manage Players
             </Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/players">
-            <Users className="mr-2" /> Manage Players
-          </Link>
-        </Button>
-        <Button asChild className="btn-glow">
-          <Link href="/sets/create">
-            <PlusCircle className="mr-2" /> Create New Set
-          </Link>
-        </Button>
-      </div>
+          </Button>
+          <Button asChild className="btn-glow">
+            <Link href="/sets/create">
+              <PlusCircle className="mr-2" /> Create New Set
+            </Link>
+          </Button>
+        </div>
+      )}
 
       <Card className="glow-border bg-card/70 backdrop-blur-sm">
         <CardHeader>
@@ -173,15 +155,17 @@ export default function Home() {
                 exit={{ opacity: 0, y: -20 }}
               >
                   <Layers className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <h3 className="mt-4 text-lg font-medium">No Sets Created Yet</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">Get started by adding some players and creating your first set.</p>
-                  <div className="mt-6">
+                  <h3 className="mt-4 text-lg font-medium">No Sets Available</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">The auction administrator has not created any sets yet.</p>
+                  {!user && (
+                    <div className="mt-6">
                       <Button asChild className="btn-glow">
-                          <Link href="/sets/create">
-                              <PlusCircle className="mr-2" /> Create a Set
+                          <Link href="/login">
+                              <Lock className="mr-2" /> Admin Login
                           </Link>
                       </Button>
-                  </div>
+                    </div>
+                  )}
               </motion.div>
             )}
           </AnimatePresence>
