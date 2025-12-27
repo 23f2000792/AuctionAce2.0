@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel, Upload, Lock, View } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { collection, query, where, orderBy } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
@@ -16,14 +16,15 @@ export default function Home() {
   const firestore = useFirestore();
 
   const setsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    // Query for all sets, ordered by 'order' and then 'name'
+    if (!firestore || !user) return null;
+    // Query for sets owned by the current user
     return query(
       collection(firestore, 'sets'), 
+      where('userId', '==', user.uid),
       orderBy('order', 'asc'), 
       orderBy('name', 'asc')
     );
-  }, [firestore]);
+  }, [firestore, user]);
 
   const { data: sets, isLoading: isLoadingSets } = useCollection<PlayerSet>(setsQuery);
 
@@ -108,7 +109,7 @@ export default function Home() {
         <CardHeader>
           <CardTitle className="text-3xl">Select a Player Set</CardTitle>
           <CardDescription>
-            Choose a set of players to begin the auction.
+            Choose one of your sets of players to begin the auction.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -128,7 +129,13 @@ export default function Home() {
                     <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-gradient-to-br from-card/80 to-card/50 hover:from-card/90 glow-border hover:-translate-y-1">
                       <CardHeader className="p-4 flex-row items-start justify-between">
                          <CardTitle className="text-lg truncate">{set.name}</CardTitle>
-                         {/* Edit button is removed as users can see sets they don't own */}
+                         {user && set.userId === user.uid && (
+                            <Button asChild variant="ghost" size="icon" className="h-6 w-6">
+                                <Link href={`/sets/edit/${set.id}`}>
+                                    <Edit className="h-4 w-4"/>
+                                </Link>
+                            </Button>
+                         )}
                       </CardHeader>
                       <CardContent className="p-4 pt-0 flex-grow">
                          <div className="flex flex-col items-start text-sm text-muted-foreground">
@@ -155,8 +162,13 @@ export default function Home() {
                 exit={{ opacity: 0, y: -20 }}
               >
                   <Layers className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <h3 className="mt-4 text-lg font-medium">No Sets Available</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">The auction administrator has not created any sets yet.</p>
+                  <h3 className="mt-4 text-lg font-medium">No Sets Found</h3>
+                  {user ? (
+                    <p className="mt-1 text-sm text-muted-foreground">Get started by creating a new set or importing players from a CSV.</p>
+                  ): (
+                    <p className="mt-1 text-sm text-muted-foreground">Log in to create and manage your auction sets.</p>
+                  )}
+                  
                   {!user && (
                     <div className="mt-6">
                       <Button asChild className="btn-glow">
