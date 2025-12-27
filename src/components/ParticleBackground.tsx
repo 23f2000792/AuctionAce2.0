@@ -7,19 +7,17 @@ export const ParticleBackground = () => {
   const animationFrameId = useRef<number>();
 
   const drawGrid = useCallback((ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
-    const time = performance.now() * 0.00005;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Sun
+    // Sun/Horizon Glow
     const sunX = canvas.width / 2;
     const sunY = canvas.height * 0.45;
-    const sunRadius = Math.min(canvas.width, canvas.height) * 0.2;
+    const sunRadius = Math.min(canvas.width, canvas.height) * 0.4;
 
     const sunGradient = ctx.createRadialGradient(sunX, sunY, sunRadius * 0.1, sunX, sunY, sunRadius);
-    sunGradient.addColorStop(0, 'hsla(0, 100%, 100%, 0.8)');
-    sunGradient.addColorStop(0.1, 'hsla(30, 100%, 70%, 0.6)');
-    sunGradient.addColorStop(0.4, 'hsla(330, 90%, 60%, 0.3)');
-    sunGradient.addColorStop(1, 'hsla(330, 90%, 60%, 0)');
+    sunGradient.addColorStop(0, 'hsla(49, 100%, 57%, 0.4)'); // Yellow Core
+    sunGradient.addColorStop(0.2, 'hsla(199, 85%, 65%, 0.3)'); // Blue Halo
+    sunGradient.addColorStop(1, 'hsla(199, 85%, 65%, 0)');
     
     ctx.fillStyle = sunGradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -27,7 +25,6 @@ export const ParticleBackground = () => {
     // Grid
     ctx.lineWidth = 1.5;
     ctx.strokeStyle = 'hsl(var(--primary) / 0.3)';
-    const perspective = canvas.width * 0.8;
     const projectionCenterY = canvas.height * 0.45;
     
     const numLines = 50;
@@ -35,7 +32,6 @@ export const ParticleBackground = () => {
         const ratio = i / numLines;
         const y = projectionCenterY + ratio * (canvas.height - projectionCenterY);
 
-        // horizontal lines
         const p = (y - projectionCenterY) / (canvas.height - projectionCenterY);
         const rowY = projectionCenterY + (y - projectionCenterY) * Math.pow(p, 2);
         
@@ -44,7 +40,6 @@ export const ParticleBackground = () => {
         ctx.lineTo(canvas.width, rowY);
         ctx.stroke();
 
-        // vertical lines
         if(i < numLines) {
             const x = canvas.width/2 + (i - numLines/2) * 30 * Math.pow(1.5, p*5);
             const topY = projectionCenterY + (y - projectionCenterY) * Math.pow((i)/(numLines), 2)

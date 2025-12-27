@@ -136,7 +136,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
                         {drawnPlayers.length - index}.
                       </span>
                       <span className="font-medium truncate">{player.playerName}</span>
-                      <span className="font-mono text-xs text-primary ml-auto">
+                      <span className="font-mono text-xs text-primary-foreground ml-auto">
                         #{player.playerNumber}
                       </span>
                     </motion.li>
@@ -212,7 +212,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3, duration: 0.4 }}
                       className="text-5xl sm:text-7xl font-headline mt-2 truncate bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
-                      style={{ textShadow: '0 0 40px hsl(var(--primary) / 0.5)' }}
+                      style={{ textShadow: '0 0 40px hsl(var(--accent) / 0.7)' }}
                     >
                       {currentPlayer.playerName}
                     </motion.h1>

@@ -60,7 +60,7 @@ const Header = () => {
   );
 
   return (
-    <header className="w-full border-b border-primary/20 bg-gradient-to-b from-background to-background/50 backdrop-blur-sm z-20 sticky top-0">
+    <header className="w-full border-b border-primary/20 bg-background/80 backdrop-blur-sm z-20 sticky top-0">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 group">
           <Gavel className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />

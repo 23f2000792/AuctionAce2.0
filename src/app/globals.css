@@ -5,41 +5,41 @@
 
 @layer base {
   :root {
-    --background: 254 60% 10%; /* Deep Indigo */
+    --background: 227 10% 25%; /* Dark Charcoal: #383946 */
     --foreground: 210 40% 98%;
 
-    --card: 254 60% 15%;
+    --card: 227 10% 30%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 254 60% 10%;
+    --popover: 227 10% 20%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 330 90% 60%; /* Hot Pink */
-    --primary-foreground: 0 0% 100%;
+    --primary: 199 85% 65%; /* Sporty Blue: #5ac9f1 */
+    --primary-foreground: 227 10% 10%;
 
-    --secondary: 330 90% 25%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 49 100% 57%; /* Vibrant Yellow: #ffd922 */
+    --secondary-foreground: 227 10% 15%;
 
-    --muted: 254 60% 25%;
+    --muted: 227 10% 40%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 30 100% 60%; /* Sunset Orange */
-    --accent-foreground: 210 40% 98%;
+    --accent: 49 100% 57%; /* Vibrant Yellow: #ffd922 */
+    --accent-foreground: 227 10% 15%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 1 69% 42%; /* Red: #b52221 */
     --destructive-foreground: 210 40% 98%;
 
-    --border: 330 90% 40%;
-    --input: 254 60% 20%;
-    --ring: 330 90% 60%;
+    --border: 199 85% 55%;
+    --input: 227 10% 35%;
+    --ring: 199 85% 65%;
 
     --radius: 0.5rem;
 
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --chart-1: 199 85% 65%;
+    --chart-2: 49 100% 57%;
+    --chart-3: 294 6% 48%;
+    --chart-4: 1 69% 42%;
+    --chart-5: 210 40% 80%;
   }
 }
 

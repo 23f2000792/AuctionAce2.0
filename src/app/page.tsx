@@ -138,7 +138,7 @@ export default function Home() {
                     key={set.id}
                     variants={cardVariants}
                   >
-                    <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-gradient-to-br from-secondary/50 to-secondary/20 hover:from-secondary/70 glow-border hover:-translate-y-1">
+                    <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-gradient-to-br from-card/80 to-card/50 hover:from-card/90 glow-border hover:-translate-y-1">
                       <CardHeader className="p-4 flex-row items-start justify-between">
                          <CardTitle className="text-lg font-headline truncate">{set.name}</CardTitle>
                          {user && set.userId === user.uid && (
@@ -151,7 +151,7 @@ export default function Home() {
                       </CardHeader>
                       <CardContent className="p-4 pt-0 flex-grow">
                          <div className="flex flex-col items-start text-sm text-muted-foreground">
-                            <span className="text-xs uppercase font-bold tracking-wider text-primary">Players</span>
+                            <span className="text-xs uppercase font-bold tracking-wider text-accent">Players</span>
                             <span className="text-4xl font-mono font-bold text-foreground">{set.players.length}</span>
                          </div>
                       </CardContent>
