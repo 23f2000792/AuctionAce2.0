@@ -17,7 +17,7 @@ export default function Home() {
 
   const setsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'sets'), orderBy('order', 'asc'));
+    return query(collection(firestore, 'sets'), orderBy('name', 'asc'));
   }, [firestore]);
 
   const { data: sets, isLoading: isLoadingSets } = useCollection<PlayerSet>(setsQuery);
