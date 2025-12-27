@@ -28,7 +28,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
 
-  const handleDrawPlayer = () => {
+  const handleDrawPlayer = useCallback(() => {
     if (undrawnPlayers.length === 0 || isDrawing) return;
 
     setIsDrawing(true);
@@ -43,7 +43,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
       setUndrawnPlayers(prev => prev.filter(p => p.id !== newDrawnPlayer.id));
       setIsDrawing(false);
     }, 1500); // Suspense duration
-  };
+  }, [isDrawing, undrawnPlayers]);
   
   const resetAuction = () => {
     setUndrawnPlayers([...players]);
