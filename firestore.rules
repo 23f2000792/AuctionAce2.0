@@ -16,11 +16,11 @@ service cloud.firestore {
       allow read, update, delete: if request.auth.uid == resource.data.userId;
     }
     
-    // A user can create sets linked to their UID
-    // They can read, update, or delete sets they own
+    // Any authenticated user can view the sets.
+    // Only the owner can create, update, or delete their own sets.
     match /sets/{setId} {
-      allow create: if request.auth.uid == request.resource.data.userId;
-      allow read, update, delete: if request.auth.uid == resource.data.userId;
+      allow get, list: if request.auth != null;
+      allow create, update, delete: if request.auth.uid == resource.data.userId;
     }
 
   }

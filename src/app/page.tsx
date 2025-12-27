@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel, Upload, Lock, View } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
+import { collection, query, orderBy } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
@@ -16,13 +16,13 @@ export default function Home() {
   const firestore = useFirestore();
 
   const setsQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    // Query for sets owned by the current user
+    if (!firestore) return null;
+    // Query for all sets, sorted by the 'order' field (Set No.)
     return query(
       collection(firestore, 'sets'), 
-      where('userId', '==', user.uid)
+      orderBy('order')
     );
-  }, [firestore, user]);
+  }, [firestore]);
 
   const { data: sets, isLoading: isLoadingSets } = useCollection<PlayerSet>(setsQuery);
 
@@ -167,7 +167,7 @@ export default function Home() {
                     <p className="mt-1 text-sm text-muted-foreground">Log in to create and manage your auction sets.</p>
                   )}
                   
-                  {!user && (
+                  {!user && !isUserLoading && (
                     <div className="mt-6">
                       <Button asChild className="btn-glow">
                           <Link href="/login">
