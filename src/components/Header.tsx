@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -69,11 +70,11 @@ const Header = () => {
   );
 
   return (
-    <header className="w-full border-b border-primary/20 bg-background/30 backdrop-blur-sm z-20">
+    <header className="w-full border-b border-primary/20 bg-background/50 backdrop-blur-sm z-20 sticky top-0">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 group">
-          <Gavel className="h-7 w-7 text-primary group-hover:animate-pulse" />
-          <span className="text-xl font-bold tracking-tight font-headline">Auction Ace</span>
+          <Gavel className="h-8 w-8 text-primary group-hover:animate-pulse" />
+          <span className="text-2xl font-bold tracking-tighter font-headline">Auction Ace</span>
         </Link>
         
         {/* Desktop Navigation */}

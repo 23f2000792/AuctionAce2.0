@@ -119,7 +119,7 @@ export default function Home() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-headline">Select a Player Set</CardTitle>
+          <CardTitle className="text-3xl font-headline">Select a Player Set</CardTitle>
           <CardDescription>
             Choose a set of players to begin the auction.
           </CardDescription>
@@ -138,21 +138,14 @@ export default function Home() {
                     key={set.id}
                     variants={cardVariants}
                   >
-                    <Card className="hover:shadow-lg transition-shadow flex flex-col h-full">
-                      <CardHeader className="p-4">
-                        <div className="flex items-center justify-between">
-                           <div className="flex items-center gap-3">
-                             <div className="bg-primary/10 text-primary p-2 rounded-lg">
-                               <Layers className="h-6 w-6" />
-                             </div>
-                             <CardTitle className="text-lg">{set.name}</CardTitle>
-                           </div>
-                           <Button variant="ghost" size="icon" asChild>
-                              <Link href={`/sets/edit/${set.id}`}>
-                                <Edit className="h-4 w-4" />
-                              </Link>
-                           </Button>
-                        </div>
+                    <Card className="hover:border-primary/50 hover:shadow-primary/10 hover:shadow-lg transition-all flex flex-col h-full bg-secondary/20 border-secondary">
+                      <CardHeader className="p-4 flex-row items-center justify-between">
+                         <CardTitle className="text-xl font-headline truncate">{set.name}</CardTitle>
+                         <Button variant="ghost" size="icon" asChild>
+                            <Link href={`/sets/edit/${set.id}`}>
+                              <Edit className="h-4 w-4" />
+                            </Link>
+                         </Button>
                       </CardHeader>
                       <CardContent className="p-4 pt-0 flex-grow">
                          <div className="flex items-center justify-between text-sm text-muted-foreground">
@@ -160,7 +153,7 @@ export default function Home() {
                          </div>
                       </CardContent>
                       <CardFooter className="p-4">
-                         <Button asChild className="w-full mt-auto">
+                         <Button asChild className="w-full mt-auto btn-glow">
                             <Link href={`/auction/present/${set.id}`}>
                               Start Auction
                             </Link>
