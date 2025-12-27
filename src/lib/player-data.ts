@@ -24,5 +24,4 @@ export interface PlayerSet extends DocumentData {
   name: string;
   players: Player[];
   userId: string;
-  order?: number;
 }
