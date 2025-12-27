@@ -8,7 +8,7 @@ import { Card, CardContent } from './ui/card';
 import { X, Gavel, Users, ChevronsLeft, ChevronsRight, Repeat } from 'lucide-react';
 import { Player, PlayerSet } from '@/lib/player-data';
 import { AnimatePresence, motion } from 'framer-motion';
-import { cn } from '@/lib/utils';
+import { cn, shuffleArray } from '@/lib/utils';
 import {
   Collapsible,
   CollapsibleContent,
@@ -21,12 +21,25 @@ interface FullScreenViewProps {
 }
 
 export default function FullScreenView({ players, set }: FullScreenViewProps) {
-  const [undrawnPlayers, setUndrawnPlayers] = useState<Player[]>([...players]);
+  const [activePlayerList, setActivePlayerList] = useState<Player[]>(() => shuffleArray(players));
+  const [undrawnPlayers, setUndrawnPlayers] = useState<Player[]>([...activePlayerList]);
   const [drawnPlayers, setDrawnPlayers] = useState<Player[]>([]);
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const router = useRouter();
+  
+  const drawingInterval = useRef<NodeJS.Timeout>();
+  const [drawingDisplayPlayer, setDrawingDisplayPlayer] = useState<Player | null>(null);
+
+
+  const stopDrawingAnimation = useCallback(() => {
+    if (drawingInterval.current) {
+        clearInterval(drawingInterval.current);
+        drawingInterval.current = undefined;
+    }
+    setDrawingDisplayPlayer(null);
+  }, []);
 
   const handleDrawPlayer = useCallback(() => {
     if (undrawnPlayers.length === 0 || isDrawing) return;
@@ -34,7 +47,14 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
     setIsDrawing(true);
     setCurrentPlayer(null); // Clear current player for animation
 
+    // Start the "slot machine" animation
+    drawingInterval.current = setInterval(() => {
+        const randomIndex = Math.floor(Math.random() * undrawnPlayers.length);
+        setDrawingDisplayPlayer(undrawnPlayers[randomIndex]);
+    }, 100);
+
     setTimeout(() => {
+      stopDrawingAnimation();
       const randomIndex = Math.floor(Math.random() * undrawnPlayers.length);
       const newDrawnPlayer = undrawnPlayers[randomIndex];
       
@@ -42,11 +62,14 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
       setDrawnPlayers(prev => [newDrawnPlayer, ...prev]);
       setUndrawnPlayers(prev => prev.filter(p => p.id !== newDrawnPlayer.id));
       setIsDrawing(false);
-    }, 1500); // Suspense duration
-  }, [isDrawing, undrawnPlayers]);
+    }, 2500); // Suspense duration
+  }, [isDrawing, undrawnPlayers, stopDrawingAnimation]);
   
   const resetAuction = () => {
-    setUndrawnPlayers([...players]);
+    stopDrawingAnimation();
+    const newShuffledList = shuffleArray(players);
+    setActivePlayerList(newShuffledList);
+    setUndrawnPlayers([...newShuffledList]);
     setDrawnPlayers([]);
     setCurrentPlayer(null);
     setIsDrawing(false);
@@ -67,8 +90,9 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
+      stopDrawingAnimation();
     };
-  }, [handleKeyDown]);
+  }, [handleKeyDown, stopDrawingAnimation]);
 
   const cardVariants = {
     hidden: { opacity: 0, y: 100, scale: 0.8, filter: 'blur(10px)' },
@@ -183,18 +207,28 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
             exit="exit"
             className="w-full"
           >
-            <Card className="w-full aspect-video flex flex-col items-center justify-center text-center bg-gradient-to-br from-card/80 to-card/50 backdrop-blur-sm border-primary/20 glow-border">
+            <Card 
+              className="w-full aspect-video flex flex-col items-center justify-center text-center bg-gradient-to-br from-card/80 to-card/50 backdrop-blur-sm border-primary/20 glow-border relative overflow-hidden"
+              style={{
+                boxShadow: 'inset 0 0 40px hsl(var(--primary) / 0.1)',
+                backgroundImage: 'url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Cpath d=\'M11 11L89 89M89 11L11 89\' stroke=\'hsl(199 85% 65% / 0.05)\' stroke-width=\'1\'/%3E%3C/svg%3E")',
+              }}
+            >
               <CardContent className="p-6 w-full">
                 {isDrawing ? (
                    <motion.div
+                      key="drawing"
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8 }}
                       transition={{ duration: 0.3 }}
                       className="text-center"
                     >
-                      <h1 className="text-5xl sm:text-7xl text-primary animate-pulse font-headline" style={{ textShadow: '0 0 15px hsl(var(--primary) / 0.6)' }}>
-                        Drawing...
+                      <p className="font-mono text-2xl sm:text-4xl font-bold text-muted-foreground animate-pulse">
+                        #{drawingDisplayPlayer?.playerNumber || '??'}
+                      </p>
+                      <h1 className="text-5xl sm:text-7xl mt-2 text-primary font-headline" style={{ textShadow: '0 0 15px hsl(var(--primary) / 0.6)' }}>
+                        {drawingDisplayPlayer?.playerName || 'Drawing...'}
                       </h1>
                     </motion.div>
                 ) : currentPlayer ? (
@@ -212,7 +246,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3, duration: 0.4 }}
                       className="text-5xl sm:text-7xl mt-2 truncate bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-headline"
-                       style={{ textShadow: '0 0 10px hsl(var(--accent) / 0.2)' }}
+                       style={{ filter: 'drop-shadow(0 0 10px hsl(var(--accent) / 0.4))' }}
                     >
                       {currentPlayer.playerName}
                     </motion.h1>
@@ -229,32 +263,32 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
                         }}
                     >
                         {currentPlayer.country && 
-                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg border border-border/50">
-                            <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Country</span>
+                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-primary/5 rounded-lg border border-primary/20 backdrop-blur-sm">
+                            <span className="text-sm text-primary font-bold uppercase tracking-wider">Country</span>
                             <span className="font-semibold text-lg truncate">{currentPlayer.country}</span>
                           </motion.div>
                         }
                         {currentPlayer.specialism && 
-                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg border border-border/50">
-                             <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Specialism</span>
+                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-primary/5 rounded-lg border border-primary/20 backdrop-blur-sm">
+                             <span className="text-sm text-primary font-bold uppercase tracking-wider">Specialism</span>
                             <span className="font-semibold text-lg truncate">{currentPlayer.specialism}</span>
                            </motion.div>
                         }
                         {currentPlayer.cua && 
-                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg border border-border/50">
-                            <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Status</span>
+                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-primary/5 rounded-lg border border-primary/20 backdrop-blur-sm">
+                            <span className="text-sm text-primary font-bold uppercase tracking-wider">Status</span>
                             <span className="font-semibold text-lg truncate">{currentPlayer.cua}</span>
                           </motion.div>
                         }
                         {currentPlayer.reservePrice != null && currentPlayer.reservePrice > 0 &&
-                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg border border-border/50">
-                             <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Reserve Price</span>
+                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-secondary/10 rounded-lg border border-secondary/30 backdrop-blur-sm">
+                             <span className="text-sm text-secondary font-bold uppercase tracking-wider">Reserve Price</span>
                              <span className="font-mono font-semibold text-lg truncate">{currentPlayer.reservePrice} Lakh</span>
                            </motion.div>
                         }
                         {currentPlayer.points != null &&
-                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg border border-border/50">
-                            <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Points</span>
+                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-secondary/10 rounded-lg border border-secondary/30 backdrop-blur-sm">
+                            <span className="text-sm text-secondary font-bold uppercase tracking-wider">Points</span>
                             <span className="font-mono font-semibold text-lg truncate">{currentPlayer.points}</span>
                           </motion.div>
                         }
@@ -302,9 +336,11 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
             </Button>
         )}
         <p className="text-sm text-muted-foreground">
-          {undrawnPlayers.length} / {players.length} players remaining
+          {undrawnPlayers.length} / {activePlayerList.length} players remaining
         </p>
       </div>
     </div>
   );
 }
+
+    
