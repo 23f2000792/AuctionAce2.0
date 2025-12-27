@@ -2,7 +2,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore } from '@/firebase';
 import { collection, writeBatch, doc, getDocs, query, where } from 'firebase/firestore';
 import { Player } from '@/lib/player-data';
 import { Button } from '@/components/ui/button';
@@ -21,14 +21,6 @@ export default function ImportPage() {
   const [file, setFile] = useState<File | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const playersQuery = useMemoFirebase(() => {
-    if (!user || !firestore) return null;
-    return query(collection(firestore, 'players'), where('userId', '==', user.uid));
-  }, [user, firestore]);
-
-  const { data: existingPlayers, isLoading: isLoadingPlayers } = useCollection<Player>(playersQuery);
-
-
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       setFile(event.target.files[0]);
@@ -36,7 +28,7 @@ export default function ImportPage() {
   };
 
   const handleImport = async () => {
-    if (!file || !user || !firestore || isLoadingPlayers) {
+    if (!file || !user || !firestore) {
       toast({
         title: 'Error',
         description: 'File, user, or database not ready.',
@@ -52,20 +44,31 @@ export default function ImportPage() {
       skipEmptyLines: true,
       complete: async (results) => {
         try {
-          const playersCollectionRef = collection(firestore, 'players');
-          const importedData = results.data as any[];
-          
           const batch = writeBatch(firestore);
-          let playersAdded = 0;
-          let playersUpdated = 0;
           
-          const existingPlayersMap = new Map(existingPlayers?.map(p => [p.playerName.toLowerCase(), p]));
+          // 1. Delete all existing players for the user
+          const playersCollectionRef = collection(firestore, 'players');
+          const playersQuery = query(playersCollectionRef, where('userId', '==', user.uid));
+          const existingPlayersSnap = await getDocs(playersQuery);
+          existingPlayersSnap.forEach(doc => batch.delete(doc.ref));
 
+          // 2. Delete all existing sets for the user
+          const setsCollectionRef = collection(firestore, 'sets');
+          const setsQuery = query(setsCollectionRef, where('userId', '==', user.uid));
+          const existingSetsSnap = await getDocs(setsQuery);
+          existingSetsSnap.forEach(doc => batch.delete(doc.ref));
+
+          const importedData = results.data as any[];
+          const newPlayers: Player[] = [];
+          
+          // 3. Add new players from CSV
           for (const item of importedData) {
             const playerName = `${item['First Name'] || ''} ${item['Surname'] || ''}`.trim();
             if (!playerName) continue;
 
-            const newPlayerData: Omit<Player, 'id'> = {
+            const playerRef = doc(playersCollectionRef); // Create a new document reference
+            const newPlayerData: Player = {
+              id: playerRef.id,
               playerName: playerName,
               firstName: item['First Name'] || '',
               surname: item['Surname'] || '',
@@ -77,33 +80,33 @@ export default function ImportPage() {
               playerNumber: parseInt(item['List Sr.No.'], 10) || 0,
               userId: user.uid,
             };
+            
+            batch.set(playerRef, newPlayerData);
+            newPlayers.push(newPlayerData);
+          }
 
-            const existingPlayer = existingPlayersMap.get(playerName.toLowerCase());
-
-            if (existingPlayer) {
-              // Player exists, update it
-              const playerRef = doc(firestore, 'players', existingPlayer.id);
-              batch.update(playerRef, newPlayerData);
-              playersUpdated++;
-            } else {
-              // New player, add it
-              const playerRef = doc(playersCollectionRef); // Auto-generate ID
-              batch.set(playerRef, newPlayerData);
-              playersAdded++;
-            }
+          // 4. Create a single new set with all players from the CSV
+          if (newPlayers.length > 0) {
+            const setRef = doc(setsCollectionRef);
+            const setName = file.name.replace(/\.csv$/i, ''); // Use filename as set name
+            batch.set(setRef, {
+              name: setName,
+              players: newPlayers,
+              userId: user.uid,
+            });
           }
           
           await batch.commit();
 
           toast({
             title: 'Import Successful',
-            description: `${playersAdded} players added and ${playersUpdated} players updated.`,
+            description: `All existing data cleared. Imported ${newPlayers.length} players and created 1 new set.`,
             action: (
                <CheckCircle className="text-green-500" />
             )
           });
 
-          router.push('/players');
+          router.push('/');
 
         } catch (error: any) {
           console.error('Import error:', error);
@@ -137,14 +140,13 @@ export default function ImportPage() {
         <CardHeader>
           <CardTitle className="flex items-center"><Upload className="mr-2" /> Import Players from CSV</CardTitle>
           <CardDescription>
-            Add new players or update existing ones from a CSV file. This will not delete your existing players.
+            <span className="font-bold text-destructive">Warning:</span> This will permanently delete all your existing players and sets and replace them with the content from the CSV file.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="space-y-2">
                  <p className="text-sm font-medium">The CSV should have the following columns:</p>
                  <code className="text-xs p-2 bg-muted rounded-sm block whitespace-pre-wrap">List Sr.No., First Name, Surname, Country, Specialism, C/U/A, Reserve Price Rs Lakh, Points</code>
-                 <p className="text-sm text-muted-foreground pt-2">Players are matched by their full name. If a player from the CSV already exists in your list, their information will be updated. Otherwise, a new player will be created.</p>
             </div>
           <Input
             type="file"
@@ -155,18 +157,18 @@ export default function ImportPage() {
           />
            <Button
             onClick={handleImport}
-            disabled={!file || isProcessing || isLoadingPlayers}
+            disabled={!file || isProcessing}
             className="w-full"
           >
-            {isProcessing || isLoadingPlayers ? (
+            {isProcessing ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {isLoadingPlayers ? 'Loading players...' : 'Processing...'}
+                Processing...
               </>
             ) : (
               <>
                 <Upload className="mr-2" />
-                Import Data
+                Import and Overwrite Data
               </>
             )}
           </Button>
