@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
@@ -25,6 +25,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
 
   const router = useRouter();
 
@@ -34,6 +35,9 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
     setAvailablePlayers([...players].sort(() => Math.random() - 0.5));
     setDrawnPlayers([]);
     setCurrentPlayer(null);
+     if (audioRef.current) {
+      audioRef.current.load(); // Preload the audio
+    }
   }, [players]);
 
   const handleDrawPlayer = useCallback(() => {
@@ -41,10 +45,17 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
 
     setIsDrawing(true);
     setCurrentPlayer(null);
+    audioRef.current?.play();
+
 
     // Suspense and reveal animation
     setTimeout(() => {
       const [drawnPlayer, ...remainingPlayers] = availablePlayers;
+      
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
 
       setCurrentPlayer(drawnPlayer);
       setAvailablePlayers(remainingPlayers);
@@ -79,7 +90,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
       transition: {
         duration: 0.5,
         type: 'spring',
-        stiffness: 100,
+        stiffness: 80,
         damping: 15,
       },
     },
@@ -103,6 +114,9 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
 
   return (
     <div className="fixed inset-0 bg-background flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
+       <audio ref={audioRef} preload="auto">
+        <source src="https://cdn.pixabay.com/download/audio/2022/10/17/audio_c42268962a.mp3" type="audio/mpeg" />
+      </audio>
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -296,3 +310,5 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
     </div>
   );
 }
+
+    
