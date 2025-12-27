@@ -162,7 +162,7 @@ export default function Home() {
                       <CardFooter className="p-4">
                          <Button asChild className="w-full mt-auto text-sm">
                             <Link href={`/auction/present/${set.id}`}>
-                              <Gavel className="mr-2 h-4 w-4" /> Start Auction
+                              Start Auction
                             </Link>
                           </Button>
                       </CardFooter>
