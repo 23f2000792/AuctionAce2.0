@@ -13,24 +13,15 @@ export default function PresentPage() {
   const params = useParams();
   const slug = params.slug;
 
-  const { user, isUserLoading } = useUser();
+  const { isUserLoading } = useUser();
   const firestore = useFirestore();
 
   const setRef = useMemoFirebase(() => {
-    // Public sets can be viewed without a user, so we don't depend on user here.
     if (!firestore || typeof slug !== 'string') return null;
     return doc(firestore, 'sets', slug) as DocumentReference<PlayerSet>;
   }, [firestore, slug]);
 
   const { data: set, isLoading: isLoadingSet } = useDoc<PlayerSet>(setRef);
-
-  useEffect(() => {
-    // If the set has a PIN, it's private.
-    // If a user is not logged in OR the user doesn't own this private set, deny access.
-    if (set && set.hashedPin && (!user || user.uid !== set.userId)) {
-      notFound();
-    }
-  }, [set, user, isUserLoading, router]);
 
   const isLoading = isLoadingSet || isUserLoading;
 
@@ -47,8 +38,5 @@ export default function PresentPage() {
     return null;
   }
 
-  // Use the locked order if it exists, otherwise use the original player list.
-  const playersToPresent = set.lockedOrder || set.players;
-
-  return <FullScreenView players={playersToPresent} set={set} />;
+  return <FullScreenView players={set.players} set={set} />;
 }

@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel, Upload, Lock } from 'lucide-react';
+import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel, Upload, Lock, View } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, query, where, orderBy } from 'firebase/firestore';
@@ -154,18 +154,12 @@ export default function Home() {
                             <span className="text-xs uppercase font-bold tracking-wider">Players</span>
                             <span className="text-3xl font-headline text-foreground">{set.players.length}</span>
                          </div>
-                         {set.lockedOrder && (
-                            <div className="flex items-center text-xs text-green-400 mt-2">
-                               <Lock className="h-3 w-3 mr-1" />
-                               <span>Order Locked</span>
-                            </div>
-                         )}
                       </CardContent>
                       <CardFooter className="p-4 mt-auto flex flex-col gap-2">
                           <Button asChild className="w-full" variant="outline">
-                            <Link href={`/auction/generate/${set.id}`}>
-                               <Lock className="mr-2" />
-                               Generate Order
+                            <Link href={`/auction/roster/${set.id}`}>
+                               <View className="mr-2" />
+                               View Roster
                             </Link>
                           </Button>
                          <Button asChild className="w-full btn-glow">
