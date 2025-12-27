@@ -25,7 +25,6 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const audioRef = useRef<HTMLAudioElement>(null);
 
   const router = useRouter();
 
@@ -35,9 +34,6 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
     setAvailablePlayers([...players].sort(() => Math.random() - 0.5));
     setDrawnPlayers([]);
     setCurrentPlayer(null);
-     if (audioRef.current) {
-      audioRef.current.load(); // Preload the audio
-    }
   }, [players]);
 
   const handleDrawPlayer = useCallback(() => {
@@ -45,24 +41,11 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
 
     setIsDrawing(true);
     setCurrentPlayer(null);
-    
-    const playPromise = audioRef.current?.play();
-    if (playPromise !== undefined) {
-      playPromise.catch(error => {
-        // Autoplay was prevented.
-        console.error("Audio play failed:", error);
-      });
-    }
 
     // Suspense and reveal animation
     setTimeout(() => {
       const [drawnPlayer, ...remainingPlayers] = availablePlayers;
       
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-      }
-
       setCurrentPlayer(drawnPlayer);
       setAvailablePlayers(remainingPlayers);
       setDrawnPlayers((prev) => [drawnPlayer, ...prev]);
@@ -120,9 +103,6 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
 
   return (
     <div className="fixed inset-0 bg-background flex flex-col items-center justify-center p-4 z-[100] overflow-hidden">
-       <audio ref={audioRef} preload="auto">
-        <source src="https://cdn.pixabay.com/download/audio/2022/10/17/audio_c42268962a.mp3" type="audio/mpeg" />
-      </audio>
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -228,7 +208,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                       initial={{ opacity: 0, y: 50 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3, duration: 0.4 }}
-                      className="text-5xl sm:text-8xl font-headline mt-2 truncate"
+                      className="text-5xl sm:text-7xl font-headline mt-2 truncate"
                       style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.7)' }}
                     >
                       {currentPlayer.playerName}

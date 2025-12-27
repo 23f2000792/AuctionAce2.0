@@ -140,7 +140,7 @@ export default function Home() {
                   >
                     <Card className="hover:border-primary/50 hover:shadow-primary/10 hover:shadow-lg transition-all flex flex-col h-full bg-secondary/20 border-secondary">
                       <CardHeader className="p-4 flex-row items-center justify-between">
-                         <CardTitle className="text-xl font-headline truncate">{set.name}</CardTitle>
+                         <CardTitle className="text-lg font-headline truncate">{set.name}</CardTitle>
                          <Button variant="ghost" size="icon" asChild>
                             <Link href={`/sets/edit/${set.id}`}>
                               <Edit className="h-4 w-4" />
