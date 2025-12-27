@@ -18,6 +18,7 @@ import {
 interface FullScreenViewProps {
   players: Player[];
   set: PlayerSet;
+  onReset: () => void;
 }
 
 const Starfield = () => {
@@ -90,9 +91,8 @@ const Starfield = () => {
 };
   
 
-export default function FullScreenView({ players, set }: FullScreenViewProps) {
-  const [activePlayerList, setActivePlayerList] = useState<Player[]>(() => shuffleArray(players));
-  const [undrawnPlayers, setUndrawnPlayers] = useState<Player[]>([...activePlayerList]);
+export default function FullScreenView({ players, set, onReset }: FullScreenViewProps) {
+  const [undrawnPlayers, setUndrawnPlayers] = useState<Player[]>([...players]);
   const [drawnPlayers, setDrawnPlayers] = useState<Player[]>([]);
   const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -102,6 +102,12 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
   const drawingInterval = useRef<NodeJS.Timeout>();
   const [drawingDisplayPlayer, setDrawingDisplayPlayer] = useState<Player | null>(null);
 
+  // Reset internal state when the external player list changes (on new shuffle)
+  useEffect(() => {
+    setUndrawnPlayers([...players]);
+    setDrawnPlayers([]);
+    setCurrentPlayer(null);
+  }, [players]);
 
   const stopDrawingAnimation = useCallback(() => {
     if (drawingInterval.current) {
@@ -137,11 +143,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
   
   const resetAuction = () => {
     stopDrawingAnimation();
-    const newShuffledList = shuffleArray(players);
-    setActivePlayerList(newShuffledList);
-    setUndrawnPlayers([...newShuffledList]);
-    setDrawnPlayers([]);
-    setCurrentPlayer(null);
+    onReset(); // Call the passed-in reset function
     setIsDrawing(false);
   }
 
@@ -198,7 +200,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
 
 
   return (
-    <div className="fixed inset-0 bg-background flex flex-col items-center justify-center p-4 overflow-hidden">
+    <div className="fixed inset-0 flex flex-col items-center justify-center p-4 overflow-hidden">
       <AnimatePresence>
         {isSidebarOpen && (
           <motion.div
@@ -278,7 +280,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
             className="w-full"
           >
             <Card 
-              className="w-full aspect-video flex flex-col items-center justify-center text-center bg-gradient-to-br from-card/80 to-card/50 backdrop-blur-sm border-primary/20 glow-border relative overflow-hidden"
+              className="w-full aspect-video flex flex-col items-center justify-center text-center bg-card/80 backdrop-blur-sm border-primary/20 glow-border relative overflow-hidden"
               style={{
                 boxShadow: 'inset 0 0 40px hsl(var(--primary) / 0.1)',
               }}
@@ -406,7 +408,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
             </Button>
         )}
         <p className="text-sm text-muted-foreground">
-          {undrawnPlayers.length} / {activePlayerList.length} players remaining
+          {undrawnPlayers.length} / {players.length} players remaining
         </p>
       </div>
     </div>

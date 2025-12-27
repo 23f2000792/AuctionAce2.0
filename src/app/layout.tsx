@@ -17,11 +17,6 @@ export default function RootLayout({
   const pathname = usePathname();
   const isAuctionPage = pathname.includes('/auction/present/');
 
-  const AppHeader = () => {
-    if (isAuctionPage) return null;
-    return <Header />;
-  };
-
   return (
     <html lang="en" className="dark" style={{ colorScheme: 'dark' }} suppressHydrationWarning>
       <head>
@@ -30,7 +25,7 @@ export default function RootLayout({
         <FirebaseClientProvider>
           <ParticleBackground />
           <div className="flex min-h-screen w-full flex-col">
-            <AppHeader />
+            {!isAuctionPage && <Header />}
             <AnimatePresence mode="wait">
               <motion.main
                 key={pathname}

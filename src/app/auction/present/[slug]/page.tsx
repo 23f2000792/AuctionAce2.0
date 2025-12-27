@@ -23,28 +23,34 @@ export default function PresentPage() {
   }, [firestore, slug]);
 
   const { data: set, isLoading: isLoadingSet } = useDoc<PlayerSet>(setRef);
-  const [shuffledPlayers, setShuffledPlayers] = useState<Player[] | null>(null);
+  const [activePlayerList, setActivePlayerList] = useState<Player[] | null>(null);
 
   useEffect(() => {
     if (set && set.players) {
-      setShuffledPlayers(shuffleArray(set.players));
+        setActivePlayerList(shuffleArray(set.players));
     }
   }, [set]);
 
-  const isLoading = isLoadingSet || isUserLoading || !shuffledPlayers;
+  const resetAuction = () => {
+    if (set && set.players) {
+        setActivePlayerList(shuffleArray(set.players));
+    }
+  }
+
+  const isLoading = isLoadingSet || isUserLoading || !activePlayerList;
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-background flex items-center justify-center">
+      <div className="fixed inset-0 flex items-center justify-center">
         <p className="text-lg">Loading Presentation...</p>
       </div>
     );
   }
 
-  if (!set || !shuffledPlayers) {
+  if (!set || !activePlayerList) {
     notFound();
     return null;
   }
 
-  return <FullScreenView players={shuffledPlayers} set={set} />;
+  return <FullScreenView players={activePlayerList} set={set} onReset={resetAuction} />;
 }
