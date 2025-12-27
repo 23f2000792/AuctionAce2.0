@@ -5,22 +5,22 @@
 
 @layer base {
   :root {
-    --background: 227 10% 25%; /* Dark Charcoal: #383946 */
+    --background: 222 47% 11%; /* Deep Navy Blue */
     --foreground: 210 40% 98%;
 
-    --card: 227 10% 30%;
+    --card: 222 47% 15%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 227 10% 20%;
+    --popover: 222 47% 10%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 199 85% 65%; /* Sporty Blue: #5ac9f1 */
-    --primary-foreground: 227 10% 10%;
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 49 100% 57%; /* Vibrant Yellow: #ffd922 */
     --secondary-foreground: 227 10% 15%;
 
-    --muted: 227 10% 40%;
+    --muted: 222 47% 25%;
     --muted-foreground: 215 20.2% 65.1%;
 
     --accent: 49 100% 57%; /* Vibrant Yellow: #ffd922 */
@@ -30,7 +30,7 @@
     --destructive-foreground: 210 40% 98%;
 
     --border: 199 85% 55%;
-    --input: 227 10% 35%;
+    --input: 222 47% 20%;
     --ring: 199 85% 65%;
 
     --radius: 0.5rem;
