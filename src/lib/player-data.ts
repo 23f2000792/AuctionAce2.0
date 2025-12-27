@@ -14,11 +14,6 @@ export interface Player extends DocumentData {
   points?: number;
 }
 
-export interface AuctionOrderItem {
-  player: Player;
-  orderNumber: number;
-}
-
 export interface PlayerSet extends DocumentData {
   id: string;
   name: string;

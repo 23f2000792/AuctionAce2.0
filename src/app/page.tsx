@@ -17,7 +17,7 @@ export default function Home() {
 
   const setsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'sets'), orderBy('order'));
+    return query(collection(firestore, 'sets'), orderBy('order', 'asc'));
   }, [firestore]);
 
   const { data: sets, isLoading: isLoadingSets } = useCollection<PlayerSet>(setsQuery);
@@ -156,12 +156,6 @@ export default function Home() {
                          </div>
                       </CardContent>
                       <CardFooter className="p-4 mt-auto flex flex-col gap-2">
-                          <Button asChild className="w-full" variant="outline">
-                            <Link href={`/auction/roster/${set.id}`}>
-                               <View className="mr-2" />
-                               View Roster
-                            </Link>
-                          </Button>
                          <Button asChild className="w-full btn-glow">
                             <Link href={`/auction/present/${set.id}`}>
                               Start Auction

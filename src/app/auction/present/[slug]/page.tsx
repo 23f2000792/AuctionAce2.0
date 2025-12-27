@@ -1,12 +1,13 @@
 
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { notFound, useParams, useRouter } from 'next/navigation';
-import { PlayerSet } from '@/lib/player-data';
+import { Player, PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
 import { doc, DocumentReference } from 'firebase/firestore';
 import FullScreenView from '@/components/FullScreenView';
+import { shuffleArray } from '@/lib/utils';
 
 export default function PresentPage() {
   const router = useRouter();
@@ -22,8 +23,15 @@ export default function PresentPage() {
   }, [firestore, slug]);
 
   const { data: set, isLoading: isLoadingSet } = useDoc<PlayerSet>(setRef);
+  const [shuffledPlayers, setShuffledPlayers] = useState<Player[] | null>(null);
 
-  const isLoading = isLoadingSet || isUserLoading;
+  useEffect(() => {
+    if (set && set.players) {
+      setShuffledPlayers(shuffleArray(set.players));
+    }
+  }, [set]);
+
+  const isLoading = isLoadingSet || isUserLoading || !shuffledPlayers;
 
   if (isLoading) {
     return (
@@ -33,10 +41,10 @@ export default function PresentPage() {
     );
   }
 
-  if (!set) {
+  if (!set || !shuffledPlayers) {
     notFound();
     return null;
   }
 
-  return <FullScreenView players={set.players} set={set} />;
+  return <FullScreenView players={shuffledPlayers} set={set} />;
 }
