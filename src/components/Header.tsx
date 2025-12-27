@@ -30,13 +30,13 @@ const Header = () => {
   const NavContent = () => (
     <>
       { !isUserLoading && user && (
-        <div className='flex items-center gap-2'>
-            <Button variant="outline" asChild>
+        <div className='flex flex-col md:flex-row items-stretch md:items-center gap-4'>
+            <Button variant="ghost" asChild>
                 <Link href="/players" onClick={() => setIsSheetOpen(false)}>
                     <Users /> Manage Players
                 </Link>
             </Button>
-             <Button variant="outline" asChild>
+             <Button variant="ghost" asChild>
                 <Link href="/sets/create" onClick={() => setIsSheetOpen(false)}>
                     <PlusCircle /> Create Set
                 </Link>
@@ -46,7 +46,7 @@ const Header = () => {
       {isUserLoading ? (
          <div className="h-10 w-24 animate-pulse rounded-md bg-muted/50" />
       ) : user ? (
-        <Button variant="ghost" onClick={handleSignOut} className="w-full justify-start md:w-auto">
+        <Button variant="ghost" onClick={handleSignOut}>
           <LogOut /> Sign Out
         </Button>
       ) : (
@@ -60,7 +60,7 @@ const Header = () => {
   );
 
   return (
-    <header className="w-full border-b border-primary/20 bg-background/50 backdrop-blur-sm z-20 sticky top-0">
+    <header className="w-full border-b border-primary/20 bg-gradient-to-b from-background to-background/50 backdrop-blur-sm z-20 sticky top-0">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 group">
           <Gavel className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />

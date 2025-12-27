@@ -52,21 +52,23 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
     setIsDrawing(false);
   }
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
+  const handleKeyDown = useCallback((event: KeyboardEvent) => {
       if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault();
         handleDrawPlayer();
       } else if (event.key === 'Escape') {
         router.push('/');
       }
-    };
+    }, [handleDrawPlayer, router]
+  );
 
+
+  useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleDrawPlayer, router]);
+  }, [handleKeyDown]);
 
   const cardVariants = {
     hidden: { opacity: 0, y: 100, scale: 0.8, filter: 'blur(10px)' },
@@ -181,7 +183,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
             exit="exit"
             className="w-full"
           >
-            <Card className="w-full aspect-video flex flex-col items-center justify-center text-center bg-card/30 backdrop-blur-sm border-border">
+            <Card className="w-full aspect-video flex flex-col items-center justify-center text-center bg-card/30 backdrop-blur-sm border-primary/20 glow-border">
               <CardContent className="p-6 w-full">
                 {isDrawing ? (
                    <motion.div
@@ -201,7 +203,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
                       initial={{ opacity: 0, scale: 0.5 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ delay: 0.2, duration: 0.3 }}
-                      className="text-2xl sm:text-4xl font-bold text-muted-foreground font-headline"
+                      className="font-mono text-2xl sm:text-4xl font-bold text-muted-foreground"
                     >
                       #{currentPlayer.playerNumber}
                     </motion.p>
@@ -209,8 +211,8 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
                       initial={{ opacity: 0, y: 50 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3, duration: 0.4 }}
-                      className="text-5xl sm:text-7xl font-headline mt-2 truncate"
-                      style={{ textShadow: '0 0 20px hsl(var(--primary) / 0.7)' }}
+                      className="text-5xl sm:text-7xl font-headline mt-2 truncate bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+                      style={{ textShadow: '0 0 40px hsl(var(--primary) / 0.5)' }}
                     >
                       {currentPlayer.playerName}
                     </motion.h1>
@@ -227,33 +229,33 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
                         }}
                     >
                         {currentPlayer.country && 
-                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg">
+                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg border border-border/50">
                             <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Country</span>
                             <span className="font-semibold text-lg truncate">{currentPlayer.country}</span>
                           </motion.div>
                         }
                         {currentPlayer.specialism && 
-                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg">
+                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg border border-border/50">
                              <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Specialism</span>
                             <span className="font-semibold text-lg truncate">{currentPlayer.specialism}</span>
                            </motion.div>
                         }
                         {currentPlayer.cua && 
-                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg">
+                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg border border-border/50">
                             <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Status</span>
                             <span className="font-semibold text-lg truncate">{currentPlayer.cua}</span>
                           </motion.div>
                         }
                         {currentPlayer.reservePrice != null && currentPlayer.reservePrice > 0 &&
-                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg">
+                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg border border-border/50">
                              <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Reserve Price</span>
-                             <span className="font-semibold text-lg truncate">{currentPlayer.reservePrice} Lakh</span>
+                             <span className="font-mono font-semibold text-lg truncate">{currentPlayer.reservePrice} Lakh</span>
                            </motion.div>
                         }
                         {currentPlayer.points != null &&
-                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg">
+                          <motion.div variants={drawnPlayerItemVariants} className="flex flex-col p-3 bg-background/50 rounded-lg border border-border/50">
                             <span className="text-sm text-muted-foreground font-bold uppercase tracking-wider">Points</span>
-                            <span className="font-semibold text-lg truncate">{currentPlayer.points}</span>
+                            <span className="font-mono font-semibold text-lg truncate">{currentPlayer.points}</span>
                           </motion.div>
                         }
                     </motion.div>

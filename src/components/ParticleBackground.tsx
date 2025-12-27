@@ -1,33 +1,71 @@
+
 'use client';
 import React, { useEffect, useRef, useCallback } from 'react';
 
 export const ParticleBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const particlesRef = useRef<any[]>([]);
   const animationFrameId = useRef<number>();
 
-  const createParticles = useCallback((canvas: HTMLCanvasElement) => {
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  const drawGrid = useCallback((ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) => {
+    const time = performance.now() * 0.00005;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Sun
+    const sunX = canvas.width / 2;
+    const sunY = canvas.height * 0.45;
+    const sunRadius = Math.min(canvas.width, canvas.height) * 0.2;
+
+    const sunGradient = ctx.createRadialGradient(sunX, sunY, sunRadius * 0.1, sunX, sunY, sunRadius);
+    sunGradient.addColorStop(0, 'hsla(0, 100%, 100%, 0.8)');
+    sunGradient.addColorStop(0.1, 'hsla(30, 100%, 70%, 0.6)');
+    sunGradient.addColorStop(0.4, 'hsla(330, 90%, 60%, 0.3)');
+    sunGradient.addColorStop(1, 'hsla(330, 90%, 60%, 0)');
     
-    const particlesArray = [];
-    const numberOfParticles = 50;
-    const canvasArea = canvas.width * canvas.height;
-    const particleDensity = numberOfParticles / (1920 * 1080); // baseline density
-    const adjustedParticles = Math.floor(canvasArea * particleDensity);
+    ctx.fillStyle = sunGradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    // Grid
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = 'hsl(var(--primary) / 0.3)';
+    const perspective = canvas.width * 0.8;
+    const projectionCenterY = canvas.height * 0.45;
+    
+    const numLines = 50;
+    for (let i = 0; i <= numLines; i++) {
+        const ratio = i / numLines;
+        const y = projectionCenterY + ratio * (canvas.height - projectionCenterY);
 
-    for (let i = 0; i < adjustedParticles; i++) {
-      particlesArray.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        size: Math.random() * 1.5 + 0.5,
-        speedX: Math.random() * 0.6 - 0.3,
-        speedY: Math.random() * 0.6 - 0.3,
-      });
+        // horizontal lines
+        const p = (y - projectionCenterY) / (canvas.height - projectionCenterY);
+        const rowY = projectionCenterY + (y - projectionCenterY) * Math.pow(p, 2);
+        
+        ctx.beginPath();
+        ctx.moveTo(0, rowY);
+        ctx.lineTo(canvas.width, rowY);
+        ctx.stroke();
+
+        // vertical lines
+        if(i < numLines) {
+            const x = canvas.width/2 + (i - numLines/2) * 30 * Math.pow(1.5, p*5);
+            const topY = projectionCenterY + (y - projectionCenterY) * Math.pow((i)/(numLines), 2)
+            const bottomY = projectionCenterY + (y - projectionCenterY) * Math.pow((i+1)/(numLines), 2)
+            
+            ctx.beginPath();
+            ctx.moveTo(x, topY);
+            ctx.lineTo(canvas.width/2 + (x-canvas.width/2) * 1.5, bottomY);
+            ctx.stroke();
+
+            const x2 = canvas.width/2 - (i - numLines/2) * 30 * Math.pow(1.5, p*5);
+            ctx.beginPath();
+            ctx.moveTo(x2, topY);
+            ctx.lineTo(canvas.width/2 + (x2-canvas.width/2) * 1.5, bottomY);
+            ctx.stroke();
+        }
     }
-    particlesRef.current = particlesArray;
+
+
   }, []);
+
 
   const animate = useCallback(() => {
     const canvas = canvasRef.current;
@@ -35,34 +73,19 @@ export const ParticleBackground = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const particles = particlesRef.current;
-    
-    for (let i = 0; i < particles.length; i++) {
-      const p = particles[i];
-      p.x += p.speedX;
-      p.y += p.speedY;
-
-      if (p.x > canvas.width || p.x < 0) p.speedX *= -1;
-      if (p.y > canvas.height || p.y < 0) p.speedY *= -1;
-
-      ctx.fillStyle = 'hsla(var(--primary) / 0.5)';
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fill();
-    }
+    drawGrid(ctx, canvas);
 
     animationFrameId.current = requestAnimationFrame(animate);
-  }, []);
+  }, [drawGrid]);
+
 
   const handleResize = useCallback(() => {
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
-      createParticles(canvas);
     }
-  }, [createParticles]);
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
