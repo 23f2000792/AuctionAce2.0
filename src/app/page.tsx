@@ -16,9 +16,10 @@ export default function Home() {
   const firestore = useFirestore();
 
   const setsQuery = useMemoFirebase(() => {
-    if (!user || !firestore) return null;
-    return query(collection(firestore, 'sets'), where('userId', '==', user.uid));
-  }, [user, firestore]);
+    if (!firestore) return null;
+    // Query all sets and order them. Security rules will enforce public readability.
+    return query(collection(firestore, 'sets'), orderBy('order', 'asc'));
+  }, [firestore]);
 
   const { data: sets, isLoading: isLoadingSets } = useCollection<PlayerSet>(setsQuery);
 
@@ -141,11 +142,13 @@ export default function Home() {
                     <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-secondary/10 border-border btn-clash hover:-translate-y-1">
                       <CardHeader className="p-4 flex-row items-start justify-between">
                          <CardTitle className="text-lg font-headline truncate">{set.name}</CardTitle>
-                         <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
-                            <Link href={`/sets/edit/${set.id}`}>
-                              <Edit className="h-4 w-4" />
-                            </Link>
-                         </Button>
+                         {user && set.userId === user.uid && (
+                           <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
+                              <Link href={`/sets/edit/${set.id}`}>
+                                <Edit className="h-4 w-4" />
+                              </Link>
+                           </Button>
+                         )}
                       </CardHeader>
                       <CardContent className="p-4 pt-0 flex-grow">
                          <div className="flex flex-col items-start text-sm text-muted-foreground">

@@ -100,12 +100,13 @@ export default function ImportPage() {
           }
 
           // Group players by Set
-          const setsMap = new Map<string, { players: Player[] }>();
+          const setsMap = new Map<string, { players: Player[], order: number }>();
           importedPlayers.forEach((item, index) => {
             const setName = item['Set'];
+            const setNo = parseInt(item['Set No.'], 10);
             if (setName) {
               if (!setsMap.has(setName)) {
-                setsMap.set(setName, { players: [] });
+                setsMap.set(setName, { players: [], order: isNaN(setNo) ? Infinity : setNo });
               }
               const createdPlayer = playersWithIds.find(p => p.playerName === `${item['First Name'] || ''} ${item['Surname'] || ''}`.trim());
               if(createdPlayer) {
@@ -120,6 +121,7 @@ export default function ImportPage() {
               name: setName,
               players: setData.players,
               userId: user.uid,
+              order: setData.order,
             };
             const setRef = doc(setsCollectionRef);
             creationBatch.set(setRef, newSet);
