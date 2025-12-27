@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel, Upload, Lock, View } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, orderBy } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
@@ -20,9 +20,7 @@ export default function Home() {
     // Query for sets owned by the current user
     return query(
       collection(firestore, 'sets'), 
-      where('userId', '==', user.uid),
-      orderBy('order', 'asc'), 
-      orderBy('name', 'asc')
+      where('userId', '==', user.uid)
     );
   }, [firestore, user]);
 
