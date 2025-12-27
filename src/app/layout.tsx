@@ -4,6 +4,7 @@
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import Header from '@/components/Header';
+import PublicHeader from '@/components/PublicHeader';
 import { FirebaseClientProvider } from '@/firebase';
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
@@ -16,6 +17,13 @@ export default function RootLayout({
 }>) {
   const pathname = usePathname();
   const isAuctionPage = pathname.includes('/auction/present/');
+  const isPublicPage = pathname === '/public';
+
+  const AppHeader = () => {
+    if (isAuctionPage) return null;
+    if (isPublicPage) return <PublicHeader />;
+    return <Header />;
+  };
 
   return (
     <html lang="en" className="dark" style={{ colorScheme: 'dark' }} suppressHydrationWarning>
@@ -25,7 +33,7 @@ export default function RootLayout({
         <FirebaseClientProvider>
           <ParticleBackground />
           <div className="flex min-h-screen w-full flex-col">
-            {!isAuctionPage && <Header />}
+            <AppHeader />
             <AnimatePresence mode="wait">
               <motion.main
                 key={pathname}
