@@ -11,9 +11,9 @@
     --card-foreground: 0 0% 98%;
     --popover: 232 10% 25%;
     --popover-foreground: 0 0% 98%;
-    --primary: 50 100% 56%; /* #ffd922 */
-    --primary-foreground: 232 10% 25%; /* Dark for contrast on yellow */
-    --secondary: 197 85% 65%; /* #5ac9f1 */
+    --primary: 197 85% 65%; /* #5ac9f1 */
+    --primary-foreground: 232 10% 25%; /* Dark for contrast on blue */
+    --secondary: 50 100% 56%; /* #ffd922 */
     --secondary-foreground: 232 10% 25%;
     --muted: 292 5% 35%;
     --muted-foreground: 240 5% 64.9%;
@@ -23,7 +23,7 @@
     --destructive-foreground: 0 0% 98%;
     --border: 292 5% 55%;
     --input: 292 5% 50%;
-    --ring: 50 100% 56%;
+    --ring: 197 85% 65%; /* Swapped to new primary */
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
