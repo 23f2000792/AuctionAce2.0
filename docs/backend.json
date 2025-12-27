@@ -40,6 +40,10 @@
           "type": "number",
           "description": "The number assigned to the player."
         },
+        "setNumber": {
+          "type": "number",
+          "description": "The set number the player belongs to, from the CSV import."
+        },
         "userId": {
           "type": "string",
           "description": "The ID of the user who created this player."
@@ -108,7 +112,8 @@
       "required": [
         "name",
         "players",
-        "userId"
+        "userId",
+        "order"
       ]
     }
   },
@@ -152,5 +157,3 @@
     ]
   }
 }
-
-    

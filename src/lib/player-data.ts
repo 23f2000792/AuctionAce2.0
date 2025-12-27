@@ -12,6 +12,7 @@ export interface Player extends DocumentData {
   cua?: string; // Capped/Uncapped/Associate
   reservePrice?: number;
   points?: number;
+  setNumber?: number;
 }
 
 export interface PlayerSet extends DocumentData {
@@ -19,4 +20,5 @@ export interface PlayerSet extends DocumentData {
   name: string;
   players: Player[];
   userId: string;
+  order: number;
 }

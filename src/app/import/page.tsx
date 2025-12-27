@@ -45,28 +45,32 @@ export default function ImportPage() {
       complete: async (results) => {
         try {
           const batch = writeBatch(firestore);
-          
-          // 1. Delete all existing players for the user
           const playersCollectionRef = collection(firestore, 'players');
+          const setsCollectionRef = collection(firestore, 'sets');
+
+          // 1. Delete all existing players for the user
           const playersQuery = query(playersCollectionRef, where('userId', '==', user.uid));
           const existingPlayersSnap = await getDocs(playersQuery);
           existingPlayersSnap.forEach(doc => batch.delete(doc.ref));
 
           // 2. Delete all existing sets for the user
-          const setsCollectionRef = collection(firestore, 'sets');
           const setsQuery = query(setsCollectionRef, where('userId', '==', user.uid));
           const existingSetsSnap = await getDocs(setsQuery);
           existingSetsSnap.forEach(doc => batch.delete(doc.ref));
 
           const importedData = results.data as any[];
-          const newPlayers: Player[] = [];
           
-          // 3. Add new players from CSV
+          // Group players by set
+          const setsMap: { [key: string]: { name: string, order: number, players: Player[] } } = {};
+
           for (const item of importedData) {
             const playerName = `${item['First Name'] || ''} ${item['Surname'] || ''}`.trim();
             if (!playerName) continue;
+            
+            const setNumber = item['Set No.'];
+            if (!setNumber) continue;
 
-            const playerRef = doc(playersCollectionRef); // Create a new document reference
+            const playerRef = doc(playersCollectionRef); // Create a new document reference for the player
             const newPlayerData: Player = {
               id: playerRef.id,
               playerName: playerName,
@@ -78,29 +82,43 @@ export default function ImportPage() {
               reservePrice: parseFloat(item['Reserve Price Rs Lakh']) || 0,
               points: parseInt(item['Points'], 10) || 0,
               playerNumber: parseInt(item['List Sr.No.'], 10) || 0,
+              setNumber: parseInt(setNumber, 10) || 0,
               userId: user.uid,
             };
             
+            // Add player creation to the batch
             batch.set(playerRef, newPlayerData);
-            newPlayers.push(newPlayerData);
+
+            // Group players for set creation
+            if (!setsMap[setNumber]) {
+              setsMap[setNumber] = { 
+                name: item['Set'] || `Set ${setNumber}`,
+                order: parseInt(setNumber, 10) || 0,
+                players: [] 
+              };
+            }
+            setsMap[setNumber].players.push(newPlayerData);
           }
 
-          // 4. Create a single new set with all players from the CSV
-          if (newPlayers.length > 0) {
+          // Create new sets from the grouped players
+          let setCount = 0;
+          for (const setNumber in setsMap) {
+            const setData = setsMap[setNumber];
             const setRef = doc(setsCollectionRef);
-            const setName = file.name.replace(/\.csv$/i, ''); // Use filename as set name
             batch.set(setRef, {
-              name: setName,
-              players: newPlayers,
+              name: setData.name,
+              order: setData.order,
+              players: setData.players,
               userId: user.uid,
             });
+            setCount++;
           }
           
           await batch.commit();
 
           toast({
             title: 'Import Successful',
-            description: `All existing data cleared. Imported ${newPlayers.length} players and created 1 new set.`,
+            description: `All existing data cleared. Created ${setCount} new sets.`,
             action: (
                <CheckCircle className="text-green-500" />
             )
@@ -146,7 +164,7 @@ export default function ImportPage() {
         <CardContent className="space-y-4">
             <div className="space-y-2">
                  <p className="text-sm font-medium">The CSV should have the following columns:</p>
-                 <code className="text-xs p-2 bg-muted rounded-sm block whitespace-pre-wrap">List Sr.No., First Name, Surname, Country, Specialism, C/U/A, Reserve Price Rs Lakh, Points</code>
+                 <code className="text-xs p-2 bg-muted rounded-sm block whitespace-pre-wrap">List Sr.No., Set No., Set, First Name, Surname, Country, Specialism, C/U/A, Reserve Price Rs Lakh, Points</code>
             </div>
           <Input
             type="file"
