@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "User": {
@@ -33,7 +34,7 @@
       "properties": {
         "playerName": {
           "type": "string",
-          "description": "Name of the player."
+          "description": "Full name of the player."
         },
         "playerNumber": {
           "type": "number",
@@ -42,12 +43,41 @@
         "userId": {
           "type": "string",
           "description": "The ID of the user who created this player."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "Player's first name."
+        },
+        "surname": {
+          "type": "string",
+          "description": "Player's surname."
+        },
+        "country": {
+          "type": "string",
+          "description": "Player's country of origin."
+        },
+        "specialism": {
+          "type": "string",
+          "description": "Player's primary skill (e.g., Batter, Bowler)."
+        },
+        "cua": {
+          "type": "string",
+          "description": "Player's status (Capped/Uncapped/Associate)."
+        },
+        "reservePrice": {
+          "type": "number",
+          "description": "The minimum bid price for the player in Lakhs."
+        },
+        "points": {
+          "type": "number",
+          "description": "Points associated with the player for team composition."
         }
       },
       "required": [
         "playerName",
         "playerNumber",
-        "userId"
+        "userId",
+        "firstName"
       ]
     },
     "Set": {
@@ -69,6 +99,10 @@
         "userId": {
           "type": "string",
           "description": "The ID of the user who created this set."
+        },
+        "order": {
+            "type": "number",
+            "description": "The display order for the set on the homepage."
         }
       },
       "required": [
@@ -118,3 +152,5 @@
     ]
   }
 }
+
+    
