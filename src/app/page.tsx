@@ -78,7 +78,7 @@ export default function Home() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-        <Card className="shadow-lg shadow-primary/10">
+        <Card className="glow-border bg-card/70 backdrop-blur-sm">
             <CardHeader>
                 <CardTitle className="text-3xl font-headline">Welcome to Auction Ace!</CardTitle>
                 <CardDescription>Your ultimate tool for creating and managing IPL-style player auctions.</CardDescription>
@@ -118,7 +118,7 @@ export default function Home() {
         </Button>
       </div>
 
-      <Card className="shadow-lg shadow-primary/10">
+      <Card className="glow-border bg-card/70 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-3xl font-headline">Select a Player Set</CardTitle>
           <CardDescription>
@@ -139,7 +139,7 @@ export default function Home() {
                     key={set.id}
                     variants={cardVariants}
                   >
-                    <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-secondary/30 hover:bg-secondary/50 border-border hover:-translate-y-1">
+                    <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-secondary/30 hover:bg-secondary/50 glow-border hover:-translate-y-1">
                       <CardHeader className="p-4 flex-row items-start justify-between">
                          <CardTitle className="text-lg font-headline truncate">{set.name}</CardTitle>
                          {user && set.userId === user.uid && (
