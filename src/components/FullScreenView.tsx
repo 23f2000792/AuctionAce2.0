@@ -183,7 +183,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
             exit="exit"
             className="w-full"
           >
-            <Card className="w-full aspect-video flex flex-col items-center justify-center text-center bg-card/30 backdrop-blur-sm border-primary/20 glow-border">
+            <Card className="w-full aspect-video flex flex-col items-center justify-center text-center bg-gradient-to-br from-card/80 to-card/50 backdrop-blur-sm border-primary/20 glow-border">
               <CardContent className="p-6 w-full">
                 {isDrawing ? (
                    <motion.div
@@ -212,7 +212,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3, duration: 0.4 }}
                       className="text-5xl sm:text-7xl mt-2 truncate bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-headline"
-                      style={{ textShadow: '0 0 20px hsl(var(--accent) / 0.4)' }}
+                       style={{ textShadow: '0 0 10px hsl(var(--accent) / 0.2)' }}
                     >
                       {currentPlayer.playerName}
                     </motion.h1>
@@ -308,5 +308,3 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
     </div>
   );
 }
-
-    
