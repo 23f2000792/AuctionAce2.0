@@ -90,16 +90,6 @@ export default function Home() {
                   <Upload className="mr-2" /> Import CSV
               </Link>
           </Button>
-          <Button asChild variant="outline">
-            <Link href="/players">
-              <Users className="mr-2" /> Manage Players
-            </Link>
-          </Button>
-          <Button asChild className="btn-glow">
-            <Link href="/sets/create">
-              <PlusCircle className="mr-2" /> Create New Set
-            </Link>
-          </Button>
         </div>
       )}
 
@@ -107,7 +97,7 @@ export default function Home() {
         <CardHeader>
           <CardTitle className="text-3xl">Select a Player Set</CardTitle>
           <CardDescription>
-            Choose one of your sets of players to begin the auction.
+            Choose a set of players to begin the auction.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -127,13 +117,6 @@ export default function Home() {
                     <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-gradient-to-br from-card/80 to-card/50 hover:from-card/90 glow-border hover:-translate-y-1">
                       <CardHeader className="p-4 flex-row items-start justify-between">
                          <CardTitle className="text-lg truncate">{set.name}</CardTitle>
-                         {user && set.userId === user.uid && (
-                            <Button asChild variant="ghost" size="icon" className="h-6 w-6">
-                                <Link href={`/sets/edit/${set.id}`}>
-                                    <Edit className="h-4 w-4"/>
-                                </Link>
-                            </Button>
-                         )}
                       </CardHeader>
                       <CardContent className="p-4 pt-0 flex-grow">
                          <div className="flex flex-col items-start text-sm text-muted-foreground">
@@ -161,11 +144,7 @@ export default function Home() {
               >
                   <Layers className="mx-auto h-12 w-12 text-muted-foreground" />
                   <h3 className="mt-4 text-lg font-medium">No Sets Found</h3>
-                  {user ? (
-                    <p className="mt-1 text-sm text-muted-foreground">Get started by creating a new set or importing players from a CSV.</p>
-                  ): (
-                    <p className="mt-1 text-sm text-muted-foreground">Log in to create and manage your auction sets.</p>
-                  )}
+                  <p className="mt-1 text-sm text-muted-foreground">Get started by importing players from a CSV.</p>
                   
                   {!user && !isUserLoading && (
                     <div className="mt-6">
