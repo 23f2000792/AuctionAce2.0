@@ -142,13 +142,6 @@ export default function Home() {
                     <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-gradient-to-br from-card/80 to-card/50 hover:from-card/90 glow-border hover:-translate-y-1">
                       <CardHeader className="p-4 flex-row items-start justify-between">
                          <CardTitle className="text-lg truncate">{set.name}</CardTitle>
-                         {user && set.userId === user.uid && (
-                           <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
-                              <Link href={`/sets/edit/${set.id}`}>
-                                <Edit className="h-4 w-4" />
-                              </Link>
-                           </Button>
-                         )}
                       </CardHeader>
                       <CardContent className="p-4 pt-0 flex-grow">
                          <div className="flex flex-col items-start text-sm text-muted-foreground">
