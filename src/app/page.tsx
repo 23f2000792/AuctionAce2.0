@@ -145,7 +145,7 @@ export default function Home() {
                              <div className="bg-primary/10 text-primary p-2 rounded-lg">
                                <Layers className="h-6 w-6" />
                              </div>
-                             <CardTitle className="text-base">{set.name}</CardTitle>
+                             <CardTitle className="text-lg">{set.name}</CardTitle>
                            </div>
                            <Button variant="ghost" size="icon" asChild>
                               <Link href={`/sets/edit/${set.id}`}>
@@ -160,7 +160,7 @@ export default function Home() {
                          </div>
                       </CardContent>
                       <CardFooter className="p-4">
-                         <Button asChild className="w-full mt-auto text-sm">
+                         <Button asChild className="w-full mt-auto">
                             <Link href={`/auction/present/${set.id}`}>
                               Start Auction
                             </Link>
