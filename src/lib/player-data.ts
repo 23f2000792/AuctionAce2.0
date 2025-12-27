@@ -5,7 +5,7 @@ export interface Player extends DocumentData {
   playerName: string;
   playerNumber: number;
   userId: string;
-  firstName?: string;
+  firstName: string;
   surname?: string;
   country?: string;
   specialism?: string;
