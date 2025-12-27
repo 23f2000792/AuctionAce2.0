@@ -54,10 +54,16 @@ export default function EditSetPage() {
 
   useEffect(() => {
     if (set) {
+      // Ensure the user trying to edit is the owner
+      if (user && set.userId !== user.uid) {
+        toast({ title: 'Unauthorized', description: 'You can only edit your own sets.', variant: 'destructive' });
+        router.push('/');
+        return;
+      }
       setSetName(set.name);
-      setSelectedPlayers(set.players);
+      setSelectedPlayers(set.players || []);
     }
-  }, [set]);
+  }, [set, user, router, toast]);
 
 
   const handlePlayerToggle = (player: Player) => {
@@ -77,11 +83,13 @@ export default function EditSetPage() {
       toast({ title: 'Select at least one player.', variant: 'destructive' });
       return;
     }
-    if (!user || !setRef) return;
+    if (!user || !setRef || !set) return;
 
+    // Critical fix: Ensure userId is preserved on update
     const updatedSet = {
       name: setName,
       players: selectedPlayers,
+      userId: set.userId, // Preserve the original userId
     };
 
     updateDocumentNonBlocking(setRef, updatedSet);
@@ -98,6 +106,18 @@ export default function EditSetPage() {
 
   if (isLoading) {
     return <div className="w-full text-center">Loading...</div>
+  }
+
+  // Also check if the set exists or if the user is not the owner
+  if (!set || (user && set.userId !== user.uid)) {
+    return (
+        <div className="w-full text-center">
+            <p>Set not found or you do not have permission to edit it.</p>
+             <Button variant="outline" asChild className="mt-4">
+                <Link href="/"><ArrowLeft className="mr-2" /> Back to Sets</Link>
+            </Button>
+        </div>
+    )
   }
 
   return (
@@ -140,7 +160,7 @@ export default function EditSetPage() {
                         {allPlayers.map((player) => (
                             <li
                             key={player.id}
-                            className="flex items-center gap-3 p-2 rounded-md hover:bg-secondary cursor-pointer"
+                            className="flex items-center gap-3 p-2 rounded-md hover:bg-muted cursor-pointer transition-colors"
                             onClick={() => handlePlayerToggle(player)}
                             >
                             <Checkbox
@@ -149,7 +169,7 @@ export default function EditSetPage() {
                                 id={`player-${player.id}`}
                             />
                             <span className="font-mono text-muted-foreground w-8 text-center">#{player.playerNumber}</span>
-                            <label htmlFor={`player-${player.id}`} className="font-medium cursor-pointer">{player.playerName}</label>
+                            <label htmlFor={`player-${player.id}`} className="font-medium cursor-pointer flex-1">{player.playerName}</label>
                             </li>
                         ))}
                         </ul>
