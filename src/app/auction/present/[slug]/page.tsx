@@ -17,28 +17,22 @@ export default function PresentPage() {
   const firestore = useFirestore();
 
   const setRef = useMemoFirebase(() => {
-    // Wait for user and firestore to be available before creating the reference
-    if (!firestore || !user || typeof slug !== 'string') return null;
+    // Public sets can be viewed without a user, so we don't depend on user here.
+    if (!firestore || typeof slug !== 'string') return null;
     return doc(firestore, 'sets', slug) as DocumentReference<PlayerSet>;
-  }, [firestore, user, slug]);
+  }, [firestore, slug]);
 
   const { data: set, isLoading: isLoadingSet } = useDoc<PlayerSet>(setRef);
 
   useEffect(() => {
-    if (!isUserLoading && !user) {
-      router.push('/login');
-    }
-  }, [user, isUserLoading, router]);
-
-  useEffect(() => {
-    // This check is important for security, ensuring a user can't access another user's set
-    if (!isLoadingSet && set && user && set.userId !== user.uid) {
+    // If the set has a PIN, it's private.
+    // If a user is not logged in OR the user doesn't own this private set, deny access.
+    if (set && set.hashedPin && (!user || user.uid !== set.userId)) {
       notFound();
     }
-  }, [set, user, isLoadingSet]);
+  }, [set, user, isUserLoading, router]);
 
-
-  const isLoading = isLoadingSet || isUserLoading || !set;
+  const isLoading = isLoadingSet || isUserLoading;
 
   if (isLoading) {
     return (
@@ -49,15 +43,12 @@ export default function PresentPage() {
   }
 
   if (!set) {
-    // This case will be hit if the set doesn't exist or there was an issue loading it
-    // that wasn't a permissions error (already handled by isLoading logic).
-    // Can also be hit briefly before the loading state properly updates.
-    return (
-       <div className="fixed inset-0 bg-background flex items-center justify-center">
-        <p className="text-lg">Preparing auction...</p>
-      </div>
-    );
+    notFound();
+    return null;
   }
 
-  return <FullScreenView players={set.players} />;
+  // Use the locked order if it exists, otherwise use the original player list.
+  const playersToPresent = set.lockedOrder || set.players;
+
+  return <FullScreenView players={playersToPresent} set={set} />;
 }

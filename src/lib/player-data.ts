@@ -25,4 +25,7 @@ export interface PlayerSet extends DocumentData {
   players: Player[];
   userId: string;
   order?: number;
+  lockedOrder?: Player[];
+  hashedPin?: string;
+  lockedAt?: string;
 }

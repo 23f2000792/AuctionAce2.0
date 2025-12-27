@@ -5,8 +5,8 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
-import { X, Gavel, Users, ChevronsLeft, ChevronsRight } from 'lucide-react';
-import { Player } from '@/lib/player-data';
+import { X, Gavel, Users, ChevronsLeft, ChevronsRight, ArrowLeft, ArrowRight, SkipForward, SkipBack } from 'lucide-react';
+import { Player, PlayerSet } from '@/lib/player-data';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import {
@@ -17,47 +17,34 @@ import {
 
 interface FullScreenViewProps {
   players: Player[];
+  set: PlayerSet;
 }
 
-export default function FullScreenView({ players }: FullScreenViewProps) {
-  const [availablePlayers, setAvailablePlayers] = useState<Player[]>([]);
-  const [drawnPlayers, setDrawnPlayers] = useState<Player[]>([]);
-  const [currentPlayer, setCurrentPlayer] = useState<Player | null>(null);
-  const [isDrawing, setIsDrawing] = useState(false);
+export default function FullScreenView({ players, set }: FullScreenViewProps) {
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const isLocked = !!set.lockedOrder;
 
   const router = useRouter();
+  
+  const currentPlayer = players[currentIndex];
 
+  const goToNext = useCallback(() => {
+    setCurrentIndex((prev) => Math.min(prev + 1, players.length - 1));
+  }, [players.length]);
 
-  useEffect(() => {
-    // Initial shuffle of players
-    setAvailablePlayers([...players].sort(() => Math.random() - 0.5));
-    setDrawnPlayers([]);
-    setCurrentPlayer(null);
-  }, [players]);
-
-  const handleDrawPlayer = useCallback(() => {
-    if (availablePlayers.length === 0 || isDrawing) return;
-
-    setIsDrawing(true);
-    setCurrentPlayer(null);
-
-    // Suspense and reveal animation
-    setTimeout(() => {
-      const [drawnPlayer, ...remainingPlayers] = availablePlayers;
-      
-      setCurrentPlayer(drawnPlayer);
-      setAvailablePlayers(remainingPlayers);
-      setDrawnPlayers((prev) => [drawnPlayer, ...prev]);
-      setIsDrawing(false);
-    }, 1500);
-  }, [availablePlayers, isDrawing]);
+  const goToPrev = useCallback(() => {
+    setCurrentIndex((prev) => Math.max(prev - 1, 0));
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === ' ' || event.key === 'Enter') {
+      if (event.key === 'ArrowRight') {
         event.preventDefault();
-        handleDrawPlayer();
+        goToNext();
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        goToPrev();
       } else if (event.key === 'Escape') {
         router.push('/');
       }
@@ -67,7 +54,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [handleDrawPlayer, router]);
+  }, [goToNext, goToPrev, router]);
 
   const cardVariants = {
     hidden: { opacity: 0, y: 100, scale: 0.8, filter: 'blur(10px)' },
@@ -114,7 +101,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
           >
             <div className="h-full w-full bg-card/80 backdrop-blur-sm border-r border-primary/20 p-4 space-y-4">
               <h3 className="text-xl font-bold text-primary-foreground">
-                Drawn Players ({drawnPlayers.length})
+                Auction Order ({players.length})
               </h3>
               <AnimatePresence>
                 <motion.ul
@@ -123,14 +110,17 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                   animate="visible"
                   className="space-y-2 h-[calc(100%-4rem)] overflow-y-auto pr-2"
                 >
-                  {drawnPlayers.map((player, index) => (
+                  {players.map((player, index) => (
                     <motion.li
                       key={player.id}
                       variants={drawnPlayerItemVariants}
-                      className="flex items-center gap-3 p-2 bg-secondary/50 rounded-md text-left"
+                      className={cn(
+                          "flex items-center gap-3 p-2 rounded-md text-left transition-colors",
+                          index === currentIndex ? "bg-primary/30" : "bg-secondary/50"
+                       )}
                     >
                       <span className="text-sm font-bold text-muted-foreground w-6">
-                        {drawnPlayers.length - index}.
+                        {index + 1}.
                       </span>
                       <span className="font-medium truncate">{player.playerName}</span>
                       <span className="font-mono text-xs text-primary ml-auto">
@@ -182,19 +172,7 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
           >
             <Card className="w-full aspect-video flex flex-col items-center justify-center text-center bg-card/30 backdrop-blur-sm border-border">
               <CardContent className="p-6 w-full">
-                {isDrawing ? (
-                  <motion.div
-                    key="drawing"
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.5, opacity: 0 }}
-                  >
-                    <Gavel className="h-24 w-24 sm:h-32 sm:w-32 text-primary animate-[pulse_2s_cubic-bezier(0.4,0,0.6,1)_infinite]" />
-                    <p className="mt-4 text-2xl sm:text-3xl tracking-widest uppercase font-headline">
-                      Drawing...
-                    </p>
-                  </motion.div>
-                ) : currentPlayer ? (
+                {currentPlayer ? (
                   <div className="text-center flex flex-col items-center justify-center h-full">
                     <motion.p
                       initial={{ opacity: 0, scale: 0.5 }}
@@ -262,11 +240,11 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                     <Users className="h-24 w-24 sm:h-32 sm:w-32 mx-auto text-muted-foreground" />
                     <h1 className="text-4xl sm:text-6xl font-headline mt-4">
                       {players.length > 0
-                        ? 'Ready to Start?'
+                        ? 'Auction Ready'
                         : 'No Players in this Set'}
                     </h1>
-                    <p className="text-muted-foreground mt-2 text-lg">
-                      Click "Draw Player" to begin.
+                     <p className="text-muted-foreground mt-2 text-lg">
+                       {isLocked ? 'Use arrow keys to navigate the locked order.' : 'This order is not locked. Please generate and lock an order first.'}
                     </p>
                   </div>
                 )}
@@ -277,21 +255,16 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
       </div>
 
       <div className="w-full max-w-lg p-4 flex flex-col justify-center items-center gap-4">
-        <Button
-          onClick={handleDrawPlayer}
-          disabled={availablePlayers.length === 0 || isDrawing}
-          size="lg"
-          className="w-full max-w-xs h-16 text-2xl sm:text-3xl font-headline btn-glow"
-        >
-          <Gavel className="mr-4 h-6 w-6" />
-          {availablePlayers.length === 0 ? 'Auction Over' : 'Draw Player'}
-        </Button>
-        <div className="text-center">
-          <p className="text-sm text-muted-foreground">Players Remaining</p>
-          <p className="text-xl font-bold">
-            {availablePlayers.length} / {players.length}
-          </p>
-        </div>
+         <div className="flex items-center gap-4">
+              <Button onClick={goToPrev} disabled={currentIndex === 0} size="lg" className="h-16 w-16" variant="outline"><SkipBack/></Button>
+              <div className="text-center">
+                <p className="text-sm text-muted-foreground">Auction Position</p>
+                <p className="text-xl font-bold">
+                  {players.length > 0 ? currentIndex + 1 : 0} / {players.length}
+                </p>
+              </div>
+              <Button onClick={goToNext} disabled={currentIndex === players.length -1} size="lg" className="h-16 w-16" variant="outline"><SkipForward/></Button>
+         </div>
       </div>
     </div>
   );
