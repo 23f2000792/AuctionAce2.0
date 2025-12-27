@@ -20,6 +20,76 @@ interface FullScreenViewProps {
   set: PlayerSet;
 }
 
+const Starfield = () => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+    useEffect(() => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+  
+      let animationFrameId: number;
+      const stars: { x: number; y: number; z: number }[] = [];
+      const numStars = 300;
+  
+      const resize = () => {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        stars.length = 0; // Reset stars on resize
+        for (let i = 0; i < numStars; i++) {
+          stars.push({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            z: Math.random() * canvas.width,
+          });
+        }
+      };
+  
+      const draw = () => {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = 'hsl(var(--primary-foreground))';
+        
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+  
+        for (let i = 0; i < numStars; i++) {
+          const star = stars[i];
+          star.z -= 1;
+  
+          if (star.z <= 0) {
+            star.z = canvas.width;
+          }
+  
+          const k = 128 / star.z;
+          const px = star.x * k + canvas.width / 2;
+          const py = star.y * k + canvas.height / 2;
+  
+          if (px >= 0 && px <= canvas.width && py >= 0 && py <= canvas.height) {
+            const size = ((1 - star.z / canvas.width) * 5);
+            ctx.beginPath();
+            ctx.arc(px - canvas.width/2, py - canvas.height/2, size / 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+        ctx.restore();
+        animationFrameId = requestAnimationFrame(draw);
+      };
+      
+      resize();
+      draw();
+  
+      window.addEventListener('resize', resize);
+      return () => {
+        window.removeEventListener('resize', resize);
+        cancelAnimationFrame(animationFrameId);
+      };
+    }, []);
+  
+    return <canvas ref={canvasRef} className="absolute inset-0 w-full h-full opacity-20" />;
+};
+  
+
 export default function FullScreenView({ players, set }: FullScreenViewProps) {
   const [activePlayerList, setActivePlayerList] = useState<Player[]>(() => shuffleArray(players));
   const [undrawnPlayers, setUndrawnPlayers] = useState<Player[]>([...activePlayerList]);
@@ -211,11 +281,10 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
               className="w-full aspect-video flex flex-col items-center justify-center text-center bg-gradient-to-br from-card/80 to-card/50 backdrop-blur-sm border-primary/20 glow-border relative overflow-hidden"
               style={{
                 boxShadow: 'inset 0 0 40px hsl(var(--primary) / 0.1)',
-                backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 450'%3E%3Cdefs%3E%3CradialGradient id='g' cx='50%25' cy='50%25' r='50%25' fx='50%25' fy='50%25'%3E%3Cstop offset='0%25' style='stop-color:hsl(199 85% 65% / 0.15)' /%3E%3Cstop offset='100%25' style='stop-color:transparent' /%3E%3C/radialGradient%3E%3C/defs%3E%3Crect width='100%25' height='100%25' fill='url(%23g)'/%3E%3Cg stroke='hsl(199 85% 65% / 0.08)'%3E%3Cg transform='translate(400, 225)'%3E%3Cg%3E%3Cpath d='M 0 0 v -400' /%3E%3Cpath d='M 0 0 v 400' /%3E%3Cpath d='M 0 0 h -800' /%3E%3Cpath d='M 0 0 h 800' /%3E%3C/g%3E%3Cg transform='rotate(45)'%3E%3Cpath d='M 0 0 v -400' /%3E%3Cpath d='M 0 0 v 400' /%3E%3Cpath d='M 0 0 h -800' /%3E%3Cpath d='M 0 0 h 800' /%3E%3C/g%3E%3Ccircle cx='0' cy='0' r='100'/%3E%3Ccircle cx='0' cy='0' r='200'/%3E%3Ccircle cx='0' cy='0' r='300'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-                backgroundSize: 'cover',
               }}
             >
-              <CardContent className="p-6 w-full">
+              <Starfield />
+              <CardContent className="p-6 w-full z-10">
                 {isDrawing ? (
                    <motion.div
                       key="drawing"
