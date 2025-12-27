@@ -215,9 +215,15 @@ export default function FullScreenView({ players }: FullScreenViewProps) {
                     </motion.h1>
                     <motion.div 
                         className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-x-8 gap-y-4 mt-8 text-lg"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.5, duration: 0.4, staggerChildren: 0.1 }}
+                        initial="hidden"
+                        animate="visible"
+                        variants={{
+                           visible: { 
+                            opacity: 1, y: 0, 
+                            transition: { delay: 0.5, duration: 0.4, staggerChildren: 0.1 }
+                          },
+                           hidden: { opacity: 0, y: 20 },
+                        }}
                     >
                         {currentPlayer.country && 
                           <motion.div variants={drawnPlayerItemVariants} className="flex flex-col">
