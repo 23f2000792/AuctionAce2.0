@@ -79,5 +79,5 @@ export const ParticleBackground = () => {
     };
   }, [handleResize, animate]);
 
-  return <canvas ref={canvasRef} className="particle-background" />;
+  return <canvas ref={canvasRef} className="fixed top-0 left-0 w-full h-full -z-10" />;
 };

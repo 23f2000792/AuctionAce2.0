@@ -2,7 +2,7 @@ import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
-const cardVariants = "bg-card backdrop-blur-sm border border-border shadow-[4px_4px_0px_hsl(var(--border))] transition-all duration-300 hover:shadow-[2px_2px_0px_hsl(var(--border))]";
+const cardVariants = "bg-card/70 backdrop-blur-sm border border-border shadow-[4px_4px_0px_hsl(var(--border))] transition-all duration-300 hover:shadow-[2px_2px_0px_hsl(var(--border))]";
 
 const Card = React.forwardRef<
   HTMLDivElement,
