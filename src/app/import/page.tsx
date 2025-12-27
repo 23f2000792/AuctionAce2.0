@@ -100,28 +100,28 @@ export default function ImportPage() {
           }
 
           // Group players by Set
-          const setsMap = new Map<string, Player[]>();
+          const setsMap = new Map<string, { players: Player[], order: number }>();
           importedPlayers.forEach((item, index) => {
             const setName = item['Set'];
+            const setNumber = parseInt(item['Set No.'], 10);
             if (setName) {
               if (!setsMap.has(setName)) {
-                setsMap.set(setName, []);
+                setsMap.set(setName, { players: [], order: isNaN(setNumber) ? Infinity : setNumber });
               }
               const createdPlayer = playersWithIds.find(p => p.playerName === `${item['First Name'] || ''} ${item['Surname'] || ''}`.trim());
               if(createdPlayer) {
-                 setsMap.get(setName)?.push(createdPlayer);
+                 setsMap.get(setName)?.players.push(createdPlayer);
               }
             }
           });
-
+          
           // Create new sets
-          let order = 0;
-          for (const [setName, playersInSet] of setsMap.entries()) {
+          for (const [setName, setData] of setsMap.entries()) {
             const newSet: Omit<PlayerSet, 'id'> = {
               name: setName,
-              players: playersInSet,
+              players: setData.players,
               userId: user.uid,
-              order: order++,
+              order: setData.order,
             };
             const setRef = doc(setsCollectionRef);
             creationBatch.set(setRef, newSet);
@@ -177,7 +177,7 @@ export default function ImportPage() {
         <CardContent className="space-y-4">
             <div className="space-y-2">
                  <p className="text-sm font-medium">The CSV should have the following columns:</p>
-                 <code className="text-xs p-2 bg-muted rounded-sm block whitespace-pre-wrap">List Sr.No., Set, First Name, Surname, Country, Specialism, C/U/A, Reserve Price Rs Lakh, Points</code>
+                 <code className="text-xs p-2 bg-muted rounded-sm block whitespace-pre-wrap">List Sr.No., Set, Set No., First Name, Surname, Country, Specialism, C/U/A, Reserve Price Rs Lakh, Points</code>
             </div>
           <Input
             type="file"
