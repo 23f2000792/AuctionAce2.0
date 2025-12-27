@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -105,7 +106,7 @@ export default function SignupPage() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-headline flex items-center justify-center">
+              <CardTitle className="text-2xl flex items-center justify-center">
                 <UserPlus className="mr-2" /> Create an Account
               </CardTitle>
               <CardDescription>

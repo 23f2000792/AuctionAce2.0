@@ -79,7 +79,7 @@ export default function Home() {
         >
         <Card className="glow-border bg-card/70 backdrop-blur-sm">
             <CardHeader>
-                <CardTitle className="text-3xl font-headline">Welcome to Auction Ace!</CardTitle>
+                <CardTitle className="text-3xl">Welcome to Auction Ace!</CardTitle>
                 <CardDescription>Your ultimate tool for creating and managing IPL-style player auctions.</CardDescription>
             </CardHeader>
             <CardContent>
@@ -119,7 +119,7 @@ export default function Home() {
 
       <Card className="glow-border bg-card/70 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-3xl font-headline">Select a Player Set</CardTitle>
+          <CardTitle className="text-3xl">Select a Player Set</CardTitle>
           <CardDescription>
             Choose a set of players to begin the auction.
           </CardDescription>
@@ -140,7 +140,7 @@ export default function Home() {
                   >
                     <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-gradient-to-br from-card/80 to-card/50 hover:from-card/90 glow-border hover:-translate-y-1">
                       <CardHeader className="p-4 flex-row items-start justify-between">
-                         <CardTitle className="text-lg font-headline truncate">{set.name}</CardTitle>
+                         <CardTitle className="text-lg truncate">{set.name}</CardTitle>
                          {user && set.userId === user.uid && (
                            <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
                               <Link href={`/sets/edit/${set.id}`}>

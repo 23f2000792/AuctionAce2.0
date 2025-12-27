@@ -64,7 +64,7 @@ const Header = () => {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2 group">
           <Gavel className="h-8 w-8 text-primary transition-transform group-hover:scale-110" />
-          <span className="text-2xl font-bold tracking-tighter font-headline">Auction Ace</span>
+          <span className="text-2xl tracking-tighter font-headline">Auction Ace</span>
         </Link>
         
         {/* Desktop Navigation */}

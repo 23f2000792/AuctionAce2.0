@@ -193,7 +193,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
                       transition={{ duration: 0.3 }}
                       className="text-center"
                     >
-                      <h1 className="text-5xl sm:text-7xl font-headline text-primary animate-pulse" style={{ textShadow: '0 0 30px hsl(var(--primary) / 0.8)' }}>
+                      <h1 className="text-5xl sm:text-7xl text-primary animate-pulse font-headline" style={{ textShadow: '0 0 30px hsl(var(--primary) / 0.8)' }}>
                         Drawing...
                       </h1>
                     </motion.div>
@@ -211,7 +211,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
                       initial={{ opacity: 0, y: 50 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3, duration: 0.4 }}
-                      className="text-5xl sm:text-7xl font-headline mt-2 truncate bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent"
+                      className="text-5xl sm:text-7xl mt-2 truncate bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent font-headline"
                       style={{ textShadow: '0 0 40px hsl(var(--accent) / 0.7)' }}
                     >
                       {currentPlayer.playerName}
@@ -285,7 +285,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
             onClick={handleDrawPlayer}
             disabled={isDrawing}
             size="lg"
-            className="h-20 w-80 text-2xl font-headline btn-glow"
+            className="h-20 w-80 text-2xl btn-glow font-headline"
           >
             <Gavel className="mr-4 h-8 w-8" />
             {isDrawing ? 'Drawing...' : 'Draw Player'}
@@ -294,7 +294,7 @@ export default function FullScreenView({ players, set }: FullScreenViewProps) {
             <Button
               onClick={resetAuction}
               size="lg"
-              className="h-20 w-80 text-2xl font-headline btn-glow"
+              className="h-20 w-80 text-2xl btn-glow font-headline"
               variant="outline"
             >
               <Repeat className="mr-4 h-8 w-8"/>

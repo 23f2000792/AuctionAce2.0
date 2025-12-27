@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&family=Teko:wght@700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -51,11 +53,15 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline;
+  }
 }
 
 @layer components {
     .font-headline {
-        @apply font-sans font-extrabold tracking-tighter;
+        font-family: 'Teko', sans-serif;
+        @apply font-bold tracking-tighter;
     }
      .btn-glow {
         @apply shadow-[0_0_20px_hsl(var(--primary)/0.7),0_0_40px_hsl(var(--primary)/0.3)];
