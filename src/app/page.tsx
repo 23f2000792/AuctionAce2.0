@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel, Upload, Lock, View } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, where, orderBy } from 'firebase/firestore';
+import { collection, query, orderBy } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
@@ -16,15 +16,14 @@ export default function Home() {
   const firestore = useFirestore();
 
   const setsQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    // Query for sets belonging to the current user
+    if (!firestore) return null;
+    // Query for all sets, ordered by 'order' and then 'name'
     return query(
       collection(firestore, 'sets'), 
-      where('userId', '==', user.uid),
       orderBy('order', 'asc'), 
       orderBy('name', 'asc')
     );
-  }, [firestore, user]);
+  }, [firestore]);
 
   const { data: sets, isLoading: isLoadingSets } = useCollection<PlayerSet>(setsQuery);
 
@@ -147,11 +146,7 @@ export default function Home() {
                     <Card className="hover:border-primary/50 transition-all flex flex-col h-full bg-gradient-to-br from-card/80 to-card/50 hover:from-card/90 glow-border hover:-translate-y-1">
                       <CardHeader className="p-4 flex-row items-start justify-between">
                          <CardTitle className="text-lg truncate">{set.name}</CardTitle>
-                         <Button asChild variant="ghost" size="icon" className="h-6 w-6 -mr-2 -mt-2">
-                           <Link href={`/sets/edit/${set.id}`}>
-                             <Edit />
-                           </Link>
-                         </Button>
+                         {/* Edit button is removed as users can see sets they don't own */}
                       </CardHeader>
                       <CardContent className="p-4 pt-0 flex-grow">
                          <div className="flex flex-col items-start text-sm text-muted-foreground">
