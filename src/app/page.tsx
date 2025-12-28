@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel, Upload, Lock, View } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy, where } from 'firebase/firestore';
+import { collection, query, orderBy } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
@@ -17,24 +17,12 @@ export default function Home() {
 
   const setsQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-
-    // If a user is logged in, query for their sets.
-    if (user) {
-      return query(
-        collection(firestore, 'sets'),
-        where('userId', '==', user.uid),
-        orderBy('order')
-      );
-    }
-    
-    // If no user is logged in, query all sets.
-    // This allows public viewing of all auction sets.
+    // Always query all sets for public viewing.
     return query(
         collection(firestore, 'sets'),
         orderBy('order')
     );
-
-  }, [firestore, user]);
+  }, [firestore]);
 
   const { data: sets, isLoading: isLoadingSets } = useCollection<PlayerSet>(setsQuery);
 
@@ -99,7 +87,7 @@ export default function Home() {
         <CardHeader>
           <CardTitle className="text-3xl">Select a Player Set</CardTitle>
           <CardDescription>
-            {user ? "Choose one of your created sets to begin an auction." : "Choose a set to start an auction or log in to manage your sets."}
+            {user ? "Choose one of the available sets to begin an auction." : "Choose a set to start an auction or log in to manage your sets."}
           </CardDescription>
         </CardHeader>
         <CardContent>
