@@ -15,7 +15,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 const rules = [
     {
-        section: "9. Auction Overview",
+        section: "1. Auction Overview",
         content: [
             "Platform: Google Meet",
             "Each house acts as one franchise.",
@@ -23,17 +23,17 @@ const rules = [
         ],
     },
     {
-        section: "10. Auction Purse & Squad Limits",
+        section: "2. Auction Purse & Squad Limits",
         subsections: [
             {
-                title: "10.1 Purse",
+                title: "2.1 Purse",
                 content: [
                     "Each house receives a fixed virtual purse of ₹80 crore.",
                     "Purse cannot be increased or replenished.",
                 ],
             },
             {
-                title: "10.2 Squad Size",
+                title: "2.2 Squad Size",
                 content: [
                     "Minimum: 11 players",
                     "Maximum: 15 players",
@@ -43,7 +43,7 @@ const rules = [
         ],
     },
     {
-        section: "11. Player Pool & Randomisation System",
+        section: "3. Player Pool & Randomisation System",
         content: [
             "Players are grouped into predefined sets.",
             "Player order will be randomised live using a dedicated auction randomisation website.",
@@ -52,7 +52,7 @@ const rules = [
         ],
     },
     {
-        section: "12. Auction Roles & Authority",
+        section: "4. Auction Roles & Authority",
         content: [
             "Each house must nominate:",
             "House Representative (Bidder) – only person allowed to bid",
@@ -66,10 +66,10 @@ const rules = [
         ],
     },
     {
-        section: "13. Bidding Mechanics",
+        section: "5. Bidding Mechanics",
         subsections: [
             {
-                title: "13.1 Base Price & Fixed Bid Increment Structure",
+                title: "5.1 Base Price & Fixed Bid Increment Structure",
                 content: [
                     "Each player shall enter the auction at a predefined base price.",
                     "To ensure uniformity, fairness, and controlled bidding progression, all bids must strictly follow the fixed incremental slabs defined below.",
@@ -86,14 +86,14 @@ const rules = [
                 },
             },
             {
-                title: "13.1.1 Increment Transition Rule",
+                title: "5.1.1 Increment Transition Rule",
                 content: [
                     "Once a bid crosses into a higher slab, the new increment immediately applies.",
                     "The auctioneer will announce the applicable increment whenever a slab transition occurs.",
                 ],
             },
             {
-                title: "13.1.2 Validity of Bids",
+                title: "5.1.2 Validity of Bids",
                 content: [
                     "Any bid not conforming to the prescribed increment structure will be deemed invalid.",
                     "The auctioneer may:",
@@ -103,20 +103,20 @@ const rules = [
                 ],
             },
             {
-                title: "13.1.3 Authority Clause",
+                title: "5.1.3 Authority Clause",
                 content: [
                     "The auctioneer’s declaration of the current bid slab and increment shall be considered final during live bidding.",
                     "No post-bid objections regarding increments will be entertained."
                 ]
             },
             {
-                title: "Section 13.2 – Live Bidding Participation Protocol (Google Meet)",
+                title: "5.2 – Live Bidding Participation Protocol (Google Meet)",
                 content: [
                     "To ensure orderly conduct, clarity, and fairness during live bidding, the following participation protocol shall be strictly enforced:",
                 ]
             },
             {
-                title: "13.2.1 Active Bidder Limit",
+                title: "5.2.1 Active Bidder Limit",
                 content: [
                     "At any given moment, only two (2) houses may actively participate in bidding for a player.",
                     "Active participation is indicated exclusively via the Google Meet “Raise Hand” feature.",
@@ -124,7 +124,7 @@ const rules = [
                 ]
             },
             {
-                title: "13.2.2 Entry into Active Bidding",
+                title: "5.2.2 Entry into Active Bidding",
                 content: [
                     "Houses wishing to enter a bid must raise their hand while the bidding window is open.",
                     "The first two valid hand raises, as acknowledged by the auctioneer, shall become the active bidders.",
@@ -132,7 +132,7 @@ const rules = [
                 ]
             },
             {
-                title: "13.2.3 Exit from Active Bidding",
+                title: "5.2.3 Exit from Active Bidding",
                 content: [
                     "A house may voluntarily exit an ongoing bid by:",
                     "Clearly displaying a thumbs-down gesture (👎) on Google Meet, and",
@@ -143,7 +143,7 @@ const rules = [
                 ]
             },
             {
-                title: "13.2.4 Rotation & Re-entry",
+                title: "5.2.4 Rotation & Re-entry",
                 content: [
                     "When one active bidder exits, other houses may enter the bidding by raising their hand.",
                     "The auctioneer will acknowledge new entrants strictly on a first-come, first-recognised basis.",
@@ -153,14 +153,14 @@ const rules = [
                 ]
             },
             {
-                title: "13.2.5 Final Bid Condition",
+                title: "5.2.5 Final Bid Condition",
                 content: [
                     "If only one active house remains and no new valid entry occurs within the auctioneer’s final call:",
                     "The player shall be sold to the remaining active house at the last valid bid."
                 ]
             },
             {
-                title: "13.2.6 Enforcement & Misconduct",
+                title: "5.2.6 Enforcement & Misconduct",
                 content: [
                     "Any attempt to:",
                     "Bypass the hand-raise system",
@@ -175,7 +175,7 @@ const rules = [
         ]
     },
     {
-        section: "14. Auctioneer Protocol",
+        section: "6. Auctioneer Protocol",
         content: [
             "Base price announced",
             "Bidding opens",
@@ -188,7 +188,7 @@ const rules = [
         ],
     },
     {
-        section: "15. Bid Retraction & Accidental Bids",
+        section: "7. Bid Retraction & Accidental Bids",
         content: [
             "All bids are final once acknowledged by the auctioneer.",
             "Accidental bids, miscommunication, or connectivity-related delays will not be grounds for bid reversal.",
@@ -197,7 +197,7 @@ const rules = [
         ],
     },
     {
-        section: "16. Unsold Players & Accelerated Rounds",
+        section: "8. Unsold Players & Accelerated Rounds",
         content: [
             "Unsold players may be reintroduced in accelerated rounds (depends on the OC’s decision).",
             "Revised base prices may apply.",
@@ -205,7 +205,7 @@ const rules = [
         ],
     },
     {
-        section: "17. Playing XI Composition (Mandatory)",
+        section: "9. Playing XI Composition (Mandatory)",
         content: [
             "Each house must submit one Playing XI:",
             "4 Specialist Batters",
@@ -218,7 +218,7 @@ const rules = [
         ],
     },
     {
-        section: "18. Player Points & Captaincy System",
+        section: "10. Player Points & Captaincy System",
         content: [
             "Each player is assigned a performance value between 0–100 points, based on a predefined formula.",
             "Multipliers:",
@@ -235,10 +235,10 @@ const rules = [
         ],
     },
     {
-        section: "18A. Player Points Allocation System (Transparency & Methodology)",
+        section: "10A. Player Points Allocation System (Transparency & Methodology)",
         subsections: [
             {
-                title: "18A.1 Predefined & Fixed Nature of Points",
+                title: "10A.1 Predefined & Fixed Nature of Points",
                 content: [
                     "Every player in the auction pool is assigned a fixed points value prior to the auction.",
                     "These points are locked before the event begins and do not change during or after the auction under any circumstances.",
@@ -250,7 +250,7 @@ const rules = [
                 ]
             },
             {
-                title: "18A.2 Basis of Player Points Calculation",
+                title: "10A.2 Basis of Player Points Calculation",
                 content: [
                     "Player points have been derived using a structured, multi-factor system, which includes:",
                     "Role-Based Weightage:",
@@ -272,7 +272,7 @@ const rules = [
                 ]
             },
             {
-                title: "18A.3 Data Source & Authenticity",
+                title: "10A.3 Data Source & Authenticity",
                 content: [
                     "Official player data from the IPL 2025 Mega Auction has been used as the primary reference for:",
                     "Player roles",
@@ -285,7 +285,7 @@ const rules = [
                 ]
             },
             {
-                title: "18A.4 Exception: Marquee Set Players",
+                title: "10A.4 Exception: Marquee Set Players",
                 content: [
                     "The Player Points Allocation System applies to all players EXCEPT those included in the Marquee Set.",
                     "Marquee Set players are treated as a special category due to:",
@@ -302,7 +302,7 @@ const rules = [
                 ]
             },
             {
-                title: "18A.5 Transparency Declaration",
+                title: "10A.5 Transparency Declaration",
                 content: [
                     "The Organising Committee formally declares that:",
                     "The same points methodology has been consistently applied to all non-marquee players",
@@ -317,7 +317,7 @@ const rules = [
         ]
     },
     {
-        section: "19. Ranking & Winner Determination",
+        section: "11. Ranking & Winner Determination",
         content: [
             "Houses are ranked strictly by total team points.",
             "Tie-breakers:",
@@ -326,7 +326,7 @@ const rules = [
         ],
     },
     {
-        section: "20. Penalties & Enforcement Framework",
+        section: "12. Penalties & Enforcement Framework",
         subsections: [
              {
                 title: "Minor Violations:",
@@ -469,5 +469,7 @@ export default function RulebookPage() {
     );
 }
 
+
+    
 
     
