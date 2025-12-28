@@ -394,8 +394,8 @@ export default function RulebookPage() {
                                                 : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
                                         )}
                                     >
-                                        <span className="truncate">{rule.section}</span>
-                                        {activeRuleIndex === index && <ChevronRight className="h-4 w-4 shrink-0" />}
+                                        <span className="flex-1">{rule.section}</span>
+                                        {activeRuleIndex === index && <ChevronRight className="h-4 w-4 shrink-0 ml-2" />}
                                     </button>
                                 ))}
                             </nav>
@@ -460,3 +460,5 @@ export default function RulebookPage() {
         </motion.div>
     );
 }
+
+    
