@@ -207,20 +207,33 @@ const rules = [
     },
     {
         section: "9. Player Points & Captaincy System",
-        content: [
-            "Each player is assigned a performance value between 0–100 points, based on a predefined formula.",
-            "Multipliers:",
-            "Captain: 3×",
-            "Vice-Captain: 2×",
-            "Others: 1×",
-            "Total team score = sum of all player points after multipliers.",
-            "Playing XI & Captaincy Lock",
-            "Playing XI, Captain, and Vice-Captain must be submitted within the deadline announced by the OC.",
-            "Once submitted, no changes are permitted.",
-            "Late submission may result in:",
-            "Point penalties",
-            "Auto-assignment by OC",
-        ],
+        subsections: [
+            {
+                title: "9.1 Player Points",
+                content: [
+                    "Each player is assigned a performance value between 0–100 points, based on a predefined formula.",
+                ],
+            },
+            {
+                title: "9.2 Multipliers",
+                content: [
+                    "Captain: 3×",
+                    "Vice-Captain: 2×",
+                    "Others: 1×",
+                    "Total team score = sum of all player points after multipliers.",
+                ],
+            },
+            {
+                title: "9.3 Playing XI & Captaincy Lock",
+                content: [
+                    "Playing XI, Captain, and Vice-Captain must be submitted within the deadline announced by the OC.",
+                    "Once submitted, no changes are permitted.",
+                    "Late submission may result in:",
+                    "Point penalties",
+                    "Auto-assignment by OC",
+                ],
+            }
+        ]
     },
     {
         section: "10. Player Points Allocation System (Transparency & Methodology)",
@@ -303,6 +316,38 @@ const rules = [
                 ]
             }
         ]
+    },
+    {
+        section: "11. Penalties & Enforcement Framework",
+        subsections: [
+            {
+                title: "11.1 Violation Categories",
+                content: [
+                    "Minor Violations (e.g., speaking out of turn, delays). Penalty: Warning or point deduction (-20 points).",
+                    "Major Violations (e.g., bidding beyond purse, collusion). Penalty: Bid cancellation, player forfeiture, heavy point deduction (-100 points).",
+                    "Severe Violations (e.g., repeated breaches, external interference). Penalty: Immediate disqualification, nullification of results.",
+                ]
+            },
+            {
+                title: "11.2 Penalty Matrix",
+                table: {
+                    headers: ["Category", "Violation Type", "Description / Examples", "Penalty", "Escalation Rule"],
+                    rows: [
+                        ["Minor", "Speaking Out of Turn", "Strategic members speaking during live bidding", "Warning OR –20 points", "Repeated offence → Major"],
+                        ["Minor", "Accidental Disruption", "Background noise, camera issues after warning", "Warning", "Repeated: –20 points"],
+                        ["Minor", "Late Playing XI Submission", "Missing deadline for Playing XI / Captaincy submission", "–50 points AND auto-assignment", "No escalation"],
+                        ["Major", "Unauthorized Bidding", "Bid raised by non-authorised participant", "Bid cancelled + –50 points", "Repeat → Severe"],
+                        ["Major", "Bidding Beyond Purse", "Any bid exceeding available purse", "Bid cancelled + –100 points", "Repeat → Severe"],
+                        ["Major", "Collusion Attempt", "Coordinated bidding, price manipulation, signalling", "–50 points OR player forfeiture", "Immediate Severe"],
+                        ["Major", "Auction Floor Misconduct", "Shouting, misleading rivals, intentional distractions", "–100 points", "Repeat → Severe"],
+                        ["Severe", "Repeated Violations", "Multiple Major violations by same house", "Immediate Disqualification", "Final"],
+                        ["Severe", "External Assistance", "Using external inputs, live help, or tools", "Immediate Disqualification", "Final"],
+                        ["Severe", "Refusal to Comply", "Ignoring OC instructions or rulings", "Immediate Disqualification", "Final"],
+                        ["Severe", "Public Misconduct", "Defamation, public disputes harming event integrity", "Disqualification / Result Nullification", "Final"],
+                    ],
+                }
+            }
+        ]
     }
 ];
 
@@ -372,7 +417,7 @@ export default function RulebookPage() {
                                 >
                                     <h2 className="text-3xl font-headline text-primary">{activeRule.section}</h2>
                                     
-                                    <div className="space-y-4 text-muted-foreground prose prose-invert prose-p:my-2 prose-li:my-1">
+                                    <div className="space-y-4 text-muted-foreground prose prose-invert prose-p:my-2 prose-li:my-1 max-w-none">
                                         {activeRule.content && activeRule.content.map((text, i) => (
                                             <p key={i} className="ml-4 list-item list-disc list-inside">{text.includes(':') ? <><span className="font-bold text-foreground/80">{text.split(':')[0]}:</span>{text.substring(text.indexOf(':') + 1)}</> : text}</p>
                                         ))}
@@ -396,7 +441,7 @@ export default function RulebookPage() {
                                                             <TableBody>
                                                                 {sub.table.rows.map((row, rIndex) => (
                                                                     <TableRow key={rIndex} className="bg-card/50">
-                                                                        {row.map((cell, cIndex) => <TableCell key={cIndex}>{cell}</TableCell>)}
+                                                                        {row.map((cell, cIndex) => <TableCell key={cIndex} className={cn(cIndex === 2 && 'text-xs')}>{cell}</TableCell>)}
                                                                     </TableRow>
                                                                 ))}
                                                             </TableBody>
@@ -415,5 +460,3 @@ export default function RulebookPage() {
         </motion.div>
     );
 }
-
-    
