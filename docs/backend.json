@@ -115,6 +115,49 @@
         "userId",
         "order"
       ]
+    },
+    "Squad": {
+      "title": "Squad",
+      "type": "object",
+      "description": "Represents a house/team in the auction.",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "The name of the house (e.g., Sundarbans)."
+        },
+        "moneySpent": {
+          "type": "number",
+          "description": "Total money spent in crore."
+        },
+        "moneyLeft": {
+          "type": "number",
+          "description": "Remaining purse in crore."
+        },
+        "budgetUsed": {
+          "type": "number",
+          "description": "Percentage of the budget used."
+        },
+        "budgetStatus": {
+          "type": "string",
+          "description": "Status of the budget (e.g., OK, OVER)."
+        },
+        "eligibilityStatus": {
+          "type": "string",
+          "description": "Squad eligibility status (e.g., IN PROGRESS, ELIGIBLE)."
+        },
+        "totalPoints": {
+          "type": "number",
+          "description": "Total points accumulated by the squad."
+        }
+      },
+      "required": [
+        "name",
+        "moneySpent",
+        "moneyLeft",
+        "budgetUsed",
+        "budgetStatus",
+        "eligibilityStatus"
+      ]
     }
   },
   "auth": {
@@ -152,6 +195,16 @@
             "$ref": "#/entities/Set"
           },
           "description": "Stores auction sets created by users, containing an array of players."
+        }
+      },
+      {
+        "path": "/squads/{squadId}",
+        "definition": {
+          "entityName": "Squad",
+          "schema": {
+            "$ref": "#/entities/Squad"
+          },
+          "description": "Stores live data for each auction house/squad."
         }
       }
     ]

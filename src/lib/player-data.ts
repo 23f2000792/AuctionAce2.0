@@ -22,3 +22,14 @@ export interface PlayerSet extends DocumentData {
   userId: string;
   order: number;
 }
+
+export interface Squad extends DocumentData {
+    id: string;
+    name: string;
+    moneySpent: number;
+    moneyLeft: number;
+    budgetUsed: number;
+    budgetStatus: 'OK' | 'OVER';
+    eligibilityStatus: string;
+    totalPoints: number | 'N/A';
+}
