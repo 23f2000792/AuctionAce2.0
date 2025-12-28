@@ -1,4 +1,3 @@
-
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -184,16 +183,7 @@ const rules = [
         ],
     },
     {
-        section: "7. Bid Retraction & Accidental Bids",
-        content: [
-            "All bids are final once acknowledged by the auctioneer.",
-            "Accidental bids, miscommunication, or connectivity-related delays will not be grounds for bid reversal.",
-            "If two bids are raised simultaneously, the auctioneer’s verbal confirmation decides priority.",
-            "No bid retractions are allowed after the auctioneer announces the next increment.",
-        ],
-    },
-    {
-        section: "8. Playing XI Composition (Mandatory)",
+        section: "7. Playing XI Composition (Mandatory)",
         content: [
             "Each house must submit one Playing XI:",
             "4 Specialist Batters",
@@ -206,122 +196,10 @@ const rules = [
         ],
     },
     {
-        section: "9. Player Points & Captaincy System",
+        section: "8. Penalties & Enforcement Framework",
         subsections: [
             {
-                title: "9.1 Player Points",
-                content: [
-                    "Each player is assigned a performance value between 0–100 points, based on a predefined formula.",
-                ],
-            },
-            {
-                title: "9.2 Multipliers",
-                content: [
-                    "Captain: 3×",
-                    "Vice-Captain: 2×",
-                    "Others: 1×",
-                    "Total team score = sum of all player points after multipliers.",
-                ],
-            },
-            {
-                title: "9.3 Playing XI & Captaincy Lock",
-                content: [
-                    "Playing XI, Captain, and Vice-Captain must be submitted within the deadline announced by the OC.",
-                    "Once submitted, no changes are permitted.",
-                    "Late submission may result in:",
-                    "Point penalties",
-                    "Auto-assignment by OC",
-                ],
-            }
-        ]
-    },
-    {
-        section: "10. Player Points Allocation System (Transparency & Methodology)",
-        subsections: [
-            {
-                title: "10.1 Predefined & Fixed Nature of Points",
-                content: [
-                    "Every player in the auction pool is assigned a fixed points value prior to the auction.",
-                    "These points are locked before the event begins and do not change during or after the auction under any circumstances.",
-                    "The maximum possible points for any player is 100.",
-                    "This ensures that:",
-                    "No post-auction manipulation is possible",
-                    "All houses operate with equal and known information",
-                    "Team rankings are purely merit-based",
-                ]
-            },
-            {
-                title: "10.2 Basis of Player Points Calculation",
-                content: [
-                    "Player points have been derived using a structured, multi-factor system, which includes:",
-                    "Role-Based Weightage:",
-                    "Batters",
-                    "Bowlers",
-                    "All-Rounders",
-                    "Wicketkeepers",
-                    "All-rounders and wicketkeepers receive higher base weightage due to multi-skill contributions.",
-                    "Experience Category:",
-                    "Capped players (international experience)",
-                    "Uncapped players",
-                    "Reserve Price as Market Indicator:",
-                    "The official reserve price is used as a proxy for market value",
-                    "Higher reserve prices attract proportionally higher points",
-                    "This methodology ensures balanced valuation between:",
-                    "Skill",
-                    "Experience",
-                    "Market demand",
-                ]
-            },
-            {
-                title: "10.3 Data Source & Authenticity",
-                content: [
-                    "Official player data from the IPL 2025 Mega Auction has been used as the primary reference for:",
-                    "Player roles",
-                    "Experience status",
-                    "Reserve prices",
-                    "This step has been taken to:",
-                    "Align the simulation closely with real-world IPL dynamics",
-                    "Maintain objective and publicly verifiable benchmarks",
-                    "Eliminate subjective or arbitrary valuation",
-                ]
-            },
-            {
-                title: "10.4 Exception: Marquee Set Players",
-                content: [
-                    "The Player Points Allocation System applies to all players EXCEPT those included in the Marquee Set.",
-                    "Marquee Set players are treated as a special category due to:",
-                    "Exceptional reputation",
-                    "Elite status",
-                    "Disproportionate strategic impact in real IPL auctions",
-                    "For Marquee Set players:",
-                    "Standard points-calculation rules do not apply",
-                    "Their valuation is intentionally kept outside the formula to preserve:",
-                    "Auction excitement",
-                    "Strategic risk-reward dynamics",
-                    "Authentic IPL-style unpredictability",
-                    "This exception is uniformly applied across all houses and does not provide any unfair advantage.",
-                ]
-            },
-            {
-                title: "10.5 Transparency Declaration",
-                content: [
-                    "The Organising Committee formally declares that:",
-                    "The same points methodology has been consistently applied to all non-marquee players",
-                    "No player’s points have been altered, adjusted, or overridden post-calculation",
-                    "All teams are evaluated using the exact same scoring framework",
-                    "This system has been implemented to uphold:",
-                    "Competitive integrity",
-                    "Strategic fairness",
-                    "Complete transparency in winner determination",
-                ]
-            }
-        ]
-    },
-    {
-        section: "11. Penalties & Enforcement Framework",
-        subsections: [
-            {
-                title: "11.1 Violation Categories",
+                title: "8.1 Violation Categories",
                 content: [
                     "Minor Violations (e.g., speaking out of turn, delays). Penalty: Warning or point deduction (-20 points).",
                     "Major Violations (e.g., bidding beyond purse, collusion). Penalty: Bid cancellation, player forfeiture, heavy point deduction (-100 points).",
@@ -329,7 +207,7 @@ const rules = [
                 ]
             },
             {
-                title: "11.2 Penalty Matrix",
+                title: "8.2 Penalty Matrix",
                 table: {
                     headers: ["Category", "Violation Type", "Description / Examples", "Penalty", "Escalation Rule"],
                     rows: [
@@ -394,7 +272,7 @@ export default function RulebookPage() {
                                                 : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
                                         )}
                                     >
-                                        <span className="flex-1">{rule.section}</span>
+                                        <span>{rule.section}</span>
                                         {activeRuleIndex === index && <ChevronRight className="h-4 w-4 shrink-0 ml-2" />}
                                     </button>
                                 ))}
@@ -460,5 +338,3 @@ export default function RulebookPage() {
         </motion.div>
     );
 }
-
-    
