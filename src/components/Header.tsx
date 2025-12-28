@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Gavel, Users, PlusCircle, LogOut, LogIn, Menu, BookOpen } from 'lucide-react';
+import { Gavel, Users, PlusCircle, LogOut, LogIn, Menu, BookOpen, ShieldCheck } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -32,8 +32,8 @@ const Header = () => {
       { !isUserLoading && user && (
         <div className='flex flex-col md:flex-row items-stretch md:items-center gap-4'>
             <Button variant="ghost" asChild>
-                <Link href="/players" onClick={() => setIsSheetOpen(false)}>
-                    <Users /> Manage Players
+                <Link href="/squads" onClick={() => setIsSheetOpen(false)}>
+                    <ShieldCheck /> Squads
                 </Link>
             </Button>
             <Button variant="ghost" asChild>
