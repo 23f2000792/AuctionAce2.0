@@ -16,13 +16,24 @@ export default function Home() {
   const firestore = useFirestore();
 
   const setsQuery = useMemoFirebase(() => {
-    if (!firestore || !user) return null;
-    // Query for sets belonging to the current user, sorted by 'order'
+    if (!firestore) return null;
+
+    // If a user is logged in, query for their sets.
+    if (user) {
+      return query(
+        collection(firestore, 'sets'),
+        where('userId', '==', user.uid),
+        orderBy('order')
+      );
+    }
+    
+    // If no user is logged in, query all sets.
+    // This allows public viewing of all auction sets.
     return query(
-      collection(firestore, 'sets'),
-      where('userId', '==', user.uid),
-      orderBy('order')
+        collection(firestore, 'sets'),
+        orderBy('order')
     );
+
   }, [firestore, user]);
 
   const { data: sets, isLoading: isLoadingSets } = useCollection<PlayerSet>(setsQuery);
@@ -88,7 +99,7 @@ export default function Home() {
         <CardHeader>
           <CardTitle className="text-3xl">Select a Player Set</CardTitle>
           <CardDescription>
-            {user ? "Choose one of your created sets to begin an auction." : "Log in to manage your auction sets."}
+            {user ? "Choose one of your created sets to begin an auction." : "Choose a set to start an auction or log in to manage your sets."}
           </CardDescription>
         </CardHeader>
         <CardContent>
