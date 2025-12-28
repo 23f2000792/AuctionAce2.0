@@ -23,13 +23,5 @@ service cloud.firestore {
       allow create, update, delete: if request.auth.uid == request.resource.data.userId;
     }
 
-    // Any authenticated user can view the live squad data.
-    // Only admins (which you can define later with custom claims) should write.
-    // For now, we'll allow any authenticated user to write for easy setup.
-    match /squads/{squadId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null;
-    }
-
   }
 }

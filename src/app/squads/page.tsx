@@ -2,35 +2,27 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ShieldCheck, CheckCircle, AlertTriangle, Clock, Database } from 'lucide-react';
+import { ShieldCheck, CheckCircle, AlertTriangle, Clock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
-import { DocumentData } from 'firebase/firestore';
-import { Button } from '@/components/ui/button';
-import Link from 'next/link';
 
-interface Squad extends DocumentData {
-    name: string;
-    moneySpent: number;
-    moneyLeft: number;
-    budgetUsed: number;
-    budgetStatus: 'OK' | 'OVER';
-    eligibilityStatus: string;
-    totalPoints: number | 'N/A';
-}
+const houseData = [
+    { name: 'Sundarbans', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+    { name: 'Kanha', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+    { name: 'Wayanad', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+    { name: 'Kaziranga', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+    { name: 'Corbett', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+    { name: 'Bandipur', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+    { name: 'Nilgiri', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+    { name: 'Gir', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+    { name: 'Nallamala', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+    { name: 'Saranda', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+    { name: 'Pichavaram', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+    { name: 'Namdapha', moneySpent: 0, moneyLeft: 80, budgetUsed: 0, budgetStatus: 'OK', eligibilityStatus: 'IN PROGRESS', totalPoints: 'N/A' },
+];
 
 export default function SquadsPage() {
-    const firestore = useFirestore();
-    const squadsQuery = useMemoFirebase(() => {
-        if (!firestore) return null;
-        return query(collection(firestore, 'squads'), orderBy('name'));
-    }, [firestore]);
-
-    const { data: squads, isLoading } = useCollection<Squad>(squadsQuery);
-
     return (
         <motion.div
             className="w-full max-w-7xl mx-auto"
@@ -42,72 +34,51 @@ export default function SquadsPage() {
                 <CardHeader>
                     <CardTitle className="flex items-center text-3xl">
                         <ShieldCheck className="mr-3 h-8 w-8 text-primary" />
-                        Live Squad &amp; Points Status
+                        Live Squad Status
                     </CardTitle>
                     <CardDescription>
-                        This dashboard shows the live status of each house's squad, purse, and points from Firestore.
+                        This dashboard shows the live status of each house's squad, purse, and points.
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {isLoading && (
-                        <div className="space-y-2">
-                           {[...Array(12)].map((_, i) => <div key={i} className="h-14 w-full animate-pulse rounded-md bg-muted/50" />)}
-                        </div>
-                    )}
-                    { !isLoading && squads && squads.length > 0 && (
-                        <div className="border rounded-lg overflow-hidden glow-border">
-                            <Table>
-                                <TableHeader>
-                                    <TableRow className="bg-primary/10 hover:bg-primary/20">
-                                        <TableHead className="text-primary">House Name</TableHead>
-                                        <TableHead className="text-right text-primary">Money Spent</TableHead>
-                                        <TableHead className="text-right text-primary">Money Left</TableHead>
-                                        <TableHead className="text-center text-primary">Budget Used</TableHead>
-                                        <TableHead className="text-center text-primary">Budget Status</TableHead>
-                                        <TableHead className="text-center text-primary">Eligibility Status</TableHead>
-                                        <TableHead className="text-center text-primary">Total Points</TableHead>
+                     <div className="border rounded-lg overflow-hidden glow-border">
+                        <Table>
+                            <TableHeader>
+                                <TableRow className="bg-primary/10 hover:bg-primary/20">
+                                    <TableHead className="text-primary">House Name</TableHead>
+                                    <TableHead className="text-right text-primary">Money Spent</TableHead>
+                                    <TableHead className="text-right text-primary">Money Left</TableHead>
+                                    <TableHead className="text-center text-primary">Budget Used</TableHead>
+                                    <TableHead className="text-center text-primary">Budget Status</TableHead>
+                                    <TableHead className="text-center text-primary">Eligibility Status</TableHead>
+                                    <TableHead className="text-center text-primary">Total Points</TableHead>
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                {houseData.map((house) => (
+                                    <TableRow key={house.name} className="bg-card/50">
+                                        <TableCell className="font-medium text-lg">{house.name}</TableCell>
+                                        <TableCell className="text-right font-mono">{house.moneySpent} Cr</TableCell>
+                                        <TableCell className="text-right font-mono text-accent font-bold">{house.moneyLeft} Cr</TableCell>
+                                        <TableCell className="text-center font-mono">{house.budgetUsed}%</TableCell>
+                                        <TableCell className="text-center">
+                                            <Badge variant={house.budgetStatus === 'OK' ? 'secondary' : 'destructive'} className="gap-1 items-center">
+                                                {house.budgetStatus === 'OK' ? <CheckCircle className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}
+                                                {house.budgetStatus}
+                                            </Badge>
+                                        </TableCell>
+                                         <TableCell className="text-center">
+                                            <Badge variant="outline" className="gap-1 items-center">
+                                                <Clock className="h-3 w-3" />
+                                                {house.eligibilityStatus}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-center font-mono font-bold text-lg">{house.totalPoints}</TableCell>
                                     </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {squads.map((squad) => (
-                                        <TableRow key={squad.id} className="bg-card/50">
-                                            <TableCell className="font-medium text-lg">{squad.name}</TableCell>
-                                            <TableCell className="text-right font-mono">{squad.moneySpent} Cr</TableCell>
-                                            <TableCell className="text-right font-mono text-accent font-bold">{squad.moneyLeft} Cr</TableCell>
-                                            <TableCell className="text-center font-mono">{squad.budgetUsed}%</TableCell>
-                                            <TableCell className="text-center">
-                                                <Badge variant={squad.budgetStatus === 'OK' ? 'secondary' : 'destructive'} className="gap-1 items-center">
-                                                    {squad.budgetStatus === 'OK' ? <CheckCircle className="h-3 w-3" /> : <AlertTriangle className="h-3 w-3" />}
-                                                    {squad.budgetStatus}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-center">
-                                                <Badge variant="outline" className="gap-1 items-center">
-                                                    <Clock className="h-3 w-3" />
-                                                    {squad.eligibilityStatus}
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell className="text-center font-mono font-bold text-lg">{squad.totalPoints}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
-                        </div>
-                    )}
-                     { !isLoading && (!squads || squads.length === 0) && (
-                        <div className="text-center py-16 border-2 border-dashed border-border rounded-lg">
-                            <Database className="mx-auto h-12 w-12 text-muted-foreground" />
-                            <h3 className="mt-4 text-lg font-medium">No Squad Data Found</h3>
-                            <p className="mt-1 text-sm text-muted-foreground">The 'squads' collection in Firestore is empty. You need to initialize it first.</p>
-                            <div className="mt-6">
-                                <Button asChild>
-                                    <Link href="/squads/initialize">
-                                        Initialize Squad Data
-                                    </Link>
-                                </Button>
-                            </div>
-                        </div>
-                    )}
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </div>
                 </CardContent>
             </Card>
         </motion.div>
