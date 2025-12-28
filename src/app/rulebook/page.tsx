@@ -235,10 +235,10 @@ const rules = [
         ],
     },
     {
-        section: "10A. Player Points Allocation System (Transparency & Methodology)",
+        section: "11. Player Points Allocation System (Transparency & Methodology)",
         subsections: [
             {
-                title: "10A.1 Predefined & Fixed Nature of Points",
+                title: "11.1 Predefined & Fixed Nature of Points",
                 content: [
                     "Every player in the auction pool is assigned a fixed points value prior to the auction.",
                     "These points are locked before the event begins and do not change during or after the auction under any circumstances.",
@@ -250,7 +250,7 @@ const rules = [
                 ]
             },
             {
-                title: "10A.2 Basis of Player Points Calculation",
+                title: "11.2 Basis of Player Points Calculation",
                 content: [
                     "Player points have been derived using a structured, multi-factor system, which includes:",
                     "Role-Based Weightage:",
@@ -272,7 +272,7 @@ const rules = [
                 ]
             },
             {
-                title: "10A.3 Data Source & Authenticity",
+                title: "11.3 Data Source & Authenticity",
                 content: [
                     "Official player data from the IPL 2025 Mega Auction has been used as the primary reference for:",
                     "Player roles",
@@ -285,7 +285,7 @@ const rules = [
                 ]
             },
             {
-                title: "10A.4 Exception: Marquee Set Players",
+                title: "11.4 Exception: Marquee Set Players",
                 content: [
                     "The Player Points Allocation System applies to all players EXCEPT those included in the Marquee Set.",
                     "Marquee Set players are treated as a special category due to:",
@@ -302,7 +302,7 @@ const rules = [
                 ]
             },
             {
-                title: "10A.5 Transparency Declaration",
+                title: "11.5 Transparency Declaration",
                 content: [
                     "The Organising Committee formally declares that:",
                     "The same points methodology has been consistently applied to all non-marquee players",
@@ -317,7 +317,7 @@ const rules = [
         ]
     },
     {
-        section: "11. Ranking & Winner Determination",
+        section: "12. Ranking & Winner Determination",
         content: [
             "Houses are ranked strictly by total team points.",
             "Tie-breakers:",
@@ -326,7 +326,7 @@ const rules = [
         ],
     },
     {
-        section: "12. Penalties & Enforcement Framework",
+        section: "13. Penalties & Enforcement Framework",
         subsections: [
              {
                 title: "Minor Violations:",
@@ -398,7 +398,7 @@ export default function RulebookPage() {
                 </CardHeader>
                 <CardContent>
                     <ScrollArea className="h-[65vh] pr-4">
-                        <Accordion type="multiple" className="w-full space-y-4" defaultValue={rules.map(r => r.section)}>
+                        <Accordion type="multiple" className="w-full space-y-4">
                             {rules.map((rule, index) => (
                                 <AccordionItem value={rule.section} key={index} className="bg-muted/30 rounded-lg border-primary/20 border">
                                     <AccordionTrigger className="p-4 text-xl text-primary hover:no-underline">
@@ -468,8 +468,3 @@ export default function RulebookPage() {
         </motion.div>
     );
 }
-
-
-    
-
-    
