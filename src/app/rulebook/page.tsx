@@ -405,25 +405,6 @@ export default function RulebookPage() {
                                                 )}
                                             </div>
                                         ))}
-
-                                        {activeRule.table && (
-                                            <div className="my-4 border border-border rounded-lg overflow-hidden glow-border">
-                                                <Table>
-                                                    <TableHeader>
-                                                        <TableRow className="bg-primary/10">
-                                                            {activeRule.table.headers.map(header => <TableHead key={header} className="text-primary">{header}</TableHead>)}
-                                                        </TableRow>
-                                                    </TableHeader>
-                                                    <TableBody>
-                                                        {activeRule.table.rows.map((row, rIndex) => (
-                                                            <TableRow key={rIndex} className="bg-card/50">
-                                                                {row.map((cell, cIndex) => <TableCell key={cIndex} className={cIndex === 0 ? 'font-bold' : ''}>{cell}</TableCell>)}
-                                                            </TableRow>
-                                                        ))}
-                                                    </TableBody>
-                                                </Table>
-                                            </div>
-                                        )}
                                     </div>
                                 </motion.div>
                             </AnimatePresence>
@@ -434,3 +415,5 @@ export default function RulebookPage() {
         </motion.div>
     );
 }
+
+    
