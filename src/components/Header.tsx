@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Gavel, Users, PlusCircle, LogOut, LogIn, Menu, BookOpen, ShieldCheck } from 'lucide-react';
+import { Gavel, Users, PlusCircle, LogOut, LogIn, Menu, BookOpen, ShieldCheck, ChevronDown, Upload } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -30,7 +30,7 @@ const Header = () => {
   const NavContent = () => (
     <>
       { !isUserLoading && user && (
-        <div className='flex flex-col md:flex-row items-stretch md:items-center gap-4'>
+        <div className='flex flex-col md:flex-row items-stretch md:items-center gap-2'>
             <Button variant="ghost" asChild>
                 <Link href="/squads" onClick={() => setIsSheetOpen(false)}>
                     <ShieldCheck /> Squads
@@ -41,13 +41,33 @@ const Header = () => {
                     <BookOpen /> Rulebook
                 </Link>
             </Button>
-             <Button variant="ghost" asChild>
-                <Link href="/sets/create" onClick={() => setIsSheetOpen(false)}>
-                    <PlusCircle /> Create Set
-                </Link>
-            </Button>
+
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                    <Button variant="ghost">Manage <ChevronDown /></Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                    <DropdownMenuItem asChild>
+                        <Link href="/players">
+                            <Users /> Manage Players
+                        </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                         <Link href="/sets/create">
+                            <PlusCircle /> Create Set
+                        </Link>
+                    </DropdownMenuItem>
+                     <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                         <Link href="/import">
+                            <Upload /> Import CSV
+                        </Link>
+                    </DropdownMenuItem>
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
       )}
+      <div className="flex items-center gap-2">
       {isUserLoading ? (
          <div className="h-10 w-24 animate-pulse rounded-md bg-muted/50" />
       ) : user ? (
@@ -61,6 +81,7 @@ const Header = () => {
           </Link>
         </Button>
       )}
+      </div>
     </>
   );
 

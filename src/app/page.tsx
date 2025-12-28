@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Layers, PlusCircle, Users, LogIn, Edit, Gavel, Upload, Lock, View } from 'lucide-react';
 import { PlayerSet } from '@/lib/player-data';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query, orderBy } from 'firebase/firestore';
+import { collection, query, orderBy, where } from 'firebase/firestore';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Home() {
@@ -16,13 +16,14 @@ export default function Home() {
   const firestore = useFirestore();
 
   const setsQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    // Query for all sets, sorted by the 'order' field (Set No.)
+    if (!firestore || !user) return null;
+    // Query for sets belonging to the current user, sorted by 'order'
     return query(
-      collection(firestore, 'sets'), 
+      collection(firestore, 'sets'),
+      where('userId', '==', user.uid),
       orderBy('order')
     );
-  }, [firestore]);
+  }, [firestore, user]);
 
   const { data: sets, isLoading: isLoadingSets } = useCollection<PlayerSet>(setsQuery);
 
@@ -83,21 +84,11 @@ export default function Home() {
       initial="hidden"
       animate="visible"
     >
-      {!isUserLoading && user && (
-        <div className="flex justify-end gap-2 mb-4">
-          <Button asChild variant="outline">
-              <Link href="/import">
-                  <Upload className="mr-2" /> Import CSV
-              </Link>
-          </Button>
-        </div>
-      )}
-
       <Card className="glow-border bg-card/70 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="text-3xl">Select a Player Set</CardTitle>
           <CardDescription>
-            Choose a set of players to begin the auction.
+            {user ? "Choose one of your created sets to begin an auction." : "Log in to manage your auction sets."}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -143,14 +134,23 @@ export default function Home() {
                 exit={{ opacity: 0, y: -20 }}
               >
                   <Layers className="mx-auto h-12 w-12 text-muted-foreground" />
-                  <h3 className="mt-4 text-lg font-medium">No Sets Found</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">Get started by importing players from a CSV.</p>
+                  <h3 className="mt-4 text-lg font-medium">{user ? "No Sets Found" : "Welcome to Auction Ace"}</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">{user ? "Get started by importing players from a CSV." : "Log in to create and manage your player auctions."}</p>
                   
                   {!user && !isUserLoading && (
                     <div className="mt-6">
                       <Button asChild className="btn-glow">
                           <Link href="/login">
                               <Lock className="mr-2" /> Admin Login
+                          </Link>
+                      </Button>
+                    </div>
+                  )}
+                   {user && !isLoadingSets && (
+                    <div className="mt-6">
+                      <Button asChild>
+                          <Link href="/import">
+                              <Upload className="mr-2" /> Import CSV
                           </Link>
                       </Button>
                     </div>
