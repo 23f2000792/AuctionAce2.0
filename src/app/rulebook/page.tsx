@@ -1,79 +1,473 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { BookOpen } from 'lucide-react';
 import { motion } from 'framer-motion';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 const rules = [
-  {
-    title: 'Bidding Process',
-    content: 'Each player will be presented one by one. Bidding starts at the player\'s reserve price. Bids must be made in increments of at least 1 Lakh. The highest bidder at the end of the time limit wins the player.',
-  },
-  {
-    title: 'Team Composition',
-    content: 'Each team must have a minimum of 15 players and a maximum of 25 players. The squad must include a minimum of 5 specialist batsmen and 5 specialist bowlers.',
-  },
-  {
-    title: 'Salary Cap',
-    content: 'Each team has a total salary cap of 90 Crores. The total amount spent on players cannot exceed this cap. Unspent funds will not carry over.',
-  },
-  {
-    title: 'Player Categories',
-    content: 'Players are categorized as Capped, Uncapped, or Associate. Each team must have a certain number of players from each category as specified in the auction guidelines.',
-  },
-  {
-    title: 'Tie-Breaker',
-    content: 'In the event of a tie bid, a rapid-fire bidding round will commence between the tied bidders. If no further bids are made, the winner will be decided by a coin toss.',
-  },
-   {
-    title: 'Unsold Players',
-    content: 'Players who go unsold in the initial round may be brought back for a final accelerated bidding round at the end of the auction, at the discretion of the auctioneer.',
-  },
+    {
+        section: "9. Auction Overview",
+        content: [
+            "Platform: Google Meet",
+            "Each house acts as one franchise.",
+            "Auction is conducted in live sessions under moderator supervision.",
+        ],
+    },
+    {
+        section: "10. Auction Purse & Squad Limits",
+        subsections: [
+            {
+                title: "10.1 Purse",
+                content: [
+                    "Each house receives a fixed virtual purse of ₹80 crore.",
+                    "Purse cannot be increased or replenished.",
+                ],
+            },
+            {
+                title: "10.2 Squad Size",
+                content: [
+                    "Minimum: 11 players",
+                    "Maximum: 15 players",
+                    "Failure to meet minimum squad size results in disqualification.",
+                ],
+            },
+        ],
+    },
+    {
+        section: "11. Player Pool & Randomisation System",
+        content: [
+            "Players are grouped into predefined sets.",
+            "Player order will be randomised live using a dedicated auction randomisation website.",
+            "No manual interference is permitted.",
+            "The draw order is final and non-negotiable.",
+        ],
+    },
+    {
+        section: "12. Auction Roles & Authority",
+        content: [
+            "Each house must nominate:",
+            "House Representative (Bidder) – only person allowed to bid",
+            "Strategic Members – internal discussion only",
+            "House Representative Substitution:",
+            "Each house must nominate one backup bidder before the auction begins.",
+            "Backup bidder may take over only with OC approval.",
+            "Mid-bid substitutions are not permitted.",
+            "If no valid bidder is available, the house forfeits bidding until resolved.",
+            "Any bid by an unauthorised member is invalid.",
+        ],
+    },
+    {
+        section: "13. Bidding Mechanics",
+        subsections: [
+            {
+                title: "13.1 Base Price & Fixed Bid Increment Structure",
+                content: [
+                    "Each player shall enter the auction at a predefined base price.",
+                    "To ensure uniformity, fairness, and controlled bidding progression, all bids must strictly follow the fixed incremental slabs defined below.",
+                    "No custom, fractional, or off-slab bids shall be permitted.",
+                ],
+                table: {
+                    headers: ["Current Bid Value", "Mandatory Increment"],
+                    rows: [
+                        ["Up to ₹1.00 crore", "₹5 lakh"],
+                        ["₹1.00 crore – ₹2.00 crore", "₹10 lakh"],
+                        ["₹2.00 crore – ₹5.00 crore", "₹20 lakh"],
+                        ["Above ₹5.00 crore", "₹50 lakh"],
+                    ],
+                },
+            },
+            {
+                title: "13.1.1 Increment Transition Rule",
+                content: [
+                    "Once a bid crosses into a higher slab, the new increment immediately applies.",
+                    "The auctioneer will announce the applicable increment whenever a slab transition occurs.",
+                ],
+            },
+            {
+                title: "13.1.2 Validity of Bids",
+                content: [
+                    "Any bid not conforming to the prescribed increment structure will be deemed invalid.",
+                    "The auctioneer may:",
+                    "Reject the bid outright, or",
+                    "Ask the bidder to restate a valid bid immediately.",
+                    "Repeated violation of increment rules may attract penalties under Auction Floor Misconduct."
+                ],
+            },
+            {
+                title: "13.1.3 Authority Clause",
+                content: [
+                    "The auctioneer’s declaration of the current bid slab and increment shall be considered final during live bidding.",
+                    "No post-bid objections regarding increments will be entertained."
+                ]
+            },
+            {
+                title: "Section 13.2 – Live Bidding Participation Protocol (Google Meet)",
+                content: [
+                    "To ensure orderly conduct, clarity, and fairness during live bidding, the following participation protocol shall be strictly enforced:",
+                ]
+            },
+            {
+                title: "13.2.1 Active Bidder Limit",
+                content: [
+                    "At any given moment, only two (2) houses may actively participate in bidding for a player.",
+                    "Active participation is indicated exclusively via the Google Meet “Raise Hand” feature.",
+                    "Verbal bidding or visual gestures other than those specified shall not be recognised."
+                ]
+            },
+            {
+                title: "13.2.2 Entry into Active Bidding",
+                content: [
+                    "Houses wishing to enter a bid must raise their hand while the bidding window is open.",
+                    "The first two valid hand raises, as acknowledged by the auctioneer, shall become the active bidders.",
+                    "Any subsequent hand raises will be placed in a waiting queue and will not be acknowledged until a slot becomes available."
+                ]
+            },
+            {
+                title: "13.2.3 Exit from Active Bidding",
+                content: [
+                    "A house may voluntarily exit an ongoing bid by:",
+                    "Clearly displaying a thumbs-down gesture (👎) on Google Meet, and",
+                    "Lowering their raised hand on Google Meet.",
+                    "Once a house exits:",
+                    "It cannot re-enter the same bid cycle until another house has placed a valid bid or the bid value changes, and",
+                    "The auctioneer may invite the next waiting house to enter active bidding."
+                ]
+            },
+            {
+                title: "13.2.4 Rotation & Re-entry",
+                content: [
+                    "When one active bidder exits, other houses may enter the bidding by raising their hand.",
+                    "The auctioneer will acknowledge new entrants strictly on a first-come, first-recognised basis.",
+                    "This rotation continues until:",
+                    "Only one active bidder remains, or",
+                    "The hammer falls."
+                ]
+            },
+            {
+                title: "13.2.5 Final Bid Condition",
+                content: [
+                    "If only one active house remains and no new valid entry occurs within the auctioneer’s final call:",
+                    "The player shall be sold to the remaining active house at the last valid bid."
+                ]
+            },
+            {
+                title: "13.2.6 Enforcement & Misconduct",
+                content: [
+                    "Any attempt to:",
+                    "Bypass the hand-raise system",
+                    "Verbally interrupt active bidding",
+                    "Re-enter immediately after backing out will be treated as Auction Floor Misconduct and penalised accordingly.",
+                    "The auctioneer’s recognition of:",
+                    "Active bidders",
+                    "Entry order",
+                    "Exit confirmation shall be final and binding."
+                ]
+            }
+        ]
+    },
+    {
+        section: "14. Auctioneer Protocol",
+        content: [
+            "Base price announced",
+            "Bidding opens",
+            "Auctioneer calls:",
+            "“Going once”",
+            "“Going twice”",
+            "“Sold”",
+            "Hammer fall confirms sale",
+            "No bids are accepted after “Sold”.",
+        ],
+    },
+    {
+        section: "15. Bid Retraction & Accidental Bids",
+        content: [
+            "All bids are final once acknowledged by the auctioneer.",
+            "Accidental bids, miscommunication, or connectivity-related delays will not be grounds for bid reversal.",
+            "If two bids are raised simultaneously, the auctioneer’s verbal confirmation decides priority.",
+            "No bid retractions are allowed after the auctioneer announces the next increment.",
+        ],
+    },
+    {
+        section: "16. Unsold Players & Accelerated Rounds",
+        content: [
+            "Unsold players may be reintroduced in accelerated rounds (depends on the OC’s decision).",
+            "Revised base prices may apply.",
+            "No house can demand a player’s reappearance.",
+        ],
+    },
+    {
+        section: "17. Playing XI Composition (Mandatory)",
+        content: [
+            "Each house must submit one Playing XI:",
+            "4 Specialist Batters",
+            "1 Specialist Wicketkeeper",
+            "2 Recognised All-Rounders",
+            "3 Specialist Bowlers",
+            "1 Floating Player (any role)",
+            "3 Players of the playing 11 must be from the uncapped category.",
+            "Failure to meet this requirement will result in Playing XI rejection until corrected or a points penalty as decided by the OC.",
+        ],
+    },
+    {
+        section: "18. Player Points & Captaincy System",
+        content: [
+            "Each player is assigned a performance value between 0–100 points, based on a predefined formula.",
+            "Multipliers:",
+            "Captain: 3×",
+            "Vice-Captain: 2×",
+            "Others: 1×",
+            "Total team score = sum of all player points after multipliers.",
+            "Playing XI & Captaincy Lock",
+            "Playing XI, Captain, and Vice-Captain must be submitted within the deadline announced by the OC.",
+            "Once submitted, no changes are permitted.",
+            "Late submission may result in:",
+            "Point penalties",
+            "Auto-assignment by OC",
+        ],
+    },
+    {
+        section: "18A. Player Points Allocation System (Transparency & Methodology)",
+        subsections: [
+            {
+                title: "18A.1 Predefined & Fixed Nature of Points",
+                content: [
+                    "Every player in the auction pool is assigned a fixed points value prior to the auction.",
+                    "These points are locked before the event begins and do not change during or after the auction under any circumstances.",
+                    "The maximum possible points for any player is 100.",
+                    "This ensures that:",
+                    "No post-auction manipulation is possible",
+                    "All houses operate with equal and known information",
+                    "Team rankings are purely merit-based",
+                ]
+            },
+            {
+                title: "18A.2 Basis of Player Points Calculation",
+                content: [
+                    "Player points have been derived using a structured, multi-factor system, which includes:",
+                    "Role-Based Weightage:",
+                    "Batters",
+                    "Bowlers",
+                    "All-Rounders",
+                    "Wicketkeepers",
+                    "All-rounders and wicketkeepers receive higher base weightage due to multi-skill contributions.",
+                    "Experience Category:",
+                    "Capped players (international experience)",
+                    "Uncapped players",
+                    "Reserve Price as Market Indicator:",
+                    "The official reserve price is used as a proxy for market value",
+                    "Higher reserve prices attract proportionally higher points",
+                    "This methodology ensures balanced valuation between:",
+                    "Skill",
+                    "Experience",
+                    "Market demand",
+                ]
+            },
+            {
+                title: "18A.3 Data Source & Authenticity",
+                content: [
+                    "Official player data from the IPL 2025 Mega Auction has been used as the primary reference for:",
+                    "Player roles",
+                    "Experience status",
+                    "Reserve prices",
+                    "This step has been taken to:",
+                    "Align the simulation closely with real-world IPL dynamics",
+                    "Maintain objective and publicly verifiable benchmarks",
+                    "Eliminate subjective or arbitrary valuation",
+                ]
+            },
+            {
+                title: "18A.4 Exception: Marquee Set Players",
+                content: [
+                    "The Player Points Allocation System applies to all players EXCEPT those included in the Marquee Set.",
+                    "Marquee Set players are treated as a special category due to:",
+                    "Exceptional reputation",
+                    "Elite status",
+                    "Disproportionate strategic impact in real IPL auctions",
+                    "For Marquee Set players:",
+                    "Standard points-calculation rules do not apply",
+                    "Their valuation is intentionally kept outside the formula to preserve:",
+                    "Auction excitement",
+                    "Strategic risk-reward dynamics",
+                    "Authentic IPL-style unpredictability",
+                    "This exception is uniformly applied across all houses and does not provide any unfair advantage.",
+                ]
+            },
+            {
+                title: "18A.5 Transparency Declaration",
+                content: [
+                    "The Organising Committee formally declares that:",
+                    "The same points methodology has been consistently applied to all non-marquee players",
+                    "No player’s points have been altered, adjusted, or overridden post-calculation",
+                    "All teams are evaluated using the exact same scoring framework",
+                    "This system has been implemented to uphold:",
+                    "Competitive integrity",
+                    "Strategic fairness",
+                    "Complete transparency in winner determination",
+                ]
+            }
+        ]
+    },
+    {
+        section: "19. Ranking & Winner Determination",
+        content: [
+            "Houses are ranked strictly by total team points.",
+            "Tie-breakers:",
+            "Higher remaining purse",
+            "Higher points from the entire squad made.",
+        ],
+    },
+    {
+        section: "20. Penalties & Enforcement Framework",
+        subsections: [
+             {
+                title: "Minor Violations:",
+                content: [
+                    "Speaking out of turn",
+                    "Delays",
+                    "Penalty: Warning or point deduction: -20 points",
+                ],
+            },
+             {
+                title: "Major Violations:",
+                content: [
+                    "Bidding beyond purse",
+                    "Collusion",
+                    "Rule manipulation",
+                    "Penalty:",
+                    "Bid cancellation",
+                    "Player forfeiture",
+                    "Heavy point deduction: -100 points",
+                ],
+            },
+            {
+                title: "Severe Violations:",
+                content: [
+                    "Repeated breaches",
+                    "External interference",
+                    "Penalty:",
+                    "Immediate disqualification",
+                    "Nullification of results",
+                ],
+            },
+        ],
+        table: {
+            headers: ["Category", "Violation Type", "Description / Examples", "Penalty", "Escalation Rule"],
+            rows: [
+                ["Minor", "Speaking Out of Turn", "Strategic members speaking during live bidding", "Warning OR –20 points", "Repeated offence → Major"],
+                ["Minor", "Accidental Disruption", "Background noise, camera issues after warning", "Warning", "Repeated: –20 points"],
+                ["Minor", "Late Playing XI Submission", "Missing deadline for Playing XI / Captaincy submission", "–50 points AND auto-assignment", "No escalation"],
+                ["Major", "Unauthorized Bidding", "Bid raised by non-authorised participant", "Bid cancelled + –50 points", "Repeat → Severe"],
+                ["Major", "Bidding Beyond Purse", "Any bid exceeding available purse", "Bid cancelled + –100 points", "Repeat → Severe"],
+                ["Major", "Collusion Attempt", "Coordinated bidding, price manipulation, signalling", "–50 points OR player forfeiture", "Immediate Severe"],
+                ["Major", "Auction Floor Misconduct", "Shouting, misleading rivals, intentional distractions", "–100 points", "Repeat → Severe"],
+                ["Severe", "Repeated Violations", "Multiple Major violations by same house", "Immediate Disqualification", "Final"],
+                ["Severe", "External Assistance", "Using external inputs, live help, or tools", "Immediate Disqualification", "Final"],
+                ["Severe", "Refusal to Comply", "Ignoring OC instructions or rulings", "Immediate Disqualification", "Final"],
+                ["Severe", "Public Misconduct", "Defamation, public disputes harming event integrity", "Disqualification / Result Nullification", "Final"],
+            ]
+        }
+    },
 ];
 
 export default function RulebookPage() {
-  return (
-    <motion.div 
-        className="w-full max-w-4xl mx-auto"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-    >
-      <Card className="glow-border bg-card/70 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center text-3xl">
-            <BookOpen className="mr-3 h-8 w-8 text-primary" />
-            Auction Rulebook
-          </CardTitle>
-          <CardDescription>
-            The official rules and regulations for the auction process.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <ScrollArea className="h-[60vh] pr-4">
-            <div className="space-y-6">
-              {rules.map((rule, index) => (
-                <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: index * 0.1 }}
-                >
-                    <Card className="bg-muted/30">
-                        <CardHeader>
-                            <CardTitle className="text-xl text-primary">{rule.title}</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <p className="text-muted-foreground">{rule.content}</p>
-                        </CardContent>
-                    </Card>
-                </motion.div>
-              ))}
-            </div>
-          </ScrollArea>
-        </CardContent>
-      </Card>
-    </motion.div>
-  );
+    return (
+        <motion.div
+            className="w-full max-w-4xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <Card className="glow-border bg-card/70 backdrop-blur-sm">
+                <CardHeader>
+                    <CardTitle className="flex items-center text-3xl">
+                        <BookOpen className="mr-3 h-8 w-8 text-primary" />
+                        LIVE IPL AUCTION
+                    </CardTitle>
+                    <CardDescription>
+                        The official rules and regulations for the auction process.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <ScrollArea className="h-[65vh] pr-4">
+                        <Accordion type="multiple" className="w-full space-y-4" defaultValue={rules.map(r => r.section)}>
+                            {rules.map((rule, index) => (
+                                <AccordionItem value={rule.section} key={index} className="bg-muted/30 rounded-lg border-primary/20 border">
+                                    <AccordionTrigger className="p-4 text-xl text-primary hover:no-underline">
+                                        {rule.section}
+                                    </AccordionTrigger>
+                                    <AccordionContent className="p-4 pt-0">
+                                        <div className="space-y-4 text-muted-foreground">
+                                            {rule.content && rule.content.map((text, i) => (
+                                                <p key={i} className="ml-4">{text.includes(':') ? <><span className="font-bold text-foreground/80">{text.split(':')[0]}:</span>{text.substring(text.indexOf(':') + 1)}</> : text}</p>
+                                            ))}
+                                            
+                                            {rule.subsections && rule.subsections.map((sub, subIndex) => (
+                                                <div key={subIndex} className="ml-4 space-y-2 pt-2">
+                                                    <h4 className="font-bold text-lg text-foreground/90">{sub.title}</h4>
+                                                    <div className="ml-4 space-y-1">
+                                                        {sub.content && sub.content.map((text, i) => (
+                                                          <p key={i}>{text.includes(':') ? <><span className="font-semibold text-foreground/80">{text.split(':')[0]}:</span>{text.substring(text.indexOf(':') + 1)}</> : text}</p>
+                                                        ))}
+                                                    </div>
+                                                    {sub.table && (
+                                                         <div className="my-4 border border-border rounded-lg overflow-hidden">
+                                                            <Table>
+                                                                <TableHeader>
+                                                                    <TableRow className="bg-primary/10">
+                                                                        {sub.table.headers.map(header => <TableHead key={header}>{header}</TableHead>)}
+                                                                    </TableRow>
+                                                                </TableHeader>
+                                                                <TableBody>
+                                                                    {sub.table.rows.map((row, rIndex) => (
+                                                                        <TableRow key={rIndex}>
+                                                                            {row.map((cell, cIndex) => <TableCell key={cIndex}>{cell}</TableCell>)}
+                                                                        </TableRow>
+                                                                    ))}
+                                                                </TableBody>
+                                                            </Table>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            ))}
+
+                                            {rule.table && (
+                                                <div className="my-4 border border-border rounded-lg overflow-hidden">
+                                                    <Table>
+                                                        <TableHeader>
+                                                            <TableRow className="bg-primary/10">
+                                                                {rule.table.headers.map(header => <TableHead key={header} className="text-primary-foreground">{header}</TableHead>)}
+                                                            </TableRow>
+                                                        </TableHeader>
+                                                        <TableBody>
+                                                            {rule.table.rows.map((row, rIndex) => (
+                                                                <TableRow key={rIndex} className="bg-card/50">
+                                                                    {row.map((cell, cIndex) => <TableCell key={cIndex} className={cIndex === 0 ? 'font-bold' : ''}>{cell}</TableCell>)}
+                                                                </TableRow>
+                                                            ))}
+                                                        </TableBody>
+                                                    </Table>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </AccordionContent>
+                                </AccordionItem>
+                            ))}
+                        </Accordion>
+                    </ScrollArea>
+                </CardContent>
+            </Card>
+        </motion.div>
+    );
 }
+
+
+    
