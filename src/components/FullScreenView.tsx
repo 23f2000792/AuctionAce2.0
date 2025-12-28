@@ -414,3 +414,5 @@ export default function FullScreenView({ players, set, onReset }: FullScreenView
     </div>
   );
 }
+
+    
