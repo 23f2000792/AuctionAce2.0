@@ -3,15 +3,11 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { BookOpen } from 'lucide-react';
-import { motion } from 'framer-motion';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
+import { BookOpen, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { cn } from '@/lib/utils';
 
 const rules = [
     {
@@ -379,92 +375,132 @@ const rules = [
 ];
 
 export default function RulebookPage() {
+    const [activeRuleIndex, setActiveRuleIndex] = useState(0);
+    const activeRule = rules[activeRuleIndex];
+
+    const contentVariants = {
+        hidden: { opacity: 0, x: 50 },
+        visible: { opacity: 1, x: 0 },
+        exit: { opacity: 0, x: -50 },
+    };
+
     return (
         <motion.div
-            className="w-full max-w-4xl mx-auto"
+            className="w-full max-w-6xl mx-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
         >
-            <Card className="glow-border bg-card/70 backdrop-blur-sm">
+            <Card className="glow-border bg-card/70 backdrop-blur-sm overflow-hidden">
                 <CardHeader>
                     <CardTitle className="flex items-center text-3xl">
                         <BookOpen className="mr-3 h-8 w-8 text-primary" />
-                        LIVE IPL AUCTION
+                        IPL Auction Showdown
                     </CardTitle>
                     <CardDescription>
                         The official rules and regulations for the auction process.
                     </CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <ScrollArea className="h-[65vh] pr-4">
-                        <Accordion type="multiple" className="w-full space-y-4">
-                            {rules.map((rule, index) => (
-                                <AccordionItem value={rule.section} key={index} className="bg-muted/30 rounded-lg border-primary/20 border">
-                                    <AccordionTrigger className="p-4 text-xl text-primary hover:no-underline">
-                                        {rule.section}
-                                    </AccordionTrigger>
-                                    <AccordionContent className="p-4 pt-0">
-                                        <div className="space-y-4 text-muted-foreground">
-                                            {rule.content && rule.content.map((text, i) => (
-                                                <p key={i} className="ml-4">{text.includes(':') ? <><span className="font-bold text-foreground/80">{text.split(':')[0]}:</span>{text.substring(text.indexOf(':') + 1)}</> : text}</p>
-                                            ))}
-                                            
-                                            {rule.subsections && rule.subsections.map((sub, subIndex) => (
-                                                <div key={subIndex} className="ml-4 space-y-2 pt-2">
-                                                    <h4 className="font-bold text-lg text-foreground/90">{sub.title}</h4>
-                                                    <div className="ml-4 space-y-1">
-                                                        {sub.content && sub.content.map((text, i) => (
-                                                          <p key={i}>{text.includes(':') ? <><span className="font-semibold text-foreground/80">{text.split(':')[0]}:</span>{text.substring(text.indexOf(':') + 1)}</> : text}</p>
-                                                        ))}
-                                                    </div>
-                                                    {sub.table && (
-                                                         <div className="my-4 border border-border rounded-lg overflow-hidden">
-                                                            <Table>
-                                                                <TableHeader>
-                                                                    <TableRow className="bg-primary/10">
-                                                                        {sub.table.headers.map(header => <TableHead key={header}>{header}</TableHead>)}
-                                                                    </TableRow>
-                                                                </TableHeader>
-                                                                <TableBody>
-                                                                    {sub.table.rows.map((row, rIndex) => (
-                                                                        <TableRow key={rIndex}>
-                                                                            {row.map((cell, cIndex) => <TableCell key={cIndex}>{cell}</TableCell>)}
-                                                                        </TableRow>
-                                                                    ))}
-                                                                </TableBody>
-                                                            </Table>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            ))}
+                <CardContent className="grid md:grid-cols-[250px_1fr] gap-8 h-[65vh]">
+                    {/* Navigation Sidebar */}
+                    <aside>
+                        <ScrollArea className="h-full pr-4">
+                            <nav className="flex flex-col gap-1">
+                                {rules.map((rule, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => setActiveRuleIndex(index)}
+                                        className={cn(
+                                            "flex items-center justify-between text-left p-2 rounded-md text-sm font-medium transition-colors w-full",
+                                            activeRuleIndex === index 
+                                                ? "bg-primary text-primary-foreground" 
+                                                : "hover:bg-muted/50 text-muted-foreground hover:text-foreground"
+                                        )}
+                                    >
+                                        <span className="truncate">{rule.section}</span>
+                                        {activeRuleIndex === index && <ChevronRight className="h-4 w-4 shrink-0" />}
+                                    </button>
+                                ))}
+                            </nav>
+                        </ScrollArea>
+                    </aside>
 
-                                            {rule.table && (
-                                                <div className="my-4 border border-border rounded-lg overflow-hidden">
-                                                    <Table>
-                                                        <TableHeader>
-                                                            <TableRow className="bg-primary/10">
-                                                                {rule.table.headers.map(header => <TableHead key={header} className="text-primary-foreground">{header}</TableHead>)}
-                                                            </TableRow>
-                                                        </TableHeader>
-                                                        <TableBody>
-                                                            {rule.table.rows.map((row, rIndex) => (
-                                                                <TableRow key={rIndex} className="bg-card/50">
-                                                                    {row.map((cell, cIndex) => <TableCell key={cIndex} className={cIndex === 0 ? 'font-bold' : ''}>{cell}</TableCell>)}
-                                                                </TableRow>
-                                                            ))}
-                                                        </TableBody>
-                                                    </Table>
+                    {/* Content Display */}
+                    <main className="relative">
+                        <ScrollArea className="h-full pr-4">
+                            <AnimatePresence mode="wait">
+                                <motion.div
+                                    key={activeRuleIndex}
+                                    variants={contentVariants}
+                                    initial="hidden"
+                                    animate="visible"
+                                    exit="exit"
+                                    transition={{ duration: 0.3, ease: 'easeInOut' }}
+                                    className="space-y-6"
+                                >
+                                    <h2 className="text-3xl font-headline text-primary">{activeRule.section}</h2>
+                                    
+                                    <div className="space-y-4 text-muted-foreground prose prose-invert prose-p:my-2 prose-li:my-1">
+                                        {activeRule.content && activeRule.content.map((text, i) => (
+                                            <p key={i} className="ml-4 list-item list-disc list-inside">{text.includes(':') ? <><span className="font-bold text-foreground/80">{text.split(':')[0]}:</span>{text.substring(text.indexOf(':') + 1)}</> : text}</p>
+                                        ))}
+                                        
+                                        {activeRule.subsections && activeRule.subsections.map((sub, subIndex) => (
+                                            <div key={subIndex} className="ml-4 space-y-3 pt-3">
+                                                <h4 className="font-bold text-xl text-foreground/90">{sub.title}</h4>
+                                                <div className="ml-4 space-y-2 border-l-2 border-primary/20 pl-4">
+                                                    {sub.content && sub.content.map((text, i) => (
+                                                        <p key={i} className="list-item list-disc list-inside">{text.includes(':') ? <><span className="font-semibold text-foreground/80">{text.split(':')[0]}:</span>{text.substring(text.indexOf(':') + 1)}</> : text}</p>
+                                                    ))}
                                                 </div>
-                                            )}
-                                        </div>
-                                    </AccordionContent>
-                                </AccordionItem>
-                            ))}
-                        </Accordion>
-                    </ScrollArea>
+                                                {sub.table && (
+                                                        <div className="my-4 border border-border rounded-lg overflow-hidden glow-border">
+                                                        <Table>
+                                                            <TableHeader>
+                                                                <TableRow className="bg-primary/10">
+                                                                    {sub.table.headers.map(header => <TableHead key={header} className="text-primary">{header}</TableHead>)}
+                                                                </TableRow>
+                                                            </TableHeader>
+                                                            <TableBody>
+                                                                {sub.table.rows.map((row, rIndex) => (
+                                                                    <TableRow key={rIndex} className="bg-card/50">
+                                                                        {row.map((cell, cIndex) => <TableCell key={cIndex}>{cell}</TableCell>)}
+                                                                    </TableRow>
+                                                                ))}
+                                                            </TableBody>
+                                                        </Table>
+                                                    </div>
+                                                )}
+                                            </div>
+                                        ))}
+
+                                        {activeRule.table && (
+                                            <div className="my-4 border border-border rounded-lg overflow-hidden glow-border">
+                                                <Table>
+                                                    <TableHeader>
+                                                        <TableRow className="bg-primary/10">
+                                                            {activeRule.table.headers.map(header => <TableHead key={header} className="text-primary">{header}</TableHead>)}
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        {activeRule.table.rows.map((row, rIndex) => (
+                                                            <TableRow key={rIndex} className="bg-card/50">
+                                                                {row.map((cell, cIndex) => <TableCell key={cIndex} className={cIndex === 0 ? 'font-bold' : ''}>{cell}</TableCell>)}
+                                                            </TableRow>
+                                                        ))}
+                                                    </TableBody>
+                                                </Table>
+                                            </div>
+                                        )}
+                                    </div>
+                                </motion.div>
+                            </AnimatePresence>
+                        </ScrollArea>
+                    </main>
                 </CardContent>
             </Card>
         </motion.div>
     );
 }
+
+    
