@@ -51,7 +51,7 @@ export default function SquadsPage() {
                 <CardContent>
                     {isLoading && (
                         <div className="space-y-2">
-                           {[...Array(12)].map(i => <div key={i} className="h-14 w-full animate-pulse rounded-md bg-muted/50" />)}
+                           {[...Array(12)].map((_, i) => <div key={i} className="h-14 w-full animate-pulse rounded-md bg-muted/50" />)}
                         </div>
                     )}
                     { !isLoading && squads && squads.length > 0 && (
