@@ -193,15 +193,7 @@ const rules = [
         ],
     },
     {
-        section: "8. Unsold Players & Accelerated Rounds",
-        content: [
-            "Unsold players may be reintroduced in accelerated rounds (depends on the OC’s decision).",
-            "Revised base prices may apply.",
-            "No house can demand a player’s reappearance.",
-        ],
-    },
-    {
-        section: "9. Playing XI Composition (Mandatory)",
+        section: "8. Playing XI Composition (Mandatory)",
         content: [
             "Each house must submit one Playing XI:",
             "4 Specialist Batters",
@@ -214,7 +206,7 @@ const rules = [
         ],
     },
     {
-        section: "10. Player Points & Captaincy System",
+        section: "9. Player Points & Captaincy System",
         content: [
             "Each player is assigned a performance value between 0–100 points, based on a predefined formula.",
             "Multipliers:",
@@ -231,10 +223,10 @@ const rules = [
         ],
     },
     {
-        section: "11. Player Points Allocation System (Transparency & Methodology)",
+        section: "10. Player Points Allocation System (Transparency & Methodology)",
         subsections: [
             {
-                title: "11.1 Predefined & Fixed Nature of Points",
+                title: "10.1 Predefined & Fixed Nature of Points",
                 content: [
                     "Every player in the auction pool is assigned a fixed points value prior to the auction.",
                     "These points are locked before the event begins and do not change during or after the auction under any circumstances.",
@@ -246,7 +238,7 @@ const rules = [
                 ]
             },
             {
-                title: "11.2 Basis of Player Points Calculation",
+                title: "10.2 Basis of Player Points Calculation",
                 content: [
                     "Player points have been derived using a structured, multi-factor system, which includes:",
                     "Role-Based Weightage:",
@@ -268,7 +260,7 @@ const rules = [
                 ]
             },
             {
-                title: "11.3 Data Source & Authenticity",
+                title: "10.3 Data Source & Authenticity",
                 content: [
                     "Official player data from the IPL 2025 Mega Auction has been used as the primary reference for:",
                     "Player roles",
@@ -281,7 +273,7 @@ const rules = [
                 ]
             },
             {
-                title: "11.4 Exception: Marquee Set Players",
+                title: "10.4 Exception: Marquee Set Players",
                 content: [
                     "The Player Points Allocation System applies to all players EXCEPT those included in the Marquee Set.",
                     "Marquee Set players are treated as a special category due to:",
@@ -298,7 +290,7 @@ const rules = [
                 ]
             },
             {
-                title: "11.5 Transparency Declaration",
+                title: "10.5 Transparency Declaration",
                 content: [
                     "The Organising Committee formally declares that:",
                     "The same points methodology has been consistently applied to all non-marquee players",
@@ -311,67 +303,7 @@ const rules = [
                 ]
             }
         ]
-    },
-    {
-        section: "12. Ranking & Winner Determination",
-        content: [
-            "Houses are ranked strictly by total team points.",
-            "Tie-breakers:",
-            "Higher remaining purse",
-            "Higher points from the entire squad made.",
-        ],
-    },
-    {
-        section: "13. Penalties & Enforcement Framework",
-        subsections: [
-             {
-                title: "Minor Violations:",
-                content: [
-                    "Speaking out of turn",
-                    "Delays",
-                    "Penalty: Warning or point deduction: -20 points",
-                ],
-            },
-             {
-                title: "Major Violations:",
-                content: [
-                    "Bidding beyond purse",
-                    "Collusion",
-                    "Rule manipulation",
-                    "Penalty:",
-                    "Bid cancellation",
-                    "Player forfeiture",
-                    "Heavy point deduction: -100 points",
-                ],
-            },
-            {
-                title: "Severe Violations:",
-                content: [
-                    "Repeated breaches",
-                    "External interference",
-                    "Penalty:",
-                    "Immediate disqualification",
-                    "Nullification of results",
-                ],
-            },
-        ],
-        table: {
-            headers: ["Category", "Violation Type", "Description / Examples", "Penalty", "Escalation Rule"],
-            rows: [
-                ["Minor", "Speaking Out of Turn", "Strategic members speaking during live bidding", "Warning OR –20 points", "Repeated offence → Major"],
-                ["Minor", "Accidental Disruption", "Background noise, camera issues after warning", "Warning", "Repeated: –20 points"],
-                ["Minor", "Late Playing XI Submission", "Missing deadline for Playing XI / Captaincy submission", "–50 points AND auto-assignment", "No escalation"],
-                ["Major", "Unauthorized Bidding", "Bid raised by non-authorised participant", "Bid cancelled + –50 points", "Repeat → Severe"],
-                ["Major", "Bidding Beyond Purse", "Any bid exceeding available purse", "Bid cancelled + –100 points", "Repeat → Severe"],
-                ["Major", "Collusion Attempt", "Coordinated bidding, price manipulation, signalling", "–50 points OR player forfeiture", "Immediate Severe"],
-                ["Major", "Auction Floor Misconduct", "Shouting, misleading rivals, intentional distractions", "–100 points", "Repeat → Severe"],
-                ["Severe", "Repeated Violations", "Multiple Major violations by same house", "Immediate Disqualification", "Final"],
-                ["Severe", "External Assistance", "Using external inputs, live help, or tools", "Immediate Disqualification", "Final"],
-                ["Severe", "Refusal to Comply", "Ignoring OC instructions or rulings", "Immediate Disqualification", "Final"],
-                ["Severe", "Public Misconduct", "Defamation, public disputes harming event integrity", "Disqualification / Result Nullification", "Final"],
-            ]
-        }
-    },
+    }
 ];
 
 export default function RulebookPage() {
@@ -391,7 +323,7 @@ export default function RulebookPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
         >
-            <Card className="glow-border bg-card/70 backdrop-blur-sm overflow-hidden">
+            <Card className="glow-border bg-card/70 backdrop-blur-sm overflow-hidden h-[80vh] flex flex-col">
                 <CardHeader>
                     <CardTitle className="flex items-center text-3xl">
                         <BookOpen className="mr-3 h-8 w-8 text-primary" />
@@ -401,7 +333,7 @@ export default function RulebookPage() {
                         The official rules and regulations for the auction process.
                     </CardDescription>
                 </CardHeader>
-                <CardContent className="grid md:grid-cols-[250px_1fr] gap-8 h-[65vh]">
+                <CardContent className="grid md:grid-cols-[250px_1fr] gap-8 flex-1 min-h-0">
                     {/* Navigation Sidebar */}
                     <aside>
                         <ScrollArea className="h-full pr-4">
@@ -426,7 +358,7 @@ export default function RulebookPage() {
                     </aside>
 
                     {/* Content Display */}
-                    <main className="relative">
+                    <main className="relative min-h-0">
                         <ScrollArea className="h-full pr-4">
                             <AnimatePresence mode="wait">
                                 <motion.div
@@ -502,5 +434,3 @@ export default function RulebookPage() {
         </motion.div>
     );
 }
-
-    
