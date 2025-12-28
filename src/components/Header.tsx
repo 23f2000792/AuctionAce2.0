@@ -2,7 +2,7 @@
 "use client";
 
 import Link from 'next/link';
-import { Gavel, Users, PlusCircle, LogOut, LogIn, Menu } from 'lucide-react';
+import { Gavel, Users, PlusCircle, LogOut, LogIn, Menu, BookOpen } from 'lucide-react';
 import { Button } from './ui/button';
 import {
   DropdownMenu,
@@ -34,6 +34,11 @@ const Header = () => {
             <Button variant="ghost" asChild>
                 <Link href="/players" onClick={() => setIsSheetOpen(false)}>
                     <Users /> Manage Players
+                </Link>
+            </Button>
+            <Button variant="ghost" asChild>
+                <Link href="/rulebook" onClick={() => setIsSheetOpen(false)}>
+                    <BookOpen /> Rulebook
                 </Link>
             </Button>
              <Button variant="ghost" asChild>
